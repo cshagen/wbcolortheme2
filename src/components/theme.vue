@@ -1,0 +1,127 @@
+<template>
+  <div class="container-fluid p-0 m-0 theme-colors">
+    <buttonBar
+      :chargepoints="chargePoint"
+      :globalData="globalData"
+    ></buttonBar>
+   <hr/>
+    <div class="row py-0 px-0 m-0">
+      <powermeter
+        :globalData="globalData"
+        :sourceSummary="sourceSummary"
+        :usageSummary="usageSummary"
+        :chargePoint="chargePoint"
+        :vehicle="vehicle"
+        :shDevice="shDevice"
+      ></powermeter>
+      <powergraph></powergraph>
+      <energymeter
+        :sourceSummary="sourceSummary"
+        :usageDetails="usageDetails"
+      ></energymeter>
+    </div>
+    <hr/>
+    <div class="row py-0  m-0">
+      
+      <cpChargepoint v-for="(chargepoint, index) in chargepointsToDisplay"
+                  :key="index"
+                  :chargepoint="chargepoint"
+                  :vehicle="vehicle"
+      ></cpChargepoint>
+      <batterylist :globalConf="globalData"
+        :sourceSummary="sourceSummary"
+        :usageSummary="usageSummary">
+        </batterylist>
+    </div>
+    <div class="row">
+      <div class="col">
+        <hr/>
+        Screen Width: {{ screensize.x }}
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import * as d3 from "d3";
+import powermeter from "./powermeter/powermeter.vue";
+import powergraph from "./powergraph/powergraph.vue";
+import energymeter from "./energymeter/energymeter.vue";
+import buttonBar from './buttonBar/buttonBar.vue'
+import model from "../assets/mixins/model.js";
+import config from "@/assets/mixins/themeConfig";
+import messages from "@/assets/mixins/rcvMessages";
+import prefs from "@/assets/mixins/handleCookies";
+import setValues from '@/assets/mixins/sendMessages.js'
+import Batterylist from "./batterylist/batterylist.vue"
+import cpChargepoint from './chargepointlist/cpChargePoint.vue';
+
+export default {
+  name: "theme",
+  mixins: [config, messages, model, prefs, setValues],
+  components: {
+    powermeter,
+    powergraph,
+    energymeter,
+    Batterylist,
+    buttonBar,
+    cpChargepoint,
+  },
+  data() {
+    return {
+      screensize: {x: document.documentElement.clientWidth, 
+      y: document.documentElement.clientHeight}
+    }
+  },
+  mounted() {
+    // console.log("theme mounted")
+    this.init();
+    window.addEventListener('resize', this.updateDimensions)
+  },
+  methods: {
+    // initialize the theme
+    init() {
+      this.readCookie();
+      // set the background
+      const doc = d3.select("html");
+      doc.classed("theme-dark", this.config.displayMode == "dark");
+      doc.classed("theme-light", this.config.displayMode == "light");
+      doc.classed("theme-gray", this.config.displayMode == "gray");
+      // set the color scheme for devices
+      doc.classed(
+        "shcolors-standard",
+        this.config.smartHomeColors == "standard"
+      );
+      doc.classed(
+        "shcolors-advanced",
+        this.config.smartHomeColors == "advanced"
+      );
+      doc.classed("shcolors-normal", this.config.smartHomeColors == "normal");
+    },
+     updateDimensions() {
+       this.screensize.x = document.documentElement.clientWidth
+       this.screensize.y = document.documentElement.clientHeight
+  },
+  },
+  computed: {
+    usageDetails() {
+      return [this.usageSummary.evuOut, this.usageSummary.charging]
+        .concat(
+          this.shDevice.filter((row) => row.configured && row.showInGraph)
+        )
+        .concat([this.usageSummary.batIn, this.usageSummary.house]);
+    },
+    chargepointsToDisplay() {
+      return Object.values(this.chargePoint).filter((cp) => cp.configured);
+    },
+   
+  },
+  beforeUpdate() {
+    // console.log("theme.vue: beforeUpdate()");
+  },
+  
+};
+</script>
+
+<style>
+</style>

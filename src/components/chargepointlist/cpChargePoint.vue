@@ -1,0 +1,224 @@
+<template>
+  <wbWidget>
+    <template v-slot:title>
+      {{ chargepoint.name }}
+    </template>
+    <template v-slot:subtitle>
+      <span class=" mx-1 pt-1 badge rounded-pill smallTextSize modeIndicator outlinePill" :style="modePillStyle">
+        {{ modeString }}
+      </span>
+    </template>
+    <template v-slot:buttons>
+      <button class="btn btn-outline-secondary btn-sm" 
+      id="editButton"
+      @click="toggleConfig">
+        <span class="fa fa-sm fa-edit px-0"></span>
+      </button>
+    </template>
+
+    <div class="row m-0 p-1 mt-1">
+      <div class="col-8 m-0 p-0">
+        <p
+          class="tablecell nameButtonCell p-0 m-0"
+          :style="{ color: chargepoint.color }"
+        >
+          <i class="fa fa-s fa-car"> </i>
+          <span class="px-2">{{ chargepoint.carName }}</span>
+          <span
+            v-if="chargepoint.willFinishAtTime"
+            class="fa fa-xs fa-flag-checkered pl-1"
+            :style="{ color: this.fgColor }"
+          >
+          </span>
+        </p>
+      </div>
+      <div class="col-4 m-0 p-0">
+        <!-- SoC Information -->
+        <p
+          class="tablecell p-0 m-0"
+          style="text-align: right; vertical-align: middle"
+        >
+          <span v-if="chargepoint.isSocConfigured" class="px-2">
+            <i class="fa" :class="batterySymbol"></i>
+            {{ soc + "%" }}
+          </span>
+          <i
+            v-if="chargepoint.isSocManual"
+            class="small fas fa-edit"
+            :style="{ color: fgColor }"
+          ></i>
+          <i
+            v-if="!chargepoint.isSocManual"
+            class="small fas fa-redo-alt"
+            :id="'soclabel-' + index"
+            :style="{ color: fgColor }"
+          ></i>
+        </p>
+      </div>
+    </div>
+    <div class="row m-1 mt-2 p-0" style="vertical-align: middle">
+      <div class="col-6 tablecell m-0 p-0">
+        <span
+          class="mr-2 badge rounded-pill statusIndicator"
+          :style="{ color: statusColor }"
+        >
+          {{ statusString }}
+        </span>
+        <span v-if="chargepoint.isCharging && !chargepoint.isLocked" class="mx-1">
+          {{ chargePowerString }}
+        </span>
+      </div>
+      <div class="col-6 tablecell m-0 p-0" style="text-align: right">
+        Geladen:
+        <span>
+          {{ chargeEnergyString }}
+        </span>
+      </div>
+    </div>
+    <cpChargeConfig
+      :chargepoint="chargepoint"
+      :vehicle="vehicle"
+      v-if="showConfig"
+      v-on:closeConfig="toggleConfig">
+    </cpChargeConfig>
+  </wbWidget>
+</template>
+
+<script>
+import { formatWatt, formatWattH } from "@/assets/js/helpers.js";
+import globalConf from "@/assets/mixins/themeConfig.js";
+import wbWidget from "../wbWidget.vue";
+import cpChargeConfig from './cpChargeConfig.vue'
+
+export default {
+  name: "cpChargepoint",
+  mixins: [ globalConf ],
+  components: { wbWidget, cpChargeConfig },
+  props: {
+    chargepoint: Object,
+    index: Number,
+    vehicle:Array
+  },
+  data() {
+    return {
+      fgColor: "var(--color-fg)",
+      
+      phaseSymbols: ["/", "\u2460", "\u2461", "\u2462"],
+      showConfig: false
+    };
+  },
+  computed: {
+    switchStyle() {
+      return {
+        "fa-toggle-on": this.chargepoint.enabled,
+        "fa-toggle-off": !this.chargepoint.enabled,
+        "text-green": this.chargepoint.enabled,
+        "text-red": !this.chargepoint.enabled,
+      };
+    },
+    plugStyle() {
+      return {
+        "text-orange": !this.chargepoint.isCharging,
+        "text-green": this.chargepoint.isCharging,
+      };
+    },
+    chargePowerString() {
+      return (
+        formatWatt(this.chargepoint.power, this.decimalPlaces) +
+        " " +
+        this.phaseSymbols[this.chargepoint.phasesInUse] +
+        " " +
+        this.chargepoint.targetCurrent +
+        " A"
+      );
+    },
+    chargeEnergyString() {
+      if (this.chargepoint.energy > 0) {
+        return (
+          formatWattH(this.chargepoint.energy * 1000, this.decimalPlaces) +
+          " / " +
+          Math.round(
+            (this.chargepoint.energy / this.chargepoint.energyPer100km) * 100
+          )  +
+          " km")
+      } else {
+        return ("0 Wh")
+      }
+    },
+    statusString() {
+      if (this.chargepoint.isLocked) {
+        return "Gesperrt";
+      } else if (this.chargepoint.isCharging) {
+        return "Lädt";
+      } else if (this.chargepoint.isPluggedIn) {
+        return "Bereit";
+      } else {
+        return "Frei";
+      }
+    },
+    statusColor() {
+      if (this.chargepoint.isLocked) {
+        return "var(--color-evu)";
+      } else if (this.chargepoint.isCharging) {
+        return "var(--color-charging)";
+      } else if (this.chargepoint.isPluggedIn) {
+        return "var(--color-battery)";
+      } else {
+        return "var(--color-axis)";
+      }
+    },
+    modePillStyle() {
+      switch (this.chargepoint.chargeMode) {
+        case 'stop': return {color: 'var(--fg)'}
+        default: return {
+              color: this.chargemodes[this.chargepoint.chargeMode].color
+          }
+      }
+    },
+    modeString() {
+      return this.chargemodes[this.chargepoint.chargeMode].name;
+    },
+    batterySymbol() {
+      if (this.soc <= 10) {
+        return 'fa-battery-empty'
+      } else if (this.soc <= 50) {
+        return 'fa-battery-quarter'
+      } else if (this.soc <=75) {
+        return 'fa-battery-half'
+      } else if (this.soc <95) {
+        return 'fa-battery-three-quarters'
+      } else {
+        return 'fa-battery-full'
+      }
+    },
+    soc () {
+      if (this.vehicle.length >0) {
+      return this.vehicle[this.chargepoint.carId].soc
+      } else {
+        return 0
+      }
+    }
+  },
+  methods: {
+    toggleConfig () {
+      console.log ("CLICK")
+      this.showConfig = !this.showConfig
+    }
+  }
+};
+</script>
+
+<style scoped>
+.modeIndicator {
+  color: white;
+}
+.outlinePill {
+  border: 1px solid;
+  background: var(--color-bg);
+  vertical-align: bottom;
+}
+.statusIndicator {
+  border: 1px solid;
+  background: 'var(--bg) '
+}
+</style>>
