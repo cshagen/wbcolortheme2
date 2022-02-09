@@ -97,7 +97,7 @@ export default {
     processCounterMessages(topic, message) {
       let elements = topic.split("/");
       if (+elements[2] == this.evuId) {
-        console.debug("evu counter message received");
+        // console.debug("evu counter message received");
         this.processEvuMessages(topic, message);
       } else if (elements[3] == "config") {
         console.debug("config for counter " + elements[2]);
@@ -127,6 +127,7 @@ export default {
           var hierarchy = JSON.parse(message);
           if (hierarchy.length) {
             this.evuId = hierarchy[0].id.match(/[\d]+$/)[0];
+            console.warn ("EVU counter is " + this.evuId)
             this.addChargepoint(hierarchy[0]);
           }
           break;
@@ -188,6 +189,7 @@ export default {
     processChargepointMessages(topic, message) {
       let elements = topic.split("/");
       let index;
+      //console.info (topic)
       switch (elements[2]) {
         // General Chargepoint messages
         case "get":
@@ -218,7 +220,7 @@ export default {
           switch (elements[3]) {
             case "config":
               var configMessage = JSON.parse(message);
-              this.chargePoint[index].name = configMessage.name;
+              this.chargePoints[index].name = configMessage.name;
               break;
             default:
               switch (elements[4]) {
@@ -226,7 +228,7 @@ export default {
                   this.updateCP(topic, "enabled", message == "1");
                   break;
                 case "current":
-                  this.updateCP(topic, "targetCurrent", message);
+                  this.updateCP(topic, "current", message);
                   break;
                 case "power":
                   this.updateCP(topic, "power", message);
@@ -252,24 +254,34 @@ export default {
                 case "manual_lock":
                   this.updateCP(topic, "isLocked", message == "true");
                   break;
+                // Connected Vehicle...
                 case "connected_vehicle":
+                console.info ("Connected Vehicle " + topic)
                   switch (elements[5]) {
+                    // ...info
                     case "info":
                       var info = JSON.parse(message);
+                      console.warn ("---------------------_")
+                      console.warn(info)
                       this.updateCP(topic, "carName", info.name);
                       this.updateCP (topic, 'carId', info.id)
                       break
+                      // ...config
                     case "config":
                       var config = JSON.parse(message);
+                      console.dir(config)
                       this.updateCP(topic, "chargeMode", config.chargemode);
                       this.updateCP(
                         topic,
                         "chargeTemplate",
                         config.charge_template
-                      );
-                      break;
+                      )
+                      console.log(this.chargePoints)
+                      break
+                    case 'soc':
+                      break
                     default:
-                      // console.warn("CONNECTED VEHICLE MESSAGE: " + topic);
+                      console.warn("Ignored CONNECTED VEHICLE MESSAGE: " + topic);
                       break;
                   }
                   break;
@@ -291,38 +303,73 @@ export default {
     },
     updateCP(topic, attribute, value) {
       let index = this.getIndex(topic);
-      let cp = this.chargePoint[index];
+      let cp = this.chargePoints[index];
       if (cp) {
         cp[attribute] = value;
+        console.info("Update Chargepoint " + cp.cpId + ": " + attribute + "=" + value)
         }
     },
     processVehicleMessages(topic, message) {
       let elements = topic.split("/");
       if (elements.length > 0) {
+        if (elements[2] == 'template') {
+          this.processVehicleTemplateMessages(topic,message)
+        } else {
         let index = +elements[2];
-        if (index >= this.vehicle.length) {
-          this.$set(this.vehicle, index, {});
+        if (!(index in this.vehicles)) {
+          this.$set(this.vehicles, index, {});
           const vh = this.createVehicle(index);
           const keys = Object.keys(vh);
           keys.forEach((v) => {
-            this.$set(this.vehicle[index], v, vh[v]);
+            this.$set(this.vehicles[index], v, vh[v]);
           });
         }
 
         switch (elements[3]) {
           case "name":
-            this.vehicle[index].name = JSON.parse(message);
+            this.vehicles[index].name = JSON.parse(message);
             break;
           case "get": 
             if (elements[4] == 'soc') {
-            this.vehicle[index].soc = +message;
+            this.vehicles[index].soc = +message;
             }
             break
           default:
-            console.warn("VEHICLE message: [" + topic + "] " + message);
+            console.warn("Ignored VEHICLE message: [" + topic + "] " + message);
             break;
         }
+        console.dir(this.vehicles)
       }
+    }
+      },
+      processVehicleTemplateMessages (topic, message) {
+        const elements = topic.split('/')
+        if (elements.length > 0) {
+          switch (elements[3]) {
+            case 'charge_template':
+              console.log("msg: " +message)
+              var index = +elements[4]
+              var template = JSON.parse(message)
+              while (this.chargeTemplates.length <= index) {
+                this.chargeTemplates.push({})
+              }
+              this.chargeTemplates[index] = template
+              /* if (index > 0) {
+                eventBus.$emit ('update', 'chargeTemplate', template, 0)
+                console.error ("CORRECTED CHARGE TEMPLATE")
+              } */
+            /*   Object.keys(this.chargePoints).forEach((key) => {
+                if (this.chargePoints[key].chargeTemplate == index) {
+                  console.dir(template)
+                  this.chargePoints[key].targetCurrent = template.chargemode.instant_charging.current
+                  console.log (this.chargePoints[key].targetCurrent)
+                }
+              }) */
+              break
+            default:
+              console.warn ("Ignored template message [" + topic + ']=' + message)
+          }
+        }
       },
     processPvConfigMessages(topic, message) {
       let elements = topic.split('/')
@@ -346,11 +393,11 @@ export default {
     },
 
     processEvuMessages(topic, message) {
-      // console.log("EVU [" + topic + ']' + message)
+       // console.log("EVU [" + topic + ']' + message)
       let elements = topic.split("/");
-      switch (elements[3]) {
+      switch (elements[4]) {
         case "power":
-          if (message > 0) {
+          if (+message > 0) {
             this.sourceSummary.evuIn.power = +message;
             this.usageSummary.evuOut.power = 0;
           } else {
@@ -370,15 +417,16 @@ export default {
     addChargepoint(hierarchy) {
       if (hierarchy.id.match(/cp[0-9]+/g)) {
         var chargePointIndex = hierarchy.id.replace("cp", "");
-        this.$set(this.chargePoint, chargePointIndex, {});
+        this.$set(this.chargePoints, chargePointIndex, {});
         const cp = this.createChargepoint(
-          Object.keys(this.chargePoint).length - 1,
+          Object.keys(this.chargePoints).length - 1,
           chargePointIndex
         );
         const keys = Object.keys(cp);
         keys.forEach((v) => {
-          this.$set(this.chargePoint[chargePointIndex], v, cp[v]);
+          this.$set(this.chargePoints[chargePointIndex], v, cp[v]);
         });
+        console.info("Added chargepoint " + chargePointIndex)
       }
 
       hierarchy.children.forEach((element) => {
@@ -390,9 +438,13 @@ export default {
       // get occurrence of numbers between / / in topic
       // since this is supposed to be the index like in openwb/lp/4/w
       // no lookbehind supported by safari, so workaround with replace needed
+      try {
       var index = topic
         .match(/(?:\/)([0-9]+)(?=\/)/g)[0]
         .replace(/[^0-9]+/g, "");
+       } catch (e) {
+         console.warn ("Parser error in getIndex for topic " + topic)
+       }
       if (typeof index === "undefined") {
         index = "";
       }

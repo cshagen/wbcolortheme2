@@ -113,7 +113,9 @@ export default {
   name: "bbSelectModal",
   props: {
     chargepoint: Object,
-    globalData: Object
+    globalData: Object,
+    vehicles: Array,
+    chargeTemplates: Array
   },
   data() {
     return {
@@ -139,8 +141,23 @@ export default {
   },
   methods: {
     selectChargeMode(mode) {
-      this.cp.chargeMode = mode;
-      eventBus.$emit('update', 'chargeMode', mode, this.cp.chargeTemplate);
+     /*  this.cp.chargeMode = mode;
+      let vId = this.cp.carId
+      console.log ("-----------"+ vId + "------------")
+      let tId  = this.cp.chargeTemplate
+      console.log (this.cp)
+      let t = this.chargeTemplates[tId]
+      console.log ("------------- "+ tId + "-------------")
+      console.dir(t)
+      t.chargemode.selected=mode
+      eventBus.$emit ('update', 'chargeTemplate', t, tId) */
+
+
+    eventBus.$emit ('update', 'chargeMode', mode, this.cp.cpId)
+
+
+
+    //  eventBus.$emit('update', 'chargeMode', {chargemode: mode}, this.cp.cpId);
       this.modal.hide();
     },
     lockCP(value) {

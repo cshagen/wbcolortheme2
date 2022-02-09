@@ -4,40 +4,51 @@ export default {
   data() {
     return {
       topics : {
-        chargeMode: 'openWB/set/vehicle/template/charge_template/%/chargemode/selected',
         cpLock: 'openWB/set/chargepoint/%/set/manual_lock',
-        pvBatteryPriority: 'openWB/set/general/chargemode_config/pv_charging/bat_prio'
+        chargeMode: 'openWB/set/vehicle/template/charge_template/%/chargemode/selected',
+        pvBatteryPriority: 'openWB/set/general/chargemode_config/pv_charging/bat_prio',
+        chargeTemplate: 'openWB/set/vehicle/template/charge_template/%',
+        cpVehicle: 'openWB/set/chargepoint/%/config/ev',
       }
   }
 },
 methods: {
   setupCallbacks () {
     eventBus.$on ('update', (item, value, index) => {
-      let topic = this.topics[item]
-      //if (index) {
-        topic = topic.replace ('%', index)
-      //}
-      switch (value) {
-        case true: this.publish (topic, "true")
-        break
-        case false:
-          this.publish (topic, "false")
+      switch (item) {
+        case 'chargeMode': this.setChargeMode (value, index) 
           break
+          
         default:
-          this.publish (topic, '"' + value + '"')
-      }
-    })
+            var topic = this.topics[item]
+            if (topic) {
+              topic = topic.replace ('%', index)
+              this.publish (topic, JSON.stringify(value))
+            } else {
+              console.warn ('No topic for update type ' + item)
+          }
+        }
+      })
+    
+    
   },
-  
-  publish(topic, message) {
+    publish(topic, message) {
       const qos = 0;
       this.client.publish(topic, message, qos, (error) => {
         if (error) {
           console.warn("Publish error: ", error);
         }
-        console.info("Message to " + topic + " sent: " + message);
+        console.info("Message sent: [" + topic + "](" + message + ')');
       });
     },
+  setChargeMode (value, cpId) {
+    let templateId = this.chargePoints[cpId].chargeTemplate
+    let topic = this.topics.chargeMode.replace('%', templateId)
+    
+    console.log (topic)
+    this.publish (topic, JSON.stringify(value))
+  },
+  
 },
 mounted () {
   this.setupCallbacks()

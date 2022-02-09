@@ -3,6 +3,8 @@
     <bbSelectModal
      :chargepoint="cpToConfigure"
      :globalData="globalData"
+     :vehicles="vehicles"
+     :chargeTemplates="chargeTemplates"
      ></bbSelectModal>
     
     <div class="col p-0 m-0">
@@ -31,7 +33,9 @@ export default {
   name: "buttonBar",
   props: {
     chargepoints: [],
-    globalData: Object
+    globalData: Object,
+    vehicles: Array,
+    chargeTemplates: Array,
   },
   components: { 
     bbChargeButton,

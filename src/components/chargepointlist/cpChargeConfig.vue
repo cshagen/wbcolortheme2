@@ -7,101 +7,152 @@
           class="form-check-input"
           type="checkbox"
           role="switch"
-          id="flexSwitchCheckDefault"
+          id="lockCPSwitch"
+          v-model="cp.isLocked"
+          @change="lockCP"
         />
       </div>
     </cp-charge-config-item>
     <!-- Select the vehicle -->
     <cp-charge-config-item :title="'Fahrzeug:'">
-      <div class="dropdown">
-        <div class="d-grid gap-2">
-          <button
-            type="button"
-            class="btn btn-outline-secondary dropdown-toggle"
-            data-bs-toggle="dropdown"
+        <select v-model="cp.carId" 
+          class="form-select chargeConfigSelect" 
+          @change="selectVehicle"
+        >
+          <option v-for="(car, index) in vehicles" 
+            :key="index"
+            :value="index"
+            
           >
-            {{ chargepoint.carName }}
-          </button>
-          <ul class="dropdown-menu">
-            <li v-for="(car, index) in vehicle" :key="index">
-              <a class="dropdown-item" href="#">
-                {{ car.name }}
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
+          {{ car.name }}
+          </option>
+        </select>
+      
     </cp-charge-config-item>
     <!-- Select the charge mode -->
     <cp-charge-config-item :title="'Lademodus:'">
-        <div class="dropdown">
-      <div class="d-grid gap-2">
-          <button
-            type="button"
-            class="btn dropdown-toggle"
-            data-bs-toggle="dropdown"
-            :style="{
-              background: chargemodes[chargepoint.chargeMode].color,
-              color: 'var(--color-fg)',
-            }"
+        <select v-model="cp.chargeMode" 
+          class="form-select chargeConfigSelect" 
+          @change="selectChargeMode"
+        >
+          <option v-for="(key, index) in Object.keys(chargemodes)" 
+            :key="index"
+            :value="key"
           >
-            {{ chargemodes[chargepoint.chargeMode].name }}
-          </button>
-
-          <ul class="dropdown-menu">
-            <li v-for="(mode, index) in chargemodes" :key="index">
-              <a
-                class="dropdown-item"
-                href="#"
-                :style="{ background: mode.color, color: 'var(--color-fg)' }"
-              >
-                <i class ="fa mr-2" :class="mode.icon"></i> {{ mode.name }}
-              </a>
-            </li>
-          </ul>
-        </div>
+            {{ chargemodes[key].name }} 
+          </option>
+        </select>
+    </cp-charge-config-item>
+    <!-- Priority -->
+    <cp-charge-config-item title="Priorität:">
+      <div class="form-check form-switch">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          role="switch"
+          id="prioritySwitch"
+          v-model="cp.hasPriority"
+          @change="lockCP"
+        />
+      </div>
+      </cp-charge-config-item>
+    <!-- Scheduled Charging -->
+    <cp-charge-config-item title="Zeitladen:">
+      <div class="form-check form-switch">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          role="switch"
+          id="scheduledChargingSwitch"
+          v-model="cp.scheduledCharging"
+          @change="lockCP"
+        />
       </div>
     </cp-charge-config-item>
-    <cp-charge-config-item title="Priorität:"> yes </cp-charge-config-item>
-    <cp-charge-config-item title="Zeitladen:"> no </cp-charge-config-item>
-    <!-- Sofortladen config -->
-    <div>
-      <hr />
-      <h4>Einstellungen für Sofortladen:</h4>
-    </div>
+   
+   <cpConfigInstant
+    :chargepoint="cp"
+    :vehicles="vehicles"
+    :chargeTemplates="chargeTemplates">
+    </cpConfigInstant>
     <hr />
-
-    <button type="button" class="btn btn-outline-success" @click="toggleConfig">
+<div class=" row ">
+  <div class="col">
+    <button type="button" class="btn btn-outline-success float-end" @click="toggleConfig">
       OK
     </button>
+</div>
+</div>
   </div>
 </template>
 
 <script>
 import globalConf from "@/assets/mixins/themeConfig.js";
 import cpChargeConfigItem from "./cpChargeConfigItem.vue";
+import cpConfigInstant from './cpConfigInstant.vue'
+import { eventBus } from '@/main.js'
 
 export default {
-  name: "bbChargeConfig",
+  name: "cpChargeConfig",
   props: {
     chargepoint: Object,
-    vehicle: Array,
+    vehicles: Array,
+    chargeTemplates: Array
   },
   mixins: [globalConf],
   components: {
     cpChargeConfigItem,
+    cpConfigInstant
   },
   data() {
     return {
-      cars: ["Tesla", "Polestar", "ID.3"],
-    };
+      cp: this.chargepoint,
+  };
   },
   methods: {
     toggleConfig() {
       this.$emit("closeConfig");
     },
+    lockCP() {
+      eventBus.$emit ('update', 'cpLock', this.cp.isLocked, this.cp.cpId)
+    },
+    selectChargeMode() {
+      eventBus.$emit ('update', 'chargeMode', this.cp.chargeMode, this.cp.cpId)
+    
+    /*   console.warn("CP selected")
+      let vId = this.cp.carId
+      console.log ("-----------"+ vId + "------------")
+      let tId  = this.cp.chargeTemplate
+      console.log (this.cp)
+      let t = this.chargeTemplates[tId]
+      console.log ("------------- "+ tId + "-------------")
+      console.dir(t)
+      t.chargemode.selected=this.cp.chargeMode
+      eventBus.$emit ('update', 'chargeTemplate', t, tId)
+     */},
+    setPriority() {
+      eventBus.$emit ('update', 'cpPriority', this.cp.hasPriority, this.cp.cpId)
+    },
+    setTimedCharging() {
+      eventBus.$emit ('update', 'timedCharging', this.cp.timedCharging, this.cp.cpId)
+    },
+    selectVehicle() {
+      this.cp.carName=this.vehicles[this.cp.carId].name
+      eventBus.$emit ('update', 'cpVehicle', this.cp.carId, this.cp.cpId)
+      console.log (this.cp.carName)
+    }
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+
+.chargeConfigSelect {
+  background: var(--color-bg);
+  color: var(--color-fg);
+}
+.chargeModeOption {
+  background: green;
+  color: blue;
+}
+</style>

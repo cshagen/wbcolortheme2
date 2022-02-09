@@ -1,8 +1,10 @@
 <template>
   <div class="container-fluid p-0 m-0 theme-colors">
     <buttonBar
-      :chargepoints="chargePoint"
+      :chargepoints="chargePoints"
       :globalData="globalData"
+      :vehicles="Object.values(vehicles)"
+      :chargeTemplates="chargeTemplates"
     ></buttonBar>
    <hr/>
     <div class="row py-0 px-0 m-0">
@@ -10,8 +12,8 @@
         :globalData="globalData"
         :sourceSummary="sourceSummary"
         :usageSummary="usageSummary"
-        :chargePoint="chargePoint"
-        :vehicle="vehicle"
+        :chargePoint="chargePoints"
+        :vehicle="Object.values(vehicles)"
         :shDevice="shDevice"
       ></powermeter>
       <powergraph></powergraph>
@@ -22,11 +24,11 @@
     </div>
     <hr/>
     <div class="row py-0  m-0">
-      
       <cpChargepoint v-for="(chargepoint, index) in chargepointsToDisplay"
                   :key="index"
                   :chargepoint="chargepoint"
-                  :vehicle="vehicle"
+                  :vehicles="Object.values(vehicles)"
+                  :chargeTemplates="chargeTemplates"
       ></cpChargepoint>
       <batterylist :globalConf="globalData"
         :sourceSummary="sourceSummary"
@@ -112,7 +114,7 @@ export default {
         .concat([this.usageSummary.batIn, this.usageSummary.house]);
     },
     chargepointsToDisplay() {
-      return Object.values(this.chargePoint).filter((cp) => cp.configured);
+      return Object.values(this.chargePoints).filter((cp) => cp.configured);
     },
    
   },

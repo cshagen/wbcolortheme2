@@ -77,7 +77,8 @@
     </div>
     <cpChargeConfig
       :chargepoint="chargepoint"
-      :vehicle="vehicle"
+      :vehicles="vehicles"
+      :chargeTemplates="chargeTemplates"
       v-if="showConfig"
       v-on:closeConfig="toggleConfig">
     </cpChargeConfig>
@@ -97,7 +98,8 @@ export default {
   props: {
     chargepoint: Object,
     index: Number,
-    vehicle:Array
+    vehicles:Array,
+    chargeTemplates: Array
   },
   data() {
     return {
@@ -128,7 +130,7 @@ export default {
         " " +
         this.phaseSymbols[this.chargepoint.phasesInUse] +
         " " +
-        this.chargepoint.targetCurrent +
+        this.chargepoint.current +
         " A"
       );
     },
@@ -192,8 +194,8 @@ export default {
       }
     },
     soc () {
-      if (this.vehicle.length >0) {
-      return this.vehicle[this.chargepoint.carId].soc
+      if (this.vehicles.length > this.chargepoint.carId) {
+        return this.vehicles[this.chargepoint.carId].soc
       } else {
         return 0
       }

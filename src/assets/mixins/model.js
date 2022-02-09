@@ -20,16 +20,17 @@
           "batOut": { name: "Bat >", power: 0, energy: 0, color: "white" }
         },
         usageSummary : {
-        "evuOut": { name: "Export", power: 0, energy: 2, color: "white" },
-        "charging": { name: "Laden", power: 90, energy: 4, color: "white" },
-        "devices": { name: "Geräte", power: 70, energy: 3, color: "white" },
-        "batIn": { name: "> Bat", power: 0, energy: 1, color: "white" },
-        "house": { name: "Haus", power: 40, energy: 3.5, color: "white" }
+        "evuOut": { name: "Export", power: 0, energy: 0, color: "white" },
+        "charging": { name: "Laden", power: 0, energy: 0, color: "white" },
+        "devices": { name: "Geräte", power: 0, energy: 0, color: "white" },
+        "batIn": { name: "> Bat", power: 0, energy: 0, color: "white" },
+        "house": { name: "Haus", power: 0, energy: 0, color: "white" }
         },
-        chargePoint : {},
+        chargePoints : {},
         shDevice : [],
         consumer : [],
-        vehicle: [],
+        vehicles: {}, // the list of vehicles, key is the vehicle ID
+        chargeTemplates: [],
         globalData : {
           batterySoc : 0,
           isBatteryConfigured: true,
@@ -40,7 +41,7 @@
       }
     },
     created () { // Initiate the model
-     // Array.from({ length: 9 }, (v, i) => this.chargePoint.push(this.createChargepoint(i)))
+     // Array.from({ length: 9 }, (v, i) => this.chargePoints.push(this.createChargepoint(i)))
       Array.from({ length: 9 }, (v, i) => this.shDevice.push(this.createSHDevice(i)))
       // init colors
       this.sourceSummary.pv.color = 'var(--color-pv)';
@@ -52,7 +53,7 @@
       this.usageSummary.batIn.color = 'var(--color-battery)';
       this.usageSummary.house.color = 'var(--color-house)';
      /*  for (let i = 0; i < 8; i++) {
-        this.chargePoint[i].color = 'var(--color-lp' + (i + 1) + ')';
+        this.chargePoints[i].color = 'var(--color-lp' + (i + 1) + ')';
       } */
       for (let i = 0; i < 9; i++) {
         this.shDevice[i].color = 'var(--color-sh' + (i + 1) + ')';
@@ -71,7 +72,9 @@
           isSocManual,
           isLocked: false,
           phasesInUse : 0,
-          targetCurrent: 0,
+          current: 16,
+          targetCurrent:16,
+          targetSoc: 80,
           energyPer100km: 18,
           soc,
           color : 'var(--color-lp' + (+index + 1) + ')',
@@ -80,7 +83,9 @@
           carId: 0,
           carName: 'unknown',
           chargeMode: 'stop',
-          enabled: true
+          enabled: true,
+          hasPriority: true,
+          timedCharging: false
         }
       },
       createVehicle (index, name='', chargeTemplateId=0, evTemplateId=0, tags=[], soc=0 ) {
