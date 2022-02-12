@@ -1,10 +1,10 @@
 <template>
   <wbWidget>
     <template v-slot:title>
-      {{ chargepoint.name }}
+      <span @click="toggleConfig">{{ chargepoint.name }}</span>
     </template>
     <template v-slot:subtitle>
-      <span class=" mx-1 pt-1 badge rounded-pill smallTextSize modeIndicator outlinePill" :style="modePillStyle">
+      <span class=" mx-1 pt-1 badge rounded-pill smallTextSize modeIndicator outlinePill" :style="modePillStyle" @click="toggleConfig">
         {{ modeString }}
       </span>
     </template>
@@ -16,7 +16,7 @@
       </button>
     </template>
 
-    <div class="row m-0 p-1 mt-1">
+    <div class="row m-0 p-1 mt-1" @click="toggleConfig">
       <div class="col-8 m-0 p-0">
         <p
           class="tablecell nameButtonCell p-0 m-0"
@@ -56,7 +56,7 @@
         </p>
       </div>
     </div>
-    <div class="row m-1 mt-2 p-0" style="vertical-align: middle">
+    <div class="row m-1 mt-2 p-0" style="vertical-align: middle" @click="toggleConfig">
       <div class="col-6 tablecell m-0 p-0">
         <span
           class="mr-2 badge rounded-pill statusIndicator"

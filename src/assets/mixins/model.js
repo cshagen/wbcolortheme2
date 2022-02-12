@@ -37,7 +37,8 @@
           chargeMode : '0',
           housePower : 0,
           pvBatteryPriority: false
-        }
+        },
+        graphData : []
       }
     },
     created () { // Initiate the model

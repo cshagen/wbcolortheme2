@@ -2,8 +2,8 @@
 <wbWidget>
     <template v-slot:title> Leistung/Ladestand heute </template>
     
-    <figure id="powergraph" class="m-0 p-0">
-      <svg :viewBox="'0 0 500 500'">
+        <figure id="powergraph" class="p-0 m-0">
+      <svg :viewBox="'0 0 ' + width + ' ' + height">
       </svg>
     </figure>
 </wbWidget>
@@ -18,7 +18,10 @@ components: {
   },
   data () {
     return ({
-    value : "123"
+    width : 500,
+    height: 500,
+    graphMode:'day',
+    
     })
 },
 

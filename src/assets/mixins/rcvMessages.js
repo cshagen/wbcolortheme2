@@ -172,6 +172,7 @@ export default {
           this.globalData.batterySoc = message;
           break;
         default:
+          console.warn("BATTERY MSG")
       }
     },
     processPvMessages(topic, message) {
@@ -219,8 +220,13 @@ export default {
           index = elements[2];
           switch (elements[3]) {
             case "config":
-              var configMessage = JSON.parse(message);
-              this.chargePoints[index].name = configMessage.name;
+              if (this.chargePoints[index]) {
+                console.log ("INDEX: " + index)
+                var configMessage = JSON.parse(message);
+                this.chargePoints[index].name = configMessage.name;
+              } else {
+                console.warn ("invalid chargepoint index: " + index)
+              }
               break;
             default:
               switch (elements[4]) {
@@ -261,22 +267,19 @@ export default {
                     // ...info
                     case "info":
                       var info = JSON.parse(message);
-                      console.warn ("---------------------_")
-                      console.warn(info)
                       this.updateCP(topic, "carName", info.name);
                       this.updateCP (topic, 'carId', info.id)
                       break
                       // ...config
                     case "config":
-                      var config = JSON.parse(message);
-                      console.dir(config)
-                      this.updateCP(topic, "chargeMode", config.chargemode);
-                      this.updateCP(
-                        topic,
-                        "chargeTemplate",
-                        config.charge_template
-                      )
-                      console.log(this.chargePoints)
+                      //var config = JSON.parse(message);
+                      console.warn('Ignoring CP config messages')
+                     // this.updateCP(topic, "chargeMode", config.chargemode);
+                      //this.updateCP(
+                      //  topic,
+                      //  "chargeTemplate",
+                      //  config.charge_template
+                     // )
                       break
                     case 'soc':
                       break
@@ -334,12 +337,22 @@ export default {
             this.vehicles[index].soc = +message;
             }
             break
+            case "charge_template":
+              this.vehicles[index].chargeTemplateId= +message
+              Object.keys(this.chargePoints).forEach (k => {
+                if (this.chargePoints[k].carId == index) {
+                  this.chargePoints[k].chargeTemplate = +message
+                  let template = this.chargeTemplates[+message]
+                  if (template) {
+                  this.chargePoints[k].chargeMode = template.chargemode.selected
+                  }}
+              })
+              break
           default:
             console.warn("Ignored VEHICLE message: [" + topic + "] " + message);
             break;
         }
-        console.dir(this.vehicles)
-      }
+        }
     }
       },
       processVehicleTemplateMessages (topic, message) {
@@ -354,17 +367,18 @@ export default {
                 this.chargeTemplates.push({})
               }
               this.chargeTemplates[index] = template
+
               /* if (index > 0) {
                 eventBus.$emit ('update', 'chargeTemplate', template, 0)
                 console.error ("CORRECTED CHARGE TEMPLATE")
               } */
-            /*   Object.keys(this.chargePoints).forEach((key) => {
-                if (this.chargePoints[key].chargeTemplate == index) {
-                  console.dir(template)
-                  this.chargePoints[key].targetCurrent = template.chargemode.instant_charging.current
-                  console.log (this.chargePoints[key].targetCurrent)
+               Object.keys(this.chargePoints).forEach(k => {
+                if (this.chargePoints[k].chargeTemplate == index) {
+                  this.chargePoints[k].targetcurrent = template.chargemode.instant_charging.current
+                  this.chargePoints[k].chargeMode = template.chargemode.selected
+                  console.log ('--- updated chargeMode: ' + this.chargePoints[k].chargeMode)
                 }
-              }) */
+              }) 
               break
             default:
               console.warn ("Ignored template message [" + topic + ']=' + message)

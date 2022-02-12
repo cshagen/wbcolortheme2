@@ -139,7 +139,6 @@ export default {
     selectVehicle() {
       this.cp.carName=this.vehicles[this.cp.carId].name
       eventBus.$emit ('update', 'cpVehicle', this.cp.carId, this.cp.cpId)
-      console.log (this.cp.carName)
     }
   },
 };
