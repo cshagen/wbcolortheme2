@@ -60,6 +60,17 @@ export default {
         console.info("MQTT Subscription successful: ", res);
       });
     },
+    unsubscribe (fromTopic) {
+      this.subscription.topic = fromTopic;
+      const { topic } = this.subscription
+      this.client.unsubscribe(topic, (error) => {
+        if (error) {
+          console.error ("MQTT Unsubscribe from " + fromTopic + " failed: " + error)
+          return
+        }
+        console.info ('MQTT unsubscribe successful: ' + topic)
+      })
+    },
     
     processMqttMessage(topic, message) {
       if (topic.match(/^openwb\/counter\/[0-9]+\//i)) {
@@ -176,7 +187,6 @@ export default {
       }
     },
     processPvMessages(topic, message) {
-      //console.log("pv [" + topic + '] ' + message)
       switch (topic) {
         case "openWB/pv/get/power":
           this.sourceSummary.pv.power = -message;
@@ -262,7 +272,6 @@ export default {
                   break;
                 // Connected Vehicle...
                 case "connected_vehicle":
-                console.info ("Connected Vehicle " + topic)
                   switch (elements[5]) {
                     // ...info
                     case "info":
@@ -309,7 +318,7 @@ export default {
       let cp = this.chargePoints[index];
       if (cp) {
         cp[attribute] = value;
-        console.info("Update Chargepoint " + cp.cpId + ": " + attribute + "=" + value)
+        // console.info("Update Chargepoint " + cp.cpId + ": " + attribute + "=" + value)
         }
     },
     processVehicleMessages(topic, message) {
@@ -398,8 +407,20 @@ export default {
       }
     },
     processGraphMessages(topic, message) {
-      console.debug("Graph [" + topic + "] " + message);
-    },
+      if (topic == 'openWB/graph/boolDisplayLiveGraph') {
+          this.globalData.displayLiveGraph =  (message == 1)
+      } else if (topic.match(/^openwb\/graph\/alllivevaluesJson[1-9][0-9]*$/i)) {
+        // graph messages if local connection
+        this.reloadLiveGraph (topic, message)
+      } else if (topic == 'openWB/graph/lastlivevaluesJson') {
+        this.updateLiveGraph (topic, message)
+      } else if (topic == 'openWB/graph/config/duration') {
+          this.updateGlobal ('liveGraphDuration', JSON.parse(message))
+      } else {
+        console.warn ('Ignored graph message: [' + topic + '](' + message + ')')
+      }
+    }, // end processGraphMessages
+    
     processEtProviderMessages(topic, message) {
       if (topic == "huhu") {
         console.log("cp [" + topic + "] " + message);
@@ -474,6 +495,26 @@ export default {
 			);
 			this.usageSummary.charging.power = 400;
 		}, */
+    subscribeMqttLiveGraphRefresh () {
+      for (var chunk = 1; chunk < 17; chunk++) {
+        let topic = "openWB/graph/"  + "alllivevaluesJson" + chunk;
+        this.subscribe(topic);
+      }
+    },
+    unsubscribeMqttLiveGraphRefresh () {
+      for (var segments = 1; segments < 17; segments++) {
+        let topic = "openWB/graph/"  + "alllivevaluesJson" + segments;
+        this.unsubscribe(topic);
+      }
+    },
+    subscribeMqttLiveGraphUpdates () {
+      let topic = "openWB/graph/lastlivevaluesJson";
+      this.subscribe(topic);
+    },
+    unsubscribeMqttLiveGraphUpdates () {
+      let topic = "openWB/graph/lastlivevaluesJson";
+      this.unsubscribe(topic)
+    }
   },
   mounted() {
     // console.log("initiate mqtt")
@@ -482,9 +523,10 @@ export default {
       "openWB/bat/get/#",
       "openWB/pv/get/#",
       "openWB/chargepoint/#",
-      "openWB/graph/#",
+    //  "openWB/graph/#",
       "openWB/vehicle/#",
       "openWB/general/chargemode_config/pv_charging/#"
     ]);
+    this.subscribeMqttLiveGraphRefresh()
   },
 };

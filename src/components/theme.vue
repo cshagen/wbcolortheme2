@@ -16,7 +16,9 @@
         :vehicle="Object.values(vehicles)"
         :shDevice="shDevice"
       ></powermeter>
-      <powergraph></powergraph>
+      <powergraph
+        :graphData="graphData"
+        ></powergraph>
       <energymeter
         :sourceSummary="sourceSummary"
         :usageDetails="usageDetails"
@@ -57,10 +59,17 @@ import prefs from "@/assets/mixins/handleCookies";
 import setValues from '@/assets/mixins/sendMessages.js'
 import Batterylist from "./batterylist/batterylist.vue"
 import cpChargepoint from './chargepointlist/cpChargePoint.vue';
+import handleGraphData from '../assets/mixins/handleGraphData';
 
 export default {
   name: "theme",
-  mixins: [config, messages, model, prefs, setValues],
+  mixins: [
+    config, 
+    messages, 
+    model, 
+    prefs, 
+    setValues, 
+    handleGraphData],
   components: {
     powermeter,
     powergraph,

@@ -36,9 +36,10 @@
           isBatteryConfigured: true,
           chargeMode : '0',
           housePower : 0,
-          pvBatteryPriority: false
+          pvBatteryPriority: false,
+          displayLiveGraph: true,
         },
-        graphData : []
+        graphData : [],
       }
     },
     created () { // Initiate the model
@@ -54,7 +55,7 @@
       this.usageSummary.batIn.color = 'var(--color-battery)';
       this.usageSummary.house.color = 'var(--color-house)';
      /*  for (let i = 0; i < 8; i++) {
-        this.chargePoints[i].color = 'var(--color-lp' + (i + 1) + ')';
+        this.chargePoints[i].color = 'var(--color-cp' + (i + 1) + ')';
       } */
       for (let i = 0; i < 9; i++) {
         this.shDevice[i].color = 'var(--color-sh' + (i + 1) + ')';
@@ -78,7 +79,7 @@
           targetSoc: 80,
           energyPer100km: 18,
           soc,
-          color : 'var(--color-lp' + (+index + 1) + ')',
+          color : 'var(--color-cp' + (+index + 1) + ')',
           isCharging: false,
           isPluggedIn: false,
           carId: 0,
@@ -110,8 +111,12 @@
           color,
           countAsHouse : false
         }
+      },
+      updateGlobal (item, value) {
+        this.globalData[item] = value
       }
     },
+    
   }
   
 

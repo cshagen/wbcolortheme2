@@ -4,7 +4,7 @@
       <span @click="toggleConfig">{{ chargepoint.name }}</span>
     </template>
     <template v-slot:subtitle>
-      <span class=" mx-1 pt-1 badge rounded-pill smallTextSize modeIndicator outlinePill" :style="modePillStyle" @click="toggleConfig">
+      <span class=" ms-2 pt-1 badge rounded-pill smallTextSize modeIndicator outlinePill" :style="modePillStyle" @click="toggleConfig">
         {{ modeString }}
       </span>
     </template>

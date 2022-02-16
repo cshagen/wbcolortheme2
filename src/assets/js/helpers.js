@@ -20,7 +20,7 @@ export function formatWatt(watt, decimalPlaces = 1) {
 		}
 		return (wattResult + " kW");
 	} else {
-		return (watt + " W");
+		return (Math.round(watt) + " W");
 	}
 }
 
@@ -44,7 +44,7 @@ export function formatWattH(watt, decimalPlaces = 1) {
 				wattResult = Math.round(watt / 100) / 10;
 				break;
 		}
-		return (wattResult + " kWh");
+		return (Math.round(wattResult) + " kWh");
 	} else {
 		return (Math.round(watt) + " Wh");
 	}

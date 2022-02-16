@@ -6,12 +6,8 @@
 <script>
 import * as d3 from "d3";
 export default {
-  data () {
-    return {
-      name: "pmSourceArc"
-    }
-  },
-  props: {
+  name: "pmSourceArc",
+    props: {
     sourceSummary: {},
     radius: Number,
     cornerRadius: Number,
