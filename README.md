@@ -21,7 +21,7 @@ Webserver mit theme starten:
 npm run serve
 ```
 
-Zugrigg im Browser:
+Zugriff im Browser:
 ```
 http://<address of openWB>:8080
 ``` 
