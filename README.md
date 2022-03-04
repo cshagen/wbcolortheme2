@@ -6,7 +6,7 @@ Alpha version, still work in progress
 ## Testing locally (npm required):
 The theme is not yet integrated in the openWB2.0 release. It can be installed separately on the same Raspberry PI as the openWB 2 and will get its data from the openWB
 
-Checkout the code, then ```cd wbcolortheme2````
+Checkout the code, then ```cd wbcolortheme2```
 
 Install required libraries:
 ```
