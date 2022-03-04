@@ -17,7 +17,7 @@
     <cp-charge-config-item :title="'Fahrzeug:'">
         <select v-model="cp.carId" 
           class="form-select chargeConfigSelect" 
-          @change="selectVehicle"
+          @change="setVehicle"
         >
           <option v-for="(car, index) in vehicles" 
             :key="index"
@@ -33,7 +33,7 @@
     <cp-charge-config-item :title="'Lademodus:'">
         <select v-model="cp.chargeMode" 
           class="form-select chargeConfigSelect" 
-          @change="selectChargeMode"
+          @change="setChargeMode"
         >
           <option v-for="(key, index) in Object.keys(chargemodes)" 
             :key="index"
@@ -52,7 +52,7 @@
           role="switch"
           id="prioritySwitch"
           v-model="cp.hasPriority"
-          @change="lockCP"
+          @change="setPriority"
         />
       </div>
       </cp-charge-config-item>
@@ -65,7 +65,7 @@
           role="switch"
           id="scheduledChargingSwitch"
           v-model="cp.scheduledCharging"
-          @change="lockCP"
+          @change="setScheduledCharging"
         />
       </div>
     </cp-charge-config-item>
@@ -75,6 +75,11 @@
     :vehicles="vehicles"
     :chargeTemplates="chargeTemplates">
     </cpConfigInstant>
+    <CpConfigPv
+    :chargepoint="cp"
+    :vehicles="vehicles"
+    :chargeTemplates="chargeTemplates">
+    </CpConfigPv>
     <hr />
 <div class=" row ">
   <div class="col">
@@ -90,6 +95,7 @@
 import globalConf from "@/assets/mixins/themeConfig.js";
 import cpChargeConfigItem from "./cpChargeConfigItem.vue";
 import cpConfigInstant from './cpConfigInstant.vue'
+import CpConfigPv from './CpConfigPv.vue'
 import { eventBus } from '@/main.js'
 
 export default {
@@ -102,7 +108,8 @@ export default {
   mixins: [globalConf],
   components: {
     cpChargeConfigItem,
-    cpConfigInstant
+    cpConfigInstant,
+    CpConfigPv,
   },
   data() {
     return {
@@ -116,27 +123,16 @@ export default {
     lockCP() {
       eventBus.$emit ('update', 'cpLock', this.cp.isLocked, this.cp.cpId)
     },
-    selectChargeMode() {
-      eventBus.$emit ('update', 'chargeMode', this.cp.chargeMode, this.cp.cpId)
-    
-    /*   console.warn("CP selected")
-      let vId = this.cp.carId
-      console.log ("-----------"+ vId + "------------")
-      let tId  = this.cp.chargeTemplate
-      console.log (this.cp)
-      let t = this.chargeTemplates[tId]
-      console.log ("------------- "+ tId + "-------------")
-      console.dir(t)
-      t.chargemode.selected=this.cp.chargeMode
-      eventBus.$emit ('update', 'chargeTemplate', t, tId)
-     */},
+    setChargeMode() {
+      eventBus.$emit ('update', 'chargeMode', this.cp.chargeMode, this.cp.chargeTemplate)
+    },
     setPriority() {
-      eventBus.$emit ('update', 'cpPriority', this.cp.hasPriority, this.cp.cpId)
+      eventBus.$emit ('update', 'cpPriority', this.cp.hasPriority, this.cp.chargeTemplate)
     },
-    setTimedCharging() {
-      eventBus.$emit ('update', 'timedCharging', this.cp.timedCharging, this.cp.cpId)
+    setScheduledCharging() {
+      eventBus.$emit ('update', 'scheduledCharging', this.cp.scheduledCharging, this.cp.chargeTemplate)
     },
-    selectVehicle() {
+    setVehicle() {
       this.cp.carName=this.vehicles[this.cp.carId].name
       eventBus.$emit ('update', 'cpVehicle', this.cp.carId, this.cp.cpId)
     }

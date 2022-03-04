@@ -4,7 +4,6 @@
       :chargepoints="chargePoints"
       :globalData="globalData"
       :vehicles="Object.values(vehicles)"
-      :chargeTemplates="chargeTemplates"
     ></buttonBar>
     <hr />
     <div class="row py-0 px-0 m-0">
@@ -87,8 +86,7 @@
           :key="index"
           :chargepoint="chargepoint"
           :vehicles="Object.values(vehicles)"
-          :chargeTemplates="chargeTemplates"
-        ></cpChargepoint>
+          ></cpChargepoint>
       </div>
       </div>
       <div

@@ -7,35 +7,35 @@
         @click="cpSelected"
         :style="buttonStyle"
       >
-      <div class="container-fluid m-0 p-0">
-        <div class="row m-0 p-0">
-          <!-- Status indicator -->
-          <div class="col-3 m-0 p-0" style="text-align: left;">
-      <span v-if="chargepoint.isPluggedIn" 
-          class="mx-1 badge rounded-pill smallTextSize plugIndicator" 
-          >
-          <i :class="plugPillClass"></i>
-        </span>
-          </div>
-          <!-- Chargepoint name -->
-          <div class="col-6 m-0 p-0">
-        {{ chargepoint.name }}
-          </div>
-          <!-- Mode indicator -->
-          <div class="col-3 m-0 p-0" style="text-align:right">
-        <span class="mx-2 badge rounded-pill smallTextSize modeIndicator" :style="modePillStyle">
-          <i class="fa me-1" :class="modeIcon">  </i> 
-          {{ modeString }}
-          <!-- PV priority -->
-          <span v-if="chargepoint.chargeMode == 'pv_charging'" class="ps-1">
-          (<i 
-           class="fa m-0" :class="priorityIcon">  
-           </i>)
-          </span>
-        </span>
+        <div class="container-fluid m-0 p-0">
+          <div class="row m-0 p-0">
+            <!-- Status indicator -->
+            <div class="col-3 m-0 p-0" style="text-align: left;">
+              <span
+                class="mx-1 badge rounded-pill smallTextSize plugIndicator"
+              >
+                <i :class="plugPillClass"></i>
+              </span>
+            </div>
+            <!-- Chargepoint name -->
+            <div class="col-6 m-0 p-0">{{ chargepoint.name }}</div>
+            <!-- Mode indicator -->
+            <div class="col-3 m-0 p-0" style="text-align:right">
+              <span
+                class="mx-2 badge rounded-pill smallTextSize modeIndicator"
+                :style="modePillStyle"
+              >
+                <i class="fa me-1" :class="modeIcon"></i>
+                {{ modeString }}
+                <!-- PV priority -->
+                <span v-if="chargepoint.chargeMode == 'pv_charging'" class="ps-1">
+                  (
+                  <i class="fa m-0" :class="priorityIcon"></i>)
+                </span>
+              </span>
+            </div>
           </div>
         </div>
-      </div>
       </button>
     </div>
   </div>
@@ -58,7 +58,7 @@ export default {
       return this.chargepoint.name + ": " + this.modeString;
     },
     buttonColor() {
-      console.warn (this.chargemodes)
+      console.warn(this.chargemodes)
       return this.chargemodes[this.chargepoint.chargeMode].color;
     },
     buttonStyle() {
@@ -69,7 +69,7 @@ export default {
         style.background = 'var(--color-evu)'
       } else if (this.chargepoint.isCharging) {
         style.background = "var(--color-charging)";
-      } else  if (this.chargepoint.isPluggedIn) {
+      } else if (this.chargepoint.isPluggedIn) {
         style.background = "var(--color-battery)";
       } else if (this.chargepoint.enabled) {
         style.background = "var(--color-axis)";
@@ -84,7 +84,7 @@ export default {
         color: 'white'
       };
       switch (this.chargepoint.chargeMode) {
-        case 'instant_charging': 
+        case 'instant_charging':
           if (this.chargepoint.isCharging && !this.chargepoint.isLocked) {
             style = this.swapcolors(style)
           }
@@ -100,15 +100,15 @@ export default {
             style = this.swapcolors(style)
           }
           break
-          default:
+        default:
           break
       }
       return style;
     },
-    modeIcon ()  {
+    modeIcon() {
       return this.chargemodes[this.chargepoint.chargeMode].icon
     },
-    priorityIcon () {
+    priorityIcon() {
       if (this.globalData.pvBatteryPriority) {
         return 'fa-car-battery'
       } else {
@@ -116,22 +116,22 @@ export default {
       }
     },
     plugPillClass() {
-      let icon=""
+      let icon = ""
       if (this.chargepoint.isLocked) {
         icon = 'fa-lock'
       } else if (this.chargepoint.isCharging) {
-        icon=' fa-bolt'
+        icon = ' fa-bolt'
       } else if (this.chargepoint.isPluggedIn) {
         icon = 'fa-plug'
       }
-      return 'fa '+ icon
+      return 'fa ' + icon
     }
   },
   methods: {
     cpSelected() {
       this.$emit("cpSelected", this.chargepoint);
     },
-    swapcolors (style) {
+    swapcolors(style) {
       let c = style.color
       style.color = style.background
       style.background = c
@@ -143,10 +143,9 @@ export default {
 
 <style scoped>
 .plugIndicator {
- 
   color: white;
   border: 1px solid white;
-  text-align:left;
+  text-align: left;
 }
 
 .chargeButton {

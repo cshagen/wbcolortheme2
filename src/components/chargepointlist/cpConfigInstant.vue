@@ -7,7 +7,7 @@
     <cp-charge-config-item title="Stromstärke:">
       <input type="range" class="form-range " id="targetCurrent" 
       min="6" max="32"
-      v-model="cp.targetCurrent"
+      v-model="cp.instantTargetCurrent"
       @change="setTargetCurrent">
       <span class="d-flex justify-content-center align-items-center">{{ cp.targetCurrent }} A</span>
     </cp-charge-config-item>
@@ -27,7 +27,6 @@
           <span class="d-flex justify-content-center align-items-center">{{ mode.name }}</span>
           </option>
         </select>
-      
     </cp-charge-config-item>
     <!-- Max SoC -->
     <cp-charge-config-item 
@@ -35,8 +34,8 @@
       title="Maximaler SoC:">
       <input type="range" class="form-range" id="maxSoc" 
       min="0" max="100"
-      v-model="cp.targetSoc"
-      @change="setMaxSoc"
+      v-model="cp.instantTargetSoc"
+      @change="setTargetSoc"
       >
      <span class="d-flex justify-content-center align-items-center"> {{ cp.targetSoc }} %</span>
     </cp-charge-config-item>
@@ -47,10 +46,11 @@
       title="Zu ladende Energie:">
       
       <input type="range" class="form-range" id="maxEnergy" 
-      min="0" max="50"
-      v-model="cp.targetEnergy"
+      min="0" max="100"
+      v-model="cp.instantMaxEnergy"
+      @change="setMaxEnergy"
       >
-      <span class="d-flex justify-content-center align-items-center">{{ cp.targetEnergy }} kW</span>
+      <span class="d-flex justify-content-center align-items-center">{{ cp.maxEnergy }} kW</span>
     </cp-charge-config-item>
   </div>
   
@@ -81,18 +81,22 @@ export default {
   },
   methods: {
     setTargetCurrent () {
-      eventBus.$emit ('update', 'targetCurrent', +this.cp.targetCurrent, this.chargeTemplateId)
+      eventBus.$emit ('update', 'instantTargetCurrent', +this.cp.instantTargetCurrent, this.chargeTemplateId)
     },
     setChargeLimitMode() {
       eventBus.$emit('update', 'instantChargeLimit', this.cp.instantChargeLimitMode, this.chargeTemplateId)
     },
-    setMaxSoc() {
-      eventBus.$emit('update', 'maxSoc', +this.cp.targetSoc, this.chargeTemplateId)
+    setTargetSoc() {
+      eventBus.$emit('update', 'instantTargetSoc', +this.cp.instantTargetSoc, this.chargeTemplateId)
+    },
+    setMaxEnergy() {
+      eventBus.$emit('update', 'instantMaxEnergy', +this.cp.instantMaxEnergy, this.chargeTemplateId)
     }
   },
   computed: {
     chargeTemplateId() {
-      return this.vehicles[this.cp.carId].chargeTemplateId
+      console.log (this.cp)
+      return this.cp.chargeTemplate
     }
   }
 

@@ -4,7 +4,6 @@
      :chargepoint="cpToConfigure"
      :globalData="globalData"
      :vehicles="vehicles"
-     :chargeTemplates="chargeTemplates"
      ></bbSelectModal>
     
     <div class="col p-0 m-0">
@@ -35,7 +34,6 @@ export default {
     chargepoints: [],
     globalData: Object,
     vehicles: Array,
-    chargeTemplates: Array,
   },
   components: { 
     bbChargeButton,

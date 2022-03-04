@@ -11,7 +11,7 @@
             data-bs-dismiss="modal"
           ></button>
         </div>
-        <div class="modal-body" style="bgcolor: var(--color-bg)">
+        <div class="modal-body" style="background-color: var(--color-bg);">
           <div class="container-fluid p-0 m-0">
             <div class="row p-0 m-0">
               <div v-for="(bt, id) in buttons" :key="id" class="col-md-4 p-1">
@@ -114,8 +114,7 @@ export default {
   props: {
     chargepoint: Object,
     globalData: Object,
-    vehicles: Array,
-    chargeTemplates: Array
+    vehicles: Array
   },
   data() {
     return {
@@ -141,23 +140,7 @@ export default {
   },
   methods: {
     selectChargeMode(mode) {
-     /*  this.cp.chargeMode = mode;
-      let vId = this.cp.carId
-      console.log ("-----------"+ vId + "------------")
-      let tId  = this.cp.chargeTemplate
-      console.log (this.cp)
-      let t = this.chargeTemplates[tId]
-      console.log ("------------- "+ tId + "-------------")
-      console.dir(t)
-      t.chargemode.selected=mode
-      eventBus.$emit ('update', 'chargeTemplate', t, tId) */
-
-
-    eventBus.$emit ('update', 'chargeMode', mode, this.cp.cpId)
-
-
-
-    //  eventBus.$emit('update', 'chargeMode', {chargemode: mode}, this.cp.cpId);
+      eventBus.$emit ('update', 'chargeMode', mode, this.cp.chargeTemplate)
       this.modal.hide();
     },
     lockCP(value) {

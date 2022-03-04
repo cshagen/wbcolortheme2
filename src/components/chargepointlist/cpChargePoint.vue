@@ -79,7 +79,6 @@
     <cpChargeConfig
       :chargepoint="chargepoint"
       :vehicles="vehicles"
-      :chargeTemplates="chargeTemplates"
       v-if="showConfig"
       v-on:closeConfig="toggleConfig">
     </cpChargeConfig>
@@ -99,8 +98,7 @@ export default {
   props: {
     chargepoint: Object,
     index: Number,
-    vehicles:Array,
-    chargeTemplates: Array
+    vehicles:Array
   },
   data() {
     return {

@@ -30,7 +30,7 @@
         shDevice : [],
         consumer : [],
         vehicles: {}, // the list of vehicles, key is the vehicle ID
-        chargeTemplates: [],
+        chargeTemplates: {},
         globalData : {
           batterySoc : 0,
           isBatteryConfigured: true,
@@ -80,9 +80,6 @@
           isLocked: false,
           phasesInUse : 0,
           current: 16,
-          targetCurrent:16,
-          targetSoc: 80,
-          targetEnergy: 0,
           energyPer100km: 18,
           soc,
           color : 'white', // we assign correct colors later
@@ -93,8 +90,16 @@
           chargeMode: 'stop',
           enabled: true,
           hasPriority: true,
-          timedCharging: false,
-          instantChargeLimitMode: 'none'
+          scheduledCharging: false,
+          instantChargeLimitMode: 'none',
+          instantTargetCurrent:16,
+          instantTargetSoc: 80,
+          instantMaxEnergy: 0,
+          pvFeedInLimit: false,
+          pvMinCurrent: 0,
+          pvMaxSoc: 100,
+          pvMinSoc: 0,
+          pvMinSocCurrent: 16,
         }
       },
       createVehicle (index, name='', chargeTemplateId=0, evTemplateId=0, tags=[], soc=0 ) {

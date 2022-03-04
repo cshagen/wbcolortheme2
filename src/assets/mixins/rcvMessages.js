@@ -94,6 +94,8 @@ export default {
         this.processPvMessages(topic, message);
       } else if (topic.match(/^openwb\/chargepoint\//i)) {
         this.processChargepointMessages(topic, message);
+      } else if (topic.match(/^openwb\/vehicle\/template\//i)) {
+        this.processVehicleTemplateMessages(topic, message);
       } else if (topic.match(/^openwb\/vehicle\//i)) {
         this.processVehicleMessages(topic, message);
       } else if (
@@ -242,11 +244,9 @@ export default {
         } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/connected_vehicle\/soc_config$/i)) {
           this.updateCP(topic, 'isSocManual', (message=='manual'))
         } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/connected_vehicle\/info$/i)) {
-          console.log ("conn veh " + topic + " - " + message)
           var info = JSON.parse(message);
           this.updateCP(topic, "carName", String(info.name));
           this.updateCP(topic, "carId", info.id);
-          console.log (this.chargePoints[this.getIndex(topic)])
         } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/connected_vehicle\/config$/i)) {
           var config = JSON.parse(message);
           this.updateCP(topic, "chargeMode", config.chargemode);
@@ -265,12 +265,10 @@ export default {
      
       if (cp) {
         cp[attribute] = value;
-        console.info("Update Chargepoint " + cp.cpId + ": " + attribute + "=" + value)
       }
       //console.dir(cp)
     },
     processVehicleMessages(topic, message) {
-      console.log("VEH MSG " + topic + " : " + message)
       if (topic.match(/^openwb\/vehicle\/[0-9]+\/name$/i)) {
         let index=this.getIndex(topic)
         // Create vehicle if not yet existing
@@ -285,10 +283,7 @@ export default {
           }
         })
         this.vehicles[index].name = JSON.parse(message);
-      } else if (topic.match(/^openwb\/vehicle\/template\/charge_template\/[0-9]+$/i)) {
-        this.processVehicleTemplateMessages(topic, message);
       } else if (topic.match(/^openwb\/vehicle\/[0-9]+\/get\/soc$/i)) {
-        console.info("update soc")
         let index=this.getIndex(topic)
         if (!(index in this.vehicles)) {
           let v = this.createVehicle(index)
@@ -297,46 +292,48 @@ export default {
         // set soc for cp
         Object.keys(this.chargePoints).forEach((k) => {
           if (this.chargePoints[k].carId == index) {
-            console.info("SOC UPDATE FOR "+ k + " index: " + index)
             this.chargePoints[k].soc = JSON.parse(message);
           }
-          console.dir (this.chargePoints)
         })
       } else {
         console.warn("Ignored VEHICLE message [" + topic + "]=" + message);
       }
     },
     processVehicleTemplateMessages(topic, message) {
-      const elements = topic.split("/");
-      if (elements.length > 0) {
-        switch (elements[3]) {
-          case "charge_template":
-            // console.log("msg: " + message);
-            var index = +elements[4];
-            var template = JSON.parse(message);
-            while (this.chargeTemplates.length <= index) {
-              this.chargeTemplates.push({});
-            }
-            this.chargeTemplates[index] = template;
-
-            /* if (index > 0) {
-                eventBus.$emit ('update', 'chargeTemplate', template, 0)
-                console.error ("CORRECTED CHARGE TEMPLATE")
-              } */
-            Object.keys(this.chargePoints).forEach((k) => {
-              if (this.chargePoints[k].chargeTemplate == index) {
-                this.chargePoints[k].targetcurrent =
-                  template.chargemode.instant_charging.current;
-                this.chargePoints[k].chargeMode = template.chargemode.selected;
-                this.chargePoints[k].instantChargeLimitMode =
-                  template.chargemode.instant_charging.limit.selected;
-              }
-            });
-            break;
-          default:
-            console.warn("Ignored VEHICLE TEMPLATE message [" + topic + "]=" + message);
-        }
+      console.info("VEH TMPL MSG " + topic + " : " + message)
+      if (topic.match(/^openwb\/vehicle\/template\/charge_template\/[0-9]+$/i)) {
+        let index = +topic.match(/[0-9]+$/i);
+        let template = JSON.parse(message);
+        this.chargeTemplates[index] = template
+        this.updateCpFromChargeTemplate (index, template)
+      /* } else if (topic.match(/^openwb\/vehicle\/template\/charge_template\/[0-9]+\/chargemode\/instant_charging\/soc$/i)) {
+        let index=this.getIndex(topic)
+        let soc = JSON.parse(message)
+        this.chargeTemplates[index].chargemode.instant_charging.limit.soc = soc
+        this.updateCpFromChargeTemplate (index, this.chargeTemplates[index]) */
+      } else {
+        console.warn("Ignored VEHICLE TEMPLATE message [" + topic + "]=" + message);
       }
+    },
+    updateCpFromChargeTemplate (index, template) {
+      Object.keys(this.chargePoints).forEach((k) => {
+        if (this.chargePoints[k].chargeTemplate == index) {
+          this.chargePoints[k].hasPriority = template.prio
+          this.chargePoints[k].chargeMode = template.chargemode.selected;
+          this.chargePoints[k].instantChargeLimitMode =
+            template.chargemode.instant_charging.limit.selected
+          this.chargePoints[k].instantTargetCurrent =
+            template.chargemode.instant_charging.current;
+          this.chargePoints[k].instantTargetSoc = template.chargemode.instant_charging.limit.soc
+          this.chargePoints[k].instantMaxEnergy = template.chargemode.instant_charging.limit.amount
+          this.chargePoints[k].scheduledCharging = template.time_charging.active
+          this.chargePoints[k].pvFeedInLimit = template.chargemode.pv_charging.feed_in_limit
+          this.chargePoints[k].pvMinCurrent = template.chargemode.pv_charging.min_current
+          this.chargePoints[k].pvMaxSoc = template.chargemode.pv_charging.max_soc
+          this.chargePoints[k].pvMinSoc = template.chargemode.pv_charging.min_soc
+          this.chargePoints[k].pvMinSocCurrent = template.chargemode.pv_charging.min_soc_current
+        }
+      })
     },
     processPvConfigMessages(topic, message) {
       let elements = topic.split("/");
