@@ -38,8 +38,13 @@
           housePower : 0,
           pvBatteryPriority: false,
           displayLiveGraph: true,
+          isEtEnabled: true,
+          etMaxPrice: 0,
+          etCurrentPrice: 0,
+          cpDailyExported: 0,
         },
         graphData : [],
+        etPriceList: ""
       }
     },
     created () { // Initiate the model
@@ -62,9 +67,9 @@
       }
     },
     methods :  {
-      createChargepoint(index, cpId, name = "Auto", power = 0, dailyYield = 0,  isSocConfigured = true, isSocManual = false, soc = 0) {
+      createChargepoint(cpId = 0, name = "Auto", power = 0, dailyYield = 0,  isSocConfigured = true, isSocManual = false, soc = 0) {
         return {
-          id:index,
+          
           cpId,
           name,
           power,
@@ -77,9 +82,10 @@
           current: 16,
           targetCurrent:16,
           targetSoc: 80,
+          targetEnergy: 0,
           energyPer100km: 18,
           soc,
-          color : 'var(--color-cp' + (+index + 1) + ')',
+          color : 'white', // we assign correct colors later
           isCharging: false,
           isPluggedIn: false,
           carId: 0,
@@ -87,7 +93,8 @@
           chargeMode: 'stop',
           enabled: true,
           hasPriority: true,
-          timedCharging: false
+          timedCharging: false,
+          instantChargeLimitMode: 'none'
         }
       },
       createVehicle (index, name='', chargeTemplateId=0, evTemplateId=0, tags=[], soc=0 ) {

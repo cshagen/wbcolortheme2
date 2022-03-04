@@ -56,7 +56,7 @@ export default {
       this.savePrefs();
     },
     toggleGrid() {
-      this.config.showGrid = !this.config.showGrid;
+      this.$set(this.config,'showGrid',  !this.config.showGrid);
       this.savePrefs();
     },
 

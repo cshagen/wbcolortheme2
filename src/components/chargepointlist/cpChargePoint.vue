@@ -5,14 +5,14 @@
     </template>
     <template v-slot:subtitle>
       <span class=" ms-2 pt-1 badge rounded-pill smallTextSize modeIndicator outlinePill" :style="modePillStyle" @click="toggleConfig">
-        {{ modeString }}
+        <i class="fa me-1" :class="modeIcon">  </i> {{ modeString }}
       </span>
     </template>
     <template v-slot:buttons>
       <button class="btn btn-outline-secondary btn-sm" 
       id="editButton"
       @click="toggleConfig">
-        <span class="fa fa-sm fa-edit px-0"></span>
+        <span class="fa fa-lg px-0" :class="buttonIcon"></span>
       </button>
     </template>
 
@@ -62,6 +62,7 @@
           class="mr-2 badge rounded-pill statusIndicator"
           :style="{ color: statusColor }"
         >
+        <i :class="statusIcon"></i>
           {{ statusString }}
         </span>
         <span v-if="chargepoint.isCharging && !chargepoint.isLocked" class="mx-1">
@@ -126,7 +127,7 @@ export default {
     },
     chargePowerString() {
       return (
-        formatWatt(this.chargepoint.power, this.decimalPlaces) +
+        formatWatt(this.chargepoint.power, this.config.decimalPlaces) +
         " " +
         this.phaseSymbols[this.chargepoint.phasesInUse] +
         " " +
@@ -137,10 +138,10 @@ export default {
     chargeEnergyString() {
       if (this.chargepoint.energy > 0) {
         return (
-          formatWattH(this.chargepoint.energy * 1000, this.decimalPlaces) +
+          formatWattH(this.chargepoint.energy, this.config.decimalPlaces) +
           " / " +
           Math.round(
-            (this.chargepoint.energy / this.chargepoint.energyPer100km) * 100
+            (this.chargepoint.energy / this.chargepoint.energyPer100km / 10) 
           )  +
           " km")
       } else {
@@ -169,6 +170,18 @@ export default {
         return "var(--color-axis)";
       }
     },
+    statusIcon() {
+      let icon=""
+      if (this.chargepoint.isLocked) {
+        icon = 'fa-lock'
+      } else if (this.chargepoint.isCharging) {
+        icon=' fa-bolt'
+      } else if (this.chargepoint.isPluggedIn) {
+        icon = 'fa-plug'
+      }
+      return 'fa '+ icon
+    },
+  
     modePillStyle() {
       switch (this.chargepoint.chargeMode) {
         case 'stop': return {color: 'var(--fg)'}
@@ -179,6 +192,9 @@ export default {
     },
     modeString() {
       return this.chargemodes[this.chargepoint.chargeMode].name;
+    },
+    modeIcon() {
+      return this.chargemodes[this.chargepoint.chargeMode].icon
     },
     batterySymbol() {
       if (this.soc <= 10) {
@@ -193,17 +209,15 @@ export default {
         return 'fa-battery-full'
       }
     },
+    buttonIcon() {
+      return (this.showConfig ? 'fa-caret-square-up' : 'fa-caret-square-down'  )
+    },
     soc () {
-      if (this.vehicles.length > this.chargepoint.carId) {
-        return this.vehicles[this.chargepoint.carId].soc
-      } else {
-        return 0
-      }
+      return this.chargepoint.soc
     }
   },
   methods: {
     toggleConfig () {
-      console.log ("CLICK")
       this.showConfig = !this.showConfig
     }
   }
@@ -218,6 +232,7 @@ export default {
   border: 1px solid;
   background: var(--color-bg);
   vertical-align: bottom;
+  font-size: var(--font-verysmall);
 }
 .statusIndicator {
   border: 1px solid;

@@ -44,7 +44,7 @@ export function formatWattH(watt, decimalPlaces = 1) {
 				wattResult = Math.round(watt / 100) / 10;
 				break;
 		}
-		return (Math.round(wattResult) + " kWh");
+		return (wattResult + " kWh");
 	} else {
 		return (Math.round(watt) + " Wh");
 	}

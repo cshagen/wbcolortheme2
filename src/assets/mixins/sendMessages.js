@@ -7,8 +7,11 @@ export default {
         cpLock: 'openWB/set/chargepoint/%/set/manual_lock',
         chargeMode: 'openWB/set/vehicle/template/charge_template/%/chargemode/selected',
         pvBatteryPriority: 'openWB/set/general/chargemode_config/pv_charging/bat_prio',
-        chargeTemplate: 'openWB/set/vehicle/template/charge_template/%',
+   //     chargeTemplate: 'openWB/set/vehicle/template/charge_template/%',
         cpVehicle: 'openWB/set/chargepoint/%/config/ev',
+        instantChargeLimit: 'openWB/set/vehicle/template/charge_template/%/chargemode/instant_charging/limit/selected',
+        targetCurrent: 'openWB/set/vehicle/template/charge_template/%/chargemode/instant_charging/current',
+        maxSoc: 'openWB/set/vehicle/template/charge_template/%/chargemode/instant_charging/soc',
       }
   }
 },
@@ -16,11 +19,15 @@ methods: {
   setupCallbacks () {
     eventBus.$on ('update', (item, value, index) => {
       switch (item) {
-        case 'chargeMode': this.setChargeMode (value, index) 
+        case 'chargeMode': this.setChargeMode (value, +index) 
           break
-          
+        
         default:
             var topic = this.topics[item]
+            if (isNaN(index)) {
+              console.warn ("Invalid index")
+              return
+            }
             if (topic) {
               topic = topic.replace ('%', index)
               this.publish (topic, JSON.stringify(value))

@@ -237,8 +237,9 @@ export default {
       eventBus.$emit("resetArcs", maxPower);
     },
     soc(i) {
-      let carId = this.chargepoints[i].carId
-      return (this.vehicle.length > carId) ? this.vehicle[carId].soc : 0
+      return this.chargepoints[i].soc
+      //let carId = this.chargepoints[i].carId
+      //return (this.vehicle.length > carId) ? this.vehicle[carId].soc : 0
       
     }
   },

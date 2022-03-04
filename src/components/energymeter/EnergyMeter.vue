@@ -59,7 +59,7 @@ import wbWidget from '../wbWidget.vue'
 import config from "@/assets/mixins/themeConfig.js";
 
 export default {
-  name: "energymeter",
+  name: "EnergyMeter",
   mixins: [config],
   components: { emMenu, emBargraph, emYAxis, emLabels, wbWidget },
   props: {

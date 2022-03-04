@@ -25,6 +25,16 @@ export default {
         connected: false,
       },
       evuId: 0,
+      topicsToSubscribe: [
+      "openWB/counter/#",
+      "openWB/bat/get/#",
+      "openWB/pv/get/#",
+      "openWB/chargepoint/#",
+      //  "openWB/graph/#",
+      "openWB/vehicle/#",
+      "openWB/general/chargemode_config/pv_charging/#",
+      "openWB/optional/et/#",
+    ]
     };
   },
   methods: {
@@ -43,35 +53,36 @@ export default {
         });
       });
       this.client.on("error", (error) => {
-        console.log("MQTT connection failed", error);
+        console.error("MQTT connection failed", error);
       });
       this.client.on("message", callback);
     },
     subscribe(toTopic) {
-      // console.log("SUBSCRIBE TO " + toTopic)
       this.subscription.topic = toTopic;
       const { topic, qos } = this.subscription;
-      this.client.subscribe(topic, { qos }, (error, res) => {
+      this.client.subscribe(topic, { qos }, (error) => {
         if (error) {
           console.error("MQTT Subscription error: " + error);
           return;
         }
         // this.subscriptionSuccess = true
-        console.info("MQTT Subscription successful: ", res);
+         console.info("MQTT Subscription successful: " + toTopic);
       });
     },
-    unsubscribe (fromTopic) {
+    unsubscribe(fromTopic) {
       this.subscription.topic = fromTopic;
-      const { topic } = this.subscription
+      const { topic } = this.subscription;
       this.client.unsubscribe(topic, (error) => {
         if (error) {
-          console.error ("MQTT Unsubscribe from " + fromTopic + " failed: " + error)
-          return
+          console.error(
+            "MQTT Unsubscribe from " + fromTopic + " failed: " + error
+          );
+          return;
         }
-        console.info ('MQTT unsubscribe successful: ' + topic)
-      })
+        // console.info ('MQTT unsubscribe successful: ' + topic)
+      });
     },
-    
+
     processMqttMessage(topic, message) {
       if (topic.match(/^openwb\/counter\/[0-9]+\//i)) {
         this.processCounterMessages(topic, message);
@@ -92,7 +103,7 @@ export default {
       } else if (topic.match(/^openwb\/graph\//i)) {
         this.processGraphMessages(topic, message);
       } else if (topic.match(/^openwb\/optional\/et\//i)) {
-        this.processETProviderMessages(topic, message);
+        this.processEtProviderMessages(topic, message);
       }
       // else if ( mqttTopic.match( /^openwb\/global\//i) ) { processGlobalMessages(mqttTopic, message); }
       // else if ( mqttTopic.match( /^openwb\/system\//i) ) { processSystemMessages(mqttTopic, message); }
@@ -111,7 +122,7 @@ export default {
         // console.debug("evu counter message received");
         this.processEvuMessages(topic, message);
       } else if (elements[3] == "config") {
-        console.debug("config for counter " + elements[2]);
+        // console.debug("config for counter " + elements[2]);
       } else {
         //let index = elements[2]
         switch (elements[4]) {
@@ -127,42 +138,31 @@ export default {
           case "daily_yield_export":
             break;
           default:
-            console.warn("UNPROCESSED COUNTER MESSAGE: " + topic);
+            console.warn("Ignored COUNTER message: " + topic);
         }
       }
     },
     processGlobalCounterMessages(topic, message) {
-      let elements = topic.split("/");
-      switch (elements[3]) {
-        case "hierarchy":
+        if (topic.match(/^openwb\/counter\/get\/hierarchy$/i)) {
           var hierarchy = JSON.parse(message);
           if (hierarchy.length) {
-            this.evuId = hierarchy[0].id.match(/[\d]+$/)[0];
-            console.warn ("EVU counter is " + this.evuId)
+            for (const element of hierarchy) {
+              if (element.type == 'counter') {
+                this.evuId = hierarchy[0].id;
+                console.info("EVU counter is " + this.evuId);
+              }
+            }
             this.addChargepoint(hierarchy[0]);
           }
-          break;
-        case "home_consumption":
+        } else if (topic.match(/^openwb\/counter\/set\/home_consumption$/i)) {
           this.usageSummary.house.power = message;
-          break;
-        case "daily_yield_home_consumption":
+        } else if (topic.match(/^openwb\/counter\/set\/daily_yield_home_consumption$/i)) {
           this.usageSummary.house.energy = +message / 1000;
-          break;
-        case "invalid_home_consumption":
-          // console.log('invalid home consumption:' + message)
-          break;
-        case "fault_state":
-          // console.log('fault_state:' + message)
-          break;
-        case "fault_str":
-          // console.log('fault_str' + message)
-          break;
-        default:
-          console.warn("UNMATCHED GLOBAL COUNTER MESSAGE: " + topic);
+        } else { 
+        console.warn("Ignored GLOBAL COUNTER message: " + topic);
       }
     },
     processBatteryMessages(topic, message) {
-      // console.log('bat [' + topic + '] ' + message)
       switch (topic) {
         case "openWB/bat/get/power":
           if (message > 0) {
@@ -183,7 +183,7 @@ export default {
           this.globalData.batterySoc = message;
           break;
         default:
-          console.warn("BATTERY MSG")
+         console.warn("Ignored BATTERY message: " + topic)
       }
     },
     processPvMessages(topic, message) {
@@ -198,237 +198,210 @@ export default {
       }
     },
     processChargepointMessages(topic, message) {
-      let elements = topic.split("/");
-      let index;
-      //console.info (topic)
-      switch (elements[2]) {
         // General Chargepoint messages
-        case "get":
-          switch (elements[3]) {
-            case "power":
-              this.usageSummary.charging.power = +message;
-              break;
-            case "daily_yield":
-              this.usageSummary.charging.energy = +message / 1000;
-              break;
-            case "daily_exported":
-              // console.debug('CP daily_exported: ' + message)
-              break;
-            case "counter":
-              // console.debug('CP counter: ' + message)
-              break;
-            default:
-              console.warn("CP general get message missed: " + topic);
-              break;
+        if (topic == 'openWB/chargepoint/get/power') {
+          this.usageSummary.charging.power = +message;
+        } else if (topic == 'openWB/chargepoint/get/daily_yield') {
+          this.usageSummary.charging.energy = +message / 1000;
+        } if (topic == 'openWB/chargepoint/get/daily_exported') {
+          this.globalData.cpDailyExported = +message
+        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/config$/i)) {
+          let index=this.getIndex(topic)
+          if (this.chargePoints[index]) {
+            var configMessage = JSON.parse(message);
+            this.chargePoints[index].name = configMessage.name;
+          } else {
+            console.warn("invalid chargepoint index: " + index);
           }
-          break;
-        case "template":
-          // console.debug('template: ' + message)
-          break;
-        default:
-          // Chargepoint specific messages
-          index = elements[2];
-          switch (elements[3]) {
-            case "config":
-              if (this.chargePoints[index]) {
-                console.log ("INDEX: " + index)
-                var configMessage = JSON.parse(message);
-                this.chargePoints[index].name = configMessage.name;
-              } else {
-                console.warn ("invalid chargepoint index: " + index)
-              }
-              break;
-            default:
-              switch (elements[4]) {
-                case "enabled":
-                  this.updateCP(topic, "enabled", message == "1");
-                  break;
-                case "current":
-                  this.updateCP(topic, "current", message);
-                  break;
-                case "power":
-                  this.updateCP(topic, "power", message);
-                  break;
-                case "phases_in_use":
-                  this.updateCP(topic, "phasesInUse", message);
-                  break;
-                case "charge_state":
-                  this.updateCP(topic, "isCharging", message == "true");
-                  break;
-                case "plug_state":
-                  this.updateCP(topic, "isPluggedIn", message == "true");
-                  break;
-                case "state_str":
-                  // console.debug('state_str ' + index)
-                  break;
-                case "fault_state":
-                  // console.debug('fault_state ' + index)
-                  break;
-                case "fault_str":
-                  // console.debug('fault_str ' + index)
-                  break;
-                case "manual_lock":
-                  this.updateCP(topic, "isLocked", message == "true");
-                  break;
-                // Connected Vehicle...
-                case "connected_vehicle":
-                  switch (elements[5]) {
-                    // ...info
-                    case "info":
-                      var info = JSON.parse(message);
-                      this.updateCP(topic, "carName", info.name);
-                      this.updateCP (topic, 'carId', info.id)
-                      break
-                      // ...config
-                    case "config":
-                      //var config = JSON.parse(message);
-                      console.warn('Ignoring CP config messages')
-                     // this.updateCP(topic, "chargeMode", config.chargemode);
-                      //this.updateCP(
-                      //  topic,
-                      //  "chargeTemplate",
-                      //  config.charge_template
-                     // )
-                      break
-                    case 'soc':
-                      break
-                    default:
-                      console.warn("Ignored CONNECTED VEHICLE MESSAGE: " + topic);
-                      break;
-                  }
-                  break;
-                default:
-                  console.warn(
-                    "CP SPECIFIC MESSAGE " +
-                      elements[4] +
-                      " for index " +
-                      index +
-                      ": " +
-                      message
-                  );
-                  break;
-              }
-              break;
-          }
-          break;
-      }
+        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/state_str$/i)) {
+          // ignore
+        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/fault_str$/i)) {
+          //ignore
+        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/fault_state$/i)) {
+          //ignore
+        } else if (topic.match(/^openWB\/chargepoint\/[0-9]+\/get\/power$/i)) {
+          this.updateCP(topic, "power", message)
+        } else if (topic.match(/^openWB\/chargepoint\/[0-9]+\/set\/log\/charged_since_plugged_counter$/i)) {
+          this.updateCP(topic, "energy", +message);   
+        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/plug_state$/i)) {
+          this.updateCP(topic, "isPluggedIn", message == "true");
+        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/charge_state$/i)) {
+          this.updateCP(topic, "isCharging", message == "true");
+        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/manual_lock$/i)) {
+          this.updateCP(topic, "isLocked", message == "true");
+        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/enabled$/i)) {
+          this.updateCP(topic, "enabled", message == "1");
+        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/phases_in_use/i)) {
+          this.updateCP(topic, "phasesInUse", message)
+        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/set\/current/i)) {
+          this.updateCP(topic, "current", message);
+        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/connected_vehicle\/soc$/i)) {
+         // let socInfo = JSON.parse(message)
+         // this.updateCP(topic, 'soc', socInfo.soc)
+          console.info ("Ignored Connected Vehicle SOC " + topic + " : " + message)
+        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/connected_vehicle\/soc_config$/i)) {
+          this.updateCP(topic, 'isSocManual', (message=='manual'))
+        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/connected_vehicle\/info$/i)) {
+          console.log ("conn veh " + topic + " - " + message)
+          var info = JSON.parse(message);
+          this.updateCP(topic, "carName", String(info.name));
+          this.updateCP(topic, "carId", info.id);
+          console.log (this.chargePoints[this.getIndex(topic)])
+        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/connected_vehicle\/config$/i)) {
+          var config = JSON.parse(message);
+          this.updateCP(topic, "chargeMode", config.chargemode);
+          this.updateCP(topic, "chargeTemplate", config.charge_template)
+        } else {
+          console.warn("Ignored CHARGEPOINT message: " + topic);
+        }
+        
+        
+                
     },
     updateCP(topic, attribute, value) {
       let index = this.getIndex(topic);
       let cp = this.chargePoints[index];
+      //console.info ("Update CP " + index + " : " + attribute + "  = " + value)
+     
       if (cp) {
         cp[attribute] = value;
-        // console.info("Update Chargepoint " + cp.cpId + ": " + attribute + "=" + value)
-        }
+        console.info("Update Chargepoint " + cp.cpId + ": " + attribute + "=" + value)
+      }
+      //console.dir(cp)
     },
     processVehicleMessages(topic, message) {
-      let elements = topic.split("/");
-      if (elements.length > 0) {
-        if (elements[2] == 'template') {
-          this.processVehicleTemplateMessages(topic,message)
-        } else {
-        let index = +elements[2];
+      console.log("VEH MSG " + topic + " : " + message)
+      if (topic.match(/^openwb\/vehicle\/[0-9]+\/name$/i)) {
+        let index=this.getIndex(topic)
+        // Create vehicle if not yet existing
+        if (!(index in this.vehicles)){
+          let v = this.createVehicle(index)
+          this.$set(this.vehicles, index,  v)
+        }
+        // set car Name for charge point
+        Object.keys(this.chargePoints).forEach((k) => {
+          if (this.chargePoints[k].carId == index) {
+            this.chargePoints[k].carName = JSON.parse(message);
+          }
+        })
+        this.vehicles[index].name = JSON.parse(message);
+      } else if (topic.match(/^openwb\/vehicle\/template\/charge_template\/[0-9]+$/i)) {
+        this.processVehicleTemplateMessages(topic, message);
+      } else if (topic.match(/^openwb\/vehicle\/[0-9]+\/get\/soc$/i)) {
+        console.info("update soc")
+        let index=this.getIndex(topic)
         if (!(index in this.vehicles)) {
-          this.$set(this.vehicles, index, {});
-          const vh = this.createVehicle(index);
-          const keys = Object.keys(vh);
-          keys.forEach((v) => {
-            this.$set(this.vehicles[index], v, vh[v]);
-          });
+          let v = this.createVehicle(index)
+          this.$set(this.vehicles, index, v)
         }
-
+        // set soc for cp
+        Object.keys(this.chargePoints).forEach((k) => {
+          if (this.chargePoints[k].carId == index) {
+            console.info("SOC UPDATE FOR "+ k + " index: " + index)
+            this.chargePoints[k].soc = JSON.parse(message);
+          }
+          console.dir (this.chargePoints)
+        })
+      } else {
+        console.warn("Ignored VEHICLE message [" + topic + "]=" + message);
+      }
+    },
+    processVehicleTemplateMessages(topic, message) {
+      const elements = topic.split("/");
+      if (elements.length > 0) {
         switch (elements[3]) {
-          case "name":
-            this.vehicles[index].name = JSON.parse(message);
-            break;
-          case "get": 
-            if (elements[4] == 'soc') {
-            this.vehicles[index].soc = +message;
+          case "charge_template":
+            // console.log("msg: " + message);
+            var index = +elements[4];
+            var template = JSON.parse(message);
+            while (this.chargeTemplates.length <= index) {
+              this.chargeTemplates.push({});
             }
-            break
-            case "charge_template":
-              this.vehicles[index].chargeTemplateId= +message
-              Object.keys(this.chargePoints).forEach (k => {
-                if (this.chargePoints[k].carId == index) {
-                  this.chargePoints[k].chargeTemplate = +message
-                  let template = this.chargeTemplates[+message]
-                  if (template) {
-                  this.chargePoints[k].chargeMode = template.chargemode.selected
-                  }}
-              })
-              break
-          default:
-            console.warn("Ignored VEHICLE message: [" + topic + "] " + message);
-            break;
-        }
-        }
-    }
-      },
-      processVehicleTemplateMessages (topic, message) {
-        const elements = topic.split('/')
-        if (elements.length > 0) {
-          switch (elements[3]) {
-            case 'charge_template':
-              console.log("msg: " +message)
-              var index = +elements[4]
-              var template = JSON.parse(message)
-              while (this.chargeTemplates.length <= index) {
-                this.chargeTemplates.push({})
-              }
-              this.chargeTemplates[index] = template
+            this.chargeTemplates[index] = template;
 
-              /* if (index > 0) {
+            /* if (index > 0) {
                 eventBus.$emit ('update', 'chargeTemplate', template, 0)
                 console.error ("CORRECTED CHARGE TEMPLATE")
               } */
-               Object.keys(this.chargePoints).forEach(k => {
-                if (this.chargePoints[k].chargeTemplate == index) {
-                  this.chargePoints[k].targetcurrent = template.chargemode.instant_charging.current
-                  this.chargePoints[k].chargeMode = template.chargemode.selected
-                  console.log ('--- updated chargeMode: ' + this.chargePoints[k].chargeMode)
-                }
-              }) 
-              break
-            default:
-              console.warn ("Ignored template message [" + topic + ']=' + message)
-          }
+            Object.keys(this.chargePoints).forEach((k) => {
+              if (this.chargePoints[k].chargeTemplate == index) {
+                this.chargePoints[k].targetcurrent =
+                  template.chargemode.instant_charging.current;
+                this.chargePoints[k].chargeMode = template.chargemode.selected;
+                this.chargePoints[k].instantChargeLimitMode =
+                  template.chargemode.instant_charging.limit.selected;
+              }
+            });
+            break;
+          default:
+            console.warn("Ignored VEHICLE TEMPLATE message [" + topic + "]=" + message);
         }
-      },
+      }
+    },
     processPvConfigMessages(topic, message) {
-      let elements = topic.split('/')
+      let elements = topic.split("/");
       if (elements.length > 0) {
         switch (elements[4]) {
-          case 'bat_prio':
-            this.globalData.pvBatteryPriority = (message == "true")
-            break
-            default:
-              console.warn("Ignored PV config msg: [" + topic + "] " + message);
+          case "bat_prio":
+            this.globalData.pvBatteryPriority = message == "true";
+            break;
+          default:
+            console.warn("Ignored PV CONFIG msg: [" + topic + "] " + message);
         }
       }
     },
     processGraphMessages(topic, message) {
-      if (topic == 'openWB/graph/boolDisplayLiveGraph') {
-          this.globalData.displayLiveGraph =  (message == 1)
-      } else if (topic.match(/^openwb\/graph\/alllivevaluesJson[1-9][0-9]*$/i)) {
+      if (topic == "openWB/graph/boolDisplayLiveGraph") {
+        this.globalData.displayLiveGraph = message == 1;
+      } else if (
+        topic.match(/^openwb\/graph\/alllivevaluesJson[1-9][0-9]*$/i)
+      ) {
         // graph messages if local connection
-        this.reloadLiveGraph (topic, message)
-      } else if (topic == 'openWB/graph/lastlivevaluesJson') {
-        this.updateLiveGraph (topic, message)
-      } else if (topic == 'openWB/graph/config/duration') {
-          this.updateGlobal ('liveGraphDuration', JSON.parse(message))
+        this.reloadLiveGraph(topic, message);
+      } else if (topic == "openWB/graph/lastlivevaluesJson") {
+        this.updateLiveGraph(topic, message);
+      } else if (topic == "openWB/graph/config/duration") {
+        this.updateGlobal("liveGraphDuration", JSON.parse(message));
       } else {
-        console.warn ('Ignored graph message: [' + topic + '](' + message + ')')
+        console.warn("Ignored GRAPH message: [" + topic + "](" + message + ")");
       }
     }, // end processGraphMessages
-    
+
     processEtProviderMessages(topic, message) {
-      if (topic == "huhu") {
-        console.log("cp [" + topic + "] " + message);
+      if (topic == "openWB/optional/et/active") {
+        this.globalData.isEtEnabled = JSON.parse(message);
+      } else if (topic == "openWB/optional/et/get/price") {
+        this.globalData.etCurrentPrice = parseFloat(message);
+      } else if (topic == "openWB/optional/et/config/max_price") {
+        this.globalData.etMaxPrice = parseFloat(message);
+      } else if (topic == "openWB/optional/et/provider") {
+        this.globalData.etProvider = JSON.parse(message);
+      } else {
+        console.warn('Ignored ET Provider message: ' + topic)
       }
+      // else if ( mqttTopic == 'openWB/global/ETProvider/modulePath' ) {
+      // 	$('.etproviderLink').attr("href", "/openWB/modules/"+mqttPayload+"/stromtarifinfo/infopage.php");
+      // }
+      // else if ( mqttTopic == 'openWB/global/awattar/pricelist' ) {
+      // 	// read etprovider values and trigger graph creation
+      // 	// loadElectricityPriceChart will show electricityPriceChartCanvas if etprovideraktiv=1 in openwb.conf
+      // 	// graph will be redrawn after 5 minutes (new data pushed from cron5min.sh)
+      // 	var csvData = [];
+      // 	var rawcsv = mqttPayload.split(/\r?\n|\r/);
+      // 	// skip first entry: it is module-name responsible for list
+      // 	for (var i = 1; i < rawcsv.length; i++) {
+      // 		csvData.push(rawcsv[i].split(','));
+      // 	}
+      // 	// Timeline (x-Achse) ist UNIX Timestamp in UTC, deshalb Umrechnung (*1000) in Javascript-Timestamp (mit Millisekunden)
+      // 	electricityPriceTimeline = getCol(csvData, 0).map(function(x) { return x * 1000; });
+      // 	// Chartline (y-Achse) ist Preis in ct/kWh
+      // 	electricityPriceChartline = getCol(csvData, 1);
+
+      // 	loadElectricityPriceChart();
+      // }
     },
 
     processEvuMessages(topic, message) {
-       // console.log("EVU [" + topic + ']' + message)
       let elements = topic.split("/");
       switch (elements[4]) {
         case "power":
@@ -450,22 +423,27 @@ export default {
       }
     },
     addChargepoint(hierarchy) {
-      if (hierarchy.id.match(/cp[0-9]+/g)) {
-        var chargePointIndex = hierarchy.id.replace("cp", "");
-        this.$set(this.chargePoints, chargePointIndex, {});
-        const cp = this.createChargepoint(
-          Object.keys(this.chargePoints).length - 1,
-          chargePointIndex
-        );
-        const keys = Object.keys(cp);
-        keys.forEach((v) => {
-          this.$set(this.chargePoints[chargePointIndex], v, cp[v]);
-        });
-        console.info("Added chargepoint " + chargePointIndex)
+      if (hierarchy.type == 'cp') {
+        var chargePointIndex = hierarchy.id;
+        if (!(chargePointIndex in this.chargePoints)) {
+          this.$set(this.chargePoints, chargePointIndex, {});
+          const cp = this.createChargepoint(chargePointIndex);
+          const keys = Object.keys(cp);
+          keys.forEach((v) => {
+            this.$set(this.chargePoints[chargePointIndex], v, cp[v]);
+          });
+          console.info("Added chargepoint " + chargePointIndex);
+        } else {
+          console.info("Duplicate chargepoint message: " + chargePointIndex);
+        }
       }
-
+      // recursively add more chargepoints
       hierarchy.children.forEach((element) => {
         this.addChargepoint(element);
+      });
+      // assign colors for the chargepoints
+      Object.values(this.chargePoints).forEach((cp, index) => {
+        cp.color = "var(--color-cp" + (index + 1) + ")";
       });
     },
 
@@ -474,14 +452,14 @@ export default {
       // since this is supposed to be the index like in openwb/lp/4/w
       // no lookbehind supported by safari, so workaround with replace needed
       try {
-      var index = topic
-        .match(/(?:\/)([0-9]+)(?=\/)/g)[0]
-        .replace(/[^0-9]+/g, "");
-       } catch (e) {
-         console.warn ("Parser error in getIndex for topic " + topic)
-       }
-      if (typeof index === "undefined") {
-        index = "";
+        var index = topic
+          .match(/(?:\/)([0-9]+)(?=\/)/g)[0]
+          .replace(/[^0-9]+/g, "");
+      } catch (e) {
+        console.warn("Parser error in getIndex for topic " + topic);
+      }
+      if (typeof index != "undefined") {
+        index = +index;
       }
       return index;
     },
@@ -495,38 +473,30 @@ export default {
 			);
 			this.usageSummary.charging.power = 400;
 		}, */
-    subscribeMqttLiveGraphRefresh () {
+    subscribeMqttLiveGraphRefresh() {
       for (var chunk = 1; chunk < 17; chunk++) {
-        let topic = "openWB/graph/"  + "alllivevaluesJson" + chunk;
+        let topic = "openWB/graph/" + "alllivevaluesJson" + chunk;
         this.subscribe(topic);
       }
     },
-    unsubscribeMqttLiveGraphRefresh () {
+    unsubscribeMqttLiveGraphRefresh() {
       for (var segments = 1; segments < 17; segments++) {
-        let topic = "openWB/graph/"  + "alllivevaluesJson" + segments;
+        let topic = "openWB/graph/" + "alllivevaluesJson" + segments;
         this.unsubscribe(topic);
       }
     },
-    subscribeMqttLiveGraphUpdates () {
+    subscribeMqttLiveGraphUpdates() {
       let topic = "openWB/graph/lastlivevaluesJson";
       this.subscribe(topic);
     },
-    unsubscribeMqttLiveGraphUpdates () {
+    unsubscribeMqttLiveGraphUpdates() {
       let topic = "openWB/graph/lastlivevaluesJson";
-      this.unsubscribe(topic)
-    }
+      this.unsubscribe(topic);
+    },
   },
   mounted() {
     // console.log("initiate mqtt")
-    this.connect(this.processMqttMessage, [
-      "openWB/counter/#",
-      "openWB/bat/get/#",
-      "openWB/pv/get/#",
-      "openWB/chargepoint/#",
-    //  "openWB/graph/#",
-      "openWB/vehicle/#",
-      "openWB/general/chargemode_config/pv_charging/#"
-    ]);
-    this.subscribeMqttLiveGraphRefresh()
+    this.connect(this.processMqttMessage, this.topicsToSubscribe);
+    this.subscribeMqttLiveGraphRefresh();
   },
 };

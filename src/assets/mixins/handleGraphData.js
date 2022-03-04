@@ -6,7 +6,7 @@ export default {
       staging: [],
       rawData: [],
       initCounter: 0,
-      graphRequestCounter: 0,
+      graphRefreshCounter: 0,
       initialGraphData: [],
       initialized: false,
     };
@@ -14,7 +14,6 @@ export default {
   methods: {
     // incremental update message for the day graph
     updateLiveGraph(topic, data) {
-      // console.log(data)
       data = JSON.parse(data);
       const values = this.extractValues(data);
       // console.log(values)
@@ -30,7 +29,7 @@ export default {
       this.initialized = false;
       this.initCounter = 0;
       this.initialGraphData = [];
-      this.graphData = [];
+      // this.graphData = [];
       this.graphRefreshCounter = 0;
       this.unsubscribeMqttLiveGraphUpdates();
       this.subscribeMqttLiveGraphRefresh();
@@ -40,6 +39,8 @@ export default {
       if (this.initialized) {
        // console.log("graph initialized. Ignoring message");
       } else {
+        console.warn ('----------------- RELOAD graph')
+        let dataCache = []
         let datapointStrings = data.toString().split("\n");
         if (datapointStrings.length > 1) {
           var datapoints = datapointStrings.map((datapoint) =>
@@ -60,15 +61,12 @@ export default {
             this.initialGraphData.map((datapoints) => {
               datapoints.map((datapoint) => {
                 const values = this.extractValues(datapoint);
-                this.graphData.push(values);
+                dataCache.push(values);
               });
             });
-            //  const startTime = this.graphData[0].date;
-            //  const endTime = this.graphData[this.graphData.length - 1].date;
-            //  this.liveGraphMinutes = Math.round((endTime - startTime) / 60000);
-            //  this.updateHeading();
           }
         }
+        this.graphData = dataCache
       }
     },
     extractValues(data) {

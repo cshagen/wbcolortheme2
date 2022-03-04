@@ -4,21 +4,18 @@
   <figure id="powergraph" class="p-0 m-0">
     <svg :viewBox="'0 0 ' + width + ' ' + height">
         <!-- Draw the source graph -->
-        <pgSourceGraph
+        <PgSourceGraph
           :graphData="graphData"
           :width="width - margin.left - margin.right"
           :height="(height - margin.top - margin.bottom) / 2"
           :margin="margin"
-          :xScale="xScale"
-        ></pgSourceGraph>
-        
-        <pgUsageGraph
+        ></PgSourceGraph>
+        <PgUsageGraph
           :graphData="graphData"
           :width="width - margin.left - margin.right"
           :height="(height - margin.top - margin.bottom) / 2"
           :margin="margin"
-          :xScale="xScale"
-        ></pgUsageGraph>
+        ></PgUsageGraph>
         <PgXAxis
         :width="width - margin.left - margin.right"
         :height="(height - margin.top - margin.bottom)"
@@ -35,15 +32,15 @@
 <script>
 import * as d3 from 'd3'
 import wbWidget from '../wbWidget.vue'
-import pgSourceGraph from './pgSourceGraph.vue'
-import pgUsageGraph from './pgUsageGraph.vue'
+import PgSourceGraph from './pgSourceGraph.vue'
+import PgUsageGraph from './pgUsageGraph.vue'
 import PgXAxis from './pgXAxis.vue'
 export default {
 name: "powergraph",
 components: {
     wbWidget,
-    pgSourceGraph,
-    pgUsageGraph,
+    PgSourceGraph,
+    PgUsageGraph,
     PgXAxis
 },
   props: {

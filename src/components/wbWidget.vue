@@ -5,9 +5,7 @@
         <div class="row m-0 mb-1 p-0">
           <div class="col-9 m-0 p-0">
             <h3 class="mt-0">
-              <slot name="title">
-                      (title goes here)
-                </slot>
+              <slot name="title"> (title goes here) </slot>
               <slot name="subtitle"></slot>
             </h3>
           </div>
@@ -17,8 +15,12 @@
         </div>
 
         <div class="p-0 wb-subwidget">
-          <div class="container-fluid m-0 p-0">
-            <slot></slot>
+          <div class="row">
+            <div class="col">
+              <div class="container-fluid m-0 p-0">
+                <slot></slot>
+              </div>
+            </div>
           </div>
         </div>
       </div>
