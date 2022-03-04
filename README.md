@@ -1,7 +1,7 @@
 # wbcolortheme2
-A theme for openWallbox 2.0
+A theme for openWB 2 (http://openwb.de)
 
-Alpha version, still work in progress
+Alpha version, still work in progress, like the openWB 2.0
 
 ## Testing locally (npm required):
 The theme is not yet integrated in the openWB2.0 release. It can be installed separately on the same Raspberry PI as the openWB 2 and will get its data from the openWB
