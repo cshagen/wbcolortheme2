@@ -1,0 +1,42 @@
+FROM debian:bullseye
+
+RUN apt update && \
+    apt install -y sudo curl iproute2 vim bc apache2 php php-gd php-curl php-xml php-json libapache2-mod-php jq git mosquitto mosquitto-clients socat python3-pip sshpass
+
+RUN useradd -m pi && \
+    mkdir /var/www/html/openWB /run/mosquitto && \
+    chown pi:pi /var/www/html/openWB && \
+    chown mosquitto:mosquitto /run/mosquitto && \
+    sudo -u pi git clone https://github.com/openWB/core.git --branch master /var/www/html/openWB && \
+    sudo -u pi pip install -r /var/www/html/openWB/requirements.txt && \
+    chmod +x /var/www/html/openWB/runs/* /var/www/html/openWB/*.sh && \
+    touch /var/log/openWB.log && \
+    chmod 777 /var/log/openWB.log && \
+    cp /var/www/html/openWB/data/config/000-default.conf /etc/apache2/sites-available/ && \
+    sed -i '/^include_dir/d' /var/www/html/openWB/data/config/mosquitto_local.conf && \
+    sed -i 's/^listener .*/listener 1886 127.0.0.1/' /var/www/html/openWB/data/config/openwb_local.conf && \
+    cat /var/www/html/openWB/data/config/openwb.conf >> /var/www/html/openWB/data/config/mosquitto_local.conf && \
+    sudo -u pi mkdir /var/www/html/openWB/ramdisk && \
+    sed -i '12d;96,106d;107i\    return []' /var/www/html/openWB/packages/modules/loadvars.py && \
+    cp /var/www/html/openWB/index.html /var/www/html/index.html
+
+RUN sudo curl -fsSL https://deb.nodesource.com/setup_16.x | sudo bash -  && \
+    sudo apt-get install -y nodejs && \
+    cd /home/pi && \
+    git clone https://github.com/cshagen/wbcolortheme2.git && \
+    cd /home/pi/wbcolortheme2 && \
+    npm install 
+
+COPY run-within-docker.sh /var/www/html/openWB/
+
+CMD ["/bin/bash", "/var/www/html/openWB/run-within-docker.sh"]
+
+# Http
+EXPOSE 80
+# MQTT
+EXPOSE 1883
+# MQTT Websocket
+EXPOSE 9001
+# Color Theme
+EXPOSE 8080
+
