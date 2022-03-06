@@ -1,45 +1,48 @@
 # wbcolortheme2
-A theme for openWB 2 (http://openwb.de)
+Ein Theme für die openWB2 (http://openwb.de)
 
-Alpha version, still work in progress, like the openWB 2.0
+Alpha version, basierend auf der Alpha der openwb2.
 
-## Testing locally (npm required):
-The theme is not yet integrated in the openWB2.0 release. It can be installed separately on the same Raspberry PI as the openWB 2 and will get its data from the openWB
+![picture of theme](colors1.png)
 
-Checkout the code, then ```cd wbcolortheme2```
+Das theme is noch nicht in die openwb2 integriert. Es läuft standalone auf dem gleichen Rechner wie die openwb2 selbst. Entweder direkt auf dem Raspberry Pi oder in einem Docker Container:
 
-Install required libraries:
+## Installation auf Raspi mit openwb2 (node.js notwendig):
+
+Code auschecken, dann ```cd wbcolortheme2```
+
+Installieren:
 ```
 npm install
 ```
 
-Run the development webserver with the theme:
+Webserver mit theme starten:
 ```
 npm run serve
 ```
 
-Access the theme from your browser:
+Zugriff im Browser:
 ```
 http://<address of openWB>:8080
 ``` 
 
-## Docker based install
-(Based to the faboulous work of yankee, as published in the openWB forum)
+## Docker-Installation (zusammen mit openwb2)
+(Eine Erweiterung der wunderbaren Lösung von yankee)
 
-Copy the two files from the "docker-scripts" directory in this repository into an empty directory
+Die zwei Dateien aus dem "docker-scripts"-Verzeichnis in einen Ordner kopieren.
 
-In this directory, build the container:
+In diesem Ordner den Container bauen:
 ``` docker build -t openwb2 . ```
 
-Then start the container:
+In einer shell den Container starten:
 ``` docker run --name openwb2 -p 7080:80 -p 1883:1883 -p 9001:9001 -p 8080:8080 -it openwb2 ```
 
-Start the colors theme:
+In einer zweiten shell das colors-theme starten:
 ``` docker exec -ti openwb2 sh -c "cd /home/pi/wbcolortheme2;npm run serve" ```
 
-In a web browser, you can then access both the openWB and the colors theme:
+Im Browser kann nun das Standard-Theme (inklusive Konfiguration) und das colors-theme zugegriffen werden:
 
-openwb2 frontend (with standard theme):
+openwb2 frontend (mit standard-theme und Konfiguration):
 ``` http://localhost:7080 ```
 
 colors-Theme:
