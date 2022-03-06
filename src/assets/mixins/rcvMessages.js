@@ -229,7 +229,7 @@ export default {
           this.updateCP(topic, "isPluggedIn", message == "true");
         } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/charge_state$/i)) {
           this.updateCP(topic, "isCharging", message == "true");
-        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/manual_lock$/i)) {
+        } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/set\/manual_lock$/i)) {
           this.updateCP(topic, "isLocked", message == "true");
         } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/enabled$/i)) {
           this.updateCP(topic, "enabled", message == "1");

@@ -23,15 +23,7 @@ RUN useradd -m pi && \
 
 # wbcolortheme2
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -  && \
-    apt-get install -y nodejs && \
-    cd /home/pi && \
-    git clone https://github.com/cshagen/wbcolortheme2.git && \
-    cd /home/pi/wbcolortheme2 && \
-    npm install 
-
-# node red
-#RUN apt-get install nodered && \
-#    systemctl enable nodered.service
+    apt-get install -y nodejs 
 
 
 COPY run-within-docker.sh /var/www/html/openWB/
