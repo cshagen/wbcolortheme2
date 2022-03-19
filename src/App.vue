@@ -1,36 +1,21 @@
 <template>
-
   <div id="app" class="m-0 p-0">
-<navbar></navbar>
-<div class="container-fluid">    
+    <Navbar></Navbar>
+    <div class="container-fluid p-0">
       <div class="row p-0 m-0">
-        <div class="col-12 p-0 m-0">
-          <theme></theme>
-        </div>
+        <div class="col-12 p-0 m-0"><ColorsTheme></ColorsTheme></div>
       </div>
     </div>
   </div>
-  </template>
+</template>
 
-<script>
-import theme from "./components/theme.vue";
-import navbar from './components/navbar.vue'
-export default {
-  name: "App",
-
-  components: {
-    theme,
-    navbar
-  },
-};
+<script setup lang="ts">
+import ColorsTheme from './components/ColorsTheme.vue'
+import Navbar from './components/Navbar.vue';
+// import navbar from './components/navbar.vue'
 </script>
 
 <style>
-@import "./assets/css/style.css";
-@import "./assets/fonts/fontawesome-free-5.15.4-web/css/all.css";
-#app {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  margin-top: 60px;
-}
+@import './assets/css/style.css';
+@import './assets/fonts/fontawesome-free-6.0.0-web/css/all.css';
 </style>

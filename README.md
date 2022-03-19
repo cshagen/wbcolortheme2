@@ -18,12 +18,12 @@ npm install
 
 Webserver mit theme starten:
 ```
-npm run serve
+npm run dev
 ```
 
 Zugriff im Browser:
 ```
-http://<address of openWB>:8080
+http://<address of openWB>:3000
 ``` 
 
 ## Docker-Installation (zusammen mit openwb2)
@@ -35,7 +35,7 @@ In diesem Ordner den Container bauen:
 ``` docker build -t openwb2 . ```
 
 In einer shell den Container starten:
-``` docker run --name openwb2 -p 7080:80 -p 1883:1883 -p 9001:9001 -p 8080:8080 -it openwb2 ```
+``` docker run --name openwb2 -p 7080:80 -p 1883:1883 -p 9001:9001 -p 3000:3000 -it openwb2 ```
 
 In einer zweiten shell das colors-theme starten:
 ``` docker exec -ti openwb2 sh -c "cd /home/pi/wbcolortheme2;npm run serve" ```
@@ -46,5 +46,5 @@ openwb2 frontend (mit standard-theme und Konfiguration):
 ``` http://localhost:7080 ```
 
 colors-Theme:
-``` http://localhost:8080 ```
+``` http://localhost:3000 ```
 

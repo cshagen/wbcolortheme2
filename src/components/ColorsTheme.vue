@@ -1,0 +1,201 @@
+<template>
+  <div class="container-fluid p-0 m-0 theme-colors">
+    <ButtonBar></ButtonBar>
+    <hr />
+    <div class="row py-0 px-0 m-0">
+      <PowerMeter></PowerMeter>
+      <PowerGraph></PowerGraph>
+      <EnergyMeter :usageDetails="usageDetails"></EnergyMeter>
+    </div>
+    <nav class="nav nav-tabs nav-justified mx-1 mt-4" role="tablist">
+      <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#showAll">
+        <i class="fa-solid fa-xs fa-charging-station me-1"></i>
+        <i class="fa-solid fa-xs fa-car-battery me-1"></i>
+        <i class="fa-solid fa-xs fa-plug me-1"></i>
+        <i class="fa-solid fa-xs fa-money-bill-1-wave me-1"></i>
+        <span class="d-none d-md-inline ms-2">Alle</span>
+      </a>
+      <a
+        class="nav-link"
+        data-bs-toggle="tab"
+        data-bs-target="#chargepointlist"
+      >
+        <i class="fa-solid fa-lg fa-charging-station"></i>
+        <span class="d-none d-md-inline ms-2">Ladepunkte</span>
+      </a>
+      <a class="nav-link" data-bs-toggle="tab" data-bs-target="#batterylist">
+        <i class="fa-solid fa-lg fa-car-battery"></i>
+        <span class="d-none d-md-inline ms-2">Speicher</span>
+      </a>
+      <a class="nav-link" data-bs-toggle="tab" data-bs-target="#smarthomelist">
+        <i class="fa-solid fa-lg fa-plug"></i>
+        <span class="d-none d-md-inline ms-2">Smart Home</span>
+      </a>
+      <a class="nav-link" data-bs-toggle="tab" data-bs-target="#etPricing">
+        <i class="fa-solid fa-lg fa-money-bill-1-wave"></i>
+        <span class="d-none d-md-inline ms-2">Strompreis</span>
+      </a>
+    </nav>
+    <div class="tab-content mx-0 pt-1" id="cpContent">
+      <div
+        class="tab-pane active"
+        id="showAll"
+        role="tabpanel"
+        aria-labelledby="showall-tab"
+      >
+        <div class="row py-0 m-0">
+          <ChargePointList></ChargePointList>
+          <BatteryList></BatteryList>
+          <SmartHomeList></SmartHomeList>
+          <PriceChart></PriceChart>
+        </div>
+      </div>
+      <div
+        class="tab-pane"
+        id="chargepointlist"
+        role="tabpanel"
+        aria-labelledby="chargepoint-tab"
+      >
+        <div class="row py-0 m-0">
+          <ChargePointList></ChargePointList>
+        </div>
+      </div>
+      <div
+        class="tab-pane"
+        id="batterylist"
+        role="tabpanel"
+        aria-labelledby="battery-tab"
+      >
+        <div class="row py-0 m-0">
+          <BatteryList></BatteryList>
+        </div>
+      </div>
+      <div
+        class="tab-pane"
+        id="smarthomelist"
+        role="tabpanel"
+        aria-labelledby="smarthome-tab"
+      >
+        <div class="row py-0 m-0">
+          <SmartHomeList></SmartHomeList>
+        </div>
+      </div>
+      <div
+        class="tab-pane"
+        id="etPricing"
+        role="tabpanel"
+        aria-labelledby="pricechart-tab"
+      >
+        <div class="row py-0 m-0">
+          <PriceChart></PriceChart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row p-2 mt-5">
+    <div class="col p-2">
+      <hr />
+      <p>Screen Width: {{ screensize.x }}</p>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { reactive, computed, onMounted, provide } from 'vue'
+import { usageSummary, shDevices, globalData } from '../assets/js/model'
+import { chargePoints, vehicles } from './chargePointList/model'
+import { initConfig } from '@/assets/js/themeConfig'
+import PowerMeter from './powerMeter/PowerMeter.vue'
+import PowerGraph from './powerGraph/PowerGraph.vue'
+import EnergyMeter from './energyMeter/EnergyMeter.vue'
+import ChargePointList from './chargePointList/ChargePointList.vue'
+import ButtonBar from './buttonBar/ButtonBar.vue'
+import BatteryList from './batteryList/BatteryList.vue'
+import PriceChart from './priceChart/PriceChart.vue'
+import SmartHomeList from './smartHome/SmartHomeList.vue'
+import { msgInit } from '@/assets/js/processMessages'
+
+// state
+const screensize = reactive({
+  x: document.documentElement.clientWidth,
+  y: document.documentElement.clientHeight,
+})
+function updateDimensions() {
+  screensize.x = document.documentElement.clientWidth
+  screensize.y = document.documentElement.clientHeight
+}
+const usageDetails = computed(() => {
+  return [usageSummary.evuOut, usageSummary.charging]
+    .concat(
+      Object.values(shDevices).filter(
+        (row) => row.configured && row.showInGraph,
+      ),
+    )
+    .concat([usageSummary.batIn, usageSummary.house])
+})
+const chargepointsToDisplay = computed(() => {
+  return Object.values(chargePoints)
+})
+// methods
+function init() {
+  initConfig()
+  /*   //  readCookie();
+      // set the background
+      const doc = d3.select("html");
+      doc.classed("theme-dark", config.displayMode == "dark");
+      doc.classed("theme-light", config.displayMode == "light");
+      doc.classed("theme-gray", config.displayMode == "gray");
+      // set the color scheme for devices
+      doc.classed(
+        "shcolors-standard",
+        config.smartHomeColors == "standard"
+      );
+      doc.classed(
+        "shcolors-advanced",
+        config.smartHomeColors == "advanced"
+      );
+      doc.classed("shcolors-normal", config.smartHomeColors == "normal"); */
+}
+
+// lifecycle
+onMounted(() => {
+  init()
+  window.addEventListener('resize', updateDimensions)
+  msgInit()
+})
+</script>
+
+<style scoped>
+.nav-tabs {
+  border-bottom: 0.5px solid var(--color-menu);
+}
+.nav-tabs .nav-link {
+  color: var(--color-menu);
+  opacity: 0.5;
+}
+.nav-tabs .nav-link.disabled {
+  color: var(--color-axis);
+  border: 0.5px solid var(--color-axis);
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--color-fg);
+  background-color: var(--color-bg);
+  opacity: 1;
+  border: 1px solid var(--color-menu);
+  border-bottom: 0px;
+}
+.fa-charging-station {
+  color: var(--color-charging);
+}
+.fa-car-battery {
+  color: var(--color-battery);
+}
+.fa-plug {
+  color: var(--color-devices);
+}
+.fa-money-bill-1-wave {
+  color: var(--color-pv);
+}
+</style>
