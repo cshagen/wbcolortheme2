@@ -3,9 +3,9 @@ Ein Theme für die openWB2 (http://openwb.de)
 
 Alpha version, basierend auf der Alpha der openwb2.
 
-![picture of theme](colors1.png)
-
-Das theme is noch nicht in die openwb2 integriert. Es läuft standalone auf dem gleichen Rechner wie die openwb2 selbst. Entweder direkt auf dem Raspberry Pi oder in einem Docker Container:
+![dark background](colors1.png)
+![white background](colors2.png)
+Das theme ist noch nicht in die openwb2 integriert. Es läuft standalone auf dem gleichen Rechner wie die openwb2 selbst. Entweder direkt auf dem Raspberry Pi oder in einem Docker Container:
 
 ## Installation auf Raspi mit openwb2 (node.js notwendig):
 
