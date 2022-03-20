@@ -18,6 +18,7 @@
                 
               >
                 <i :class="plugPillClass"></i>
+                <span class="ms-2"> {{ formatWatt(chargepoint.power) }} </span>
               </span>
             </div>
             <!-- Chargepoint name -->
@@ -57,6 +58,7 @@ import { ChargePoint, ChargeMode } from '@/components/chargePointList/model'
 import { chargemodes } from '@/assets/js/themeConfig'
 import { computed } from 'vue'
 import { modalConfig } from './model'
+import { formatWatt } from '@/assets/js/helpers'
 import BBSelectModal  from './BBSelectModal.vue'
 
 //props

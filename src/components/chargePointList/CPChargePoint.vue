@@ -11,8 +11,8 @@
       </span>
     </template>
 
-    <div class="row m-0 ps-1 mt-1" @click="toggleConfig">
-      <div class="col-8 m-0 p-0">
+    <div class="row m-0 p-1 mt-1" @click="toggleConfig">
+      <div class="col m-0 p-0 d-flex justify-content-between">
         <p
           class="tablecell nameButtonCell p-0 m-0"
           :style="{ color: chargepoint.color }"
@@ -31,8 +31,7 @@
           >
           </span>
         </p>
-      </div>
-      <div class="col-4 m-0 p-0">
+      
         <!-- SoC Information -->
         <p
           class="tablecell p-0 m-0"
@@ -60,7 +59,8 @@
       style="vertical-align: middle"
       @click="toggleConfig"
     >
-      <div class="col-6 tablecell m-0 p-0">
+      <div class="col tablecell m-0 p-0 d-flex justify-content-between">
+        <p>
         <span class="me-2" :style="{ color: statusColor }">
           <i :class="statusIcon"></i>
           {{ statusString }}
@@ -71,12 +71,13 @@
         >
           {{ chargePowerString }}
         </span>
-      </div>
-      <div class="col-6 tablecell m-0 p-0" style="text-align: right">
-        Geladen:
+        </p>
+        <p>
+        <span class="energylabel me-2">Geladen:</span>
         <span>
           {{ chargeEnergyString }}
         </span>
+        </p>
       </div>
     </div>
     <CPChargeConfig
@@ -245,6 +246,9 @@ function toggleConfig() {
 }
 .fa-clock {
   color: var(--color-battery);
+}
+.energylabel {
+  color: var(--color-menu)
 }
 </style>
 >
