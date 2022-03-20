@@ -1,6 +1,11 @@
 import { usageSummary, sourceSummary, globalData } from '@/assets/js/model'
 import { batteries } from './model'
 export function processBatteryMessages(topic: string, message: string) {
+  let index = getIndex(topic)
+  if (index && !(index in batteries)) {
+    console.warn('Invalid battery index received: ' + index)
+    return
+  }
   if (topic == 'openWB/bat/config/configured') {
     globalData.isBatteryConfigured = message == 'true'
   } else if (topic == 'openWB/bat/get/power') {
@@ -17,42 +22,42 @@ export function processBatteryMessages(topic: string, message: string) {
     sourceSummary.batOut.energy = +message / 1000
   } else if (topic == 'openWB/bat/get/daily_yield_import') {
     usageSummary.batIn.energy = +message / 1000
-  } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/daily_yield_export$/i)) {
-    batteries[getIndex(topic)].dailyYieldExport = +message
-  } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/daily_yield_import$/i)) {
-    batteries[getIndex(topic)].dailyYieldImport = +message
-  } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/exported$/i)) {
-    batteries[getIndex(topic)].exported = +message
-  } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/fault_state$/i)) {
-    batteries[getIndex(topic)].faultState = +message
-  } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/fault_str$/i)) {
-    batteries[getIndex(topic)].faultStr = message
-  } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/imported$/i)) {
-    batteries[getIndex(topic)].imported = +message
-  } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/power$/i)) {
-    batteries[getIndex(topic)].power = +message
-  } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/soc$/i)) {
-    batteries[getIndex(topic)].soc = +message
+  } else if (index) {
+    if (topic.match(/^openwb\/bat\/[0-9]+\/get\/daily_yield_export$/i)) {
+      batteries[index].dailyYieldExport = +message
+    } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/daily_yield_import$/i)) {
+      batteries[index].dailyYieldImport = +message
+    } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/exported$/i)) {
+      batteries[index].exported = +message
+    } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/fault_state$/i)) {
+      batteries[index].faultState = +message
+    } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/fault_str$/i)) {
+      batteries[index].faultStr = message
+    } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/imported$/i)) {
+      batteries[index].imported = +message
+    } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/power$/i)) {
+      batteries[index].power = +message
+    } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/soc$/i)) {
+      batteries[index].soc = +message
+    } else {
+      console.warn('Ignored battery message: ' + topic)
+    }
   } else {
-    console.warn('Ignored BATTERY message: ' + topic)
+    console.warn('Ignored battery message: ' + topic)
   }
 }
 
-function getIndex(topic: string): number {
-  // get occurrence of numbers between / / in topic
-  // since  is supposed to be the index like in openwb/lp/4/w
-  // no lookbehind supported by safari, so workaround with replace needed
+function getIndex(topic: string): number | undefined {
   let index = 0
   try {
     var matches = topic.match(/(?:\/)([0-9]+)(?=\/)/g)
     if (matches) {
       index = +matches[0].replace(/[^0-9]+/g, '')
+      return index
+    } else {
+      return undefined
     }
   } catch (e) {
     console.warn('Parser error in getIndex for topic ' + topic)
   }
-  if (typeof index != 'undefined') {
-    index = +index
-  }
-  return index
 }

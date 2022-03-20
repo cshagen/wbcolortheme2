@@ -9,10 +9,7 @@
     </div>
     <nav class="nav nav-tabs nav-justified mx-1 mt-4" role="tablist">
       <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#showAll">
-        <i class="fa-solid fa-xs fa-charging-station me-1"></i>
-        <i class="fa-solid fa-xs fa-car-battery me-1"></i>
-        <i class="fa-solid fa-xs fa-plug me-1"></i>
-        <i class="fa-solid fa-xs fa-money-bill-1-wave me-1"></i>
+        <i class="fa-solid fa-lg fa-circle-info me-1"></i>
         <span class="d-none d-md-inline ms-2">Alle</span>
       </a>
       <a
@@ -23,7 +20,8 @@
         <i class="fa-solid fa-lg fa-charging-station"></i>
         <span class="d-none d-md-inline ms-2">Ladepunkte</span>
       </a>
-      <a class="nav-link" data-bs-toggle="tab" data-bs-target="#batterylist">
+      <a class="nav-link" data-bs-toggle="tab" data-bs-target="#batterylist"
+      v-if="globalData.isBatteryConfigured">
         <i class="fa-solid fa-lg fa-car-battery"></i>
         <span class="d-none d-md-inline ms-2">Speicher</span>
       </a>
@@ -31,7 +29,8 @@
         <i class="fa-solid fa-lg fa-plug"></i>
         <span class="d-none d-md-inline ms-2">Smart Home</span>
       </a>
-      <a class="nav-link" data-bs-toggle="tab" data-bs-target="#etPricing">
+      <a class="nav-link" data-bs-toggle="tab" data-bs-target="#etPricing"
+        v-if="etData.isEtEnabled">
         <i class="fa-solid fa-lg fa-money-bill-1-wave"></i>
         <span class="d-none d-md-inline ms-2">Strompreis</span>
       </a>
@@ -105,6 +104,7 @@
 import { reactive, computed, onMounted, provide } from 'vue'
 import { usageSummary, shDevices, globalData } from '../assets/js/model'
 import { chargePoints, vehicles } from './chargePointList/model'
+import { etData } from './priceChart/model'
 import { initConfig } from '@/assets/js/themeConfig'
 import PowerMeter from './powerMeter/PowerMeter.vue'
 import PowerGraph from './powerGraph/PowerGraph.vue'
@@ -140,22 +140,6 @@ const chargepointsToDisplay = computed(() => {
 // methods
 function init() {
   initConfig()
-  /*   //  readCookie();
-      // set the background
-      const doc = d3.select("html");
-      doc.classed("theme-dark", config.displayMode == "dark");
-      doc.classed("theme-light", config.displayMode == "light");
-      doc.classed("theme-gray", config.displayMode == "gray");
-      // set the color scheme for devices
-      doc.classed(
-        "shcolors-standard",
-        config.smartHomeColors == "standard"
-      );
-      doc.classed(
-        "shcolors-advanced",
-        config.smartHomeColors == "advanced"
-      );
-      doc.classed("shcolors-normal", config.smartHomeColors == "normal"); */
 }
 
 // lifecycle
@@ -186,7 +170,9 @@ onMounted(() => {
   border: 1px solid var(--color-menu);
   border-bottom: 0px;
 }
-.fa-charging-station {
+.fa-circle-info {
+  color: var(--color-fg)
+}.fa-charging-station {
   color: var(--color-charging);
 }
 .fa-car-battery {

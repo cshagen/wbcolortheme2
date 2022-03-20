@@ -1,5 +1,5 @@
 <template>
-  <WBWidget>
+  <WBWidget v-if="etData.isEtEnabled">
     <template v-slot:title> Preisbasiertes Laden </template>
     <template v-slot:buttons>
       <span class="color-charging"> Max: {{ etData.etMaxPrice }} ct</span>

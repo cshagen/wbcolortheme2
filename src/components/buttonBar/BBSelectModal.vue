@@ -1,11 +1,11 @@
 <template>
-  <div class="modal fade" :id="modalId">
+  <div class="modal" :id="modalId">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h3 class="modal-title">Lademodus für Ladepunkt {{ cp.name }}</h3>
 
-          <button type="button" class="btn-close buttonTextSize" data-bs-dismiss="modal"></button>
+          <button type="button" class="btn-close buttonTextSize d-flex justify-content-center pt-3 pb-0 " data-bs-dismiss="modal"><i class="fa-solid fa-lg fa-rectangle-xmark m-0 p-0"></i></button>
         </div>
         <div class="modal-body" style="background-color: var(--color-bg);">
           <div class="container-fluid p-0 m-0">
@@ -144,16 +144,13 @@ function priorityButtonClass(m: string) {
 }
 function selectChargeMode(mode: ChargeMode) {
   cp.value.chargeMode = mode
-   mod.hide();
 }
 function lockCP (flag:boolean) {
   cp.value.isLocked = flag
   mod.hide()
 }
 function setBatteryPriority(flag: boolean) {
-  console.log(flag)
   globalData.pvBatteryPriority = flag
-  mod.hide()
 }
 
 // lifecycle
@@ -177,6 +174,11 @@ onMounted(() => {
 }
 .modal-footer {
   text-align: right;
+}
+.modal-header .btn-close {
+  color: var(--color-fg);
+  background: var(--color-bg);
+  border: 0px;
 }
 </style>>
 
