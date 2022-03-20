@@ -1,12 +1,15 @@
 <template>
   <div class="container-fluid p-0 m-0 theme-colors">
+    <!-- Button Bar -->
     <ButtonBar></ButtonBar>
     <hr />
+    <!-- Main Widgets -->
     <div class="row py-0 px-0 m-0">
       <PowerMeter></PowerMeter>
       <PowerGraph></PowerGraph>
       <EnergyMeter :usageDetails="usageDetails"></EnergyMeter>
     </div>
+    <!-- Tabbed area -->
     <nav class="nav nav-tabs nav-justified mx-1 mt-4" role="tablist">
       <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#showAll">
         <i class="fa-solid fa-lg fa-circle-info me-1"></i>
@@ -20,8 +23,12 @@
         <i class="fa-solid fa-lg fa-charging-station"></i>
         <span class="d-none d-md-inline ms-2">Ladepunkte</span>
       </a>
-      <a class="nav-link" data-bs-toggle="tab" data-bs-target="#batterylist"
-      v-if="globalData.isBatteryConfigured">
+      <a
+        class="nav-link"
+        data-bs-toggle="tab"
+        data-bs-target="#batterylist"
+        v-if="globalData.isBatteryConfigured"
+      >
         <i class="fa-solid fa-lg fa-car-battery"></i>
         <span class="d-none d-md-inline ms-2">Speicher</span>
       </a>
@@ -29,12 +36,17 @@
         <i class="fa-solid fa-lg fa-plug"></i>
         <span class="d-none d-md-inline ms-2">Smart Home</span>
       </a>
-      <a class="nav-link" data-bs-toggle="tab" data-bs-target="#etPricing"
-        v-if="etData.isEtEnabled">
+      <a
+        class="nav-link"
+        data-bs-toggle="tab"
+        data-bs-target="#etPricing"
+        v-if="etData.isEtEnabled"
+      >
         <i class="fa-solid fa-lg fa-money-bill-1-wave"></i>
         <span class="d-none d-md-inline ms-2">Strompreis</span>
       </a>
     </nav>
+    <!-- Tab panes -->
     <div class="tab-content mx-0 pt-1" id="cpContent">
       <div
         class="tab-pane active"
@@ -91,7 +103,7 @@
       </div>
     </div>
   </div>
-
+  <!-- Footer -->
   <div class="row p-2 mt-5">
     <div class="col p-2">
       <hr />
@@ -171,8 +183,9 @@ onMounted(() => {
   border-bottom: 0px;
 }
 .fa-circle-info {
-  color: var(--color-fg)
-}.fa-charging-station {
+  color: var(--color-fg);
+}
+.fa-charging-station {
   color: var(--color-charging);
 }
 .fa-car-battery {

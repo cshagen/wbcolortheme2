@@ -3,13 +3,9 @@
     <template v-slot:title>
       <span @click="toggleConfig">{{ props.chargepoint.name }}</span>
     </template>
-    
+
     <template v-slot:buttons>
-      <span
-        class="ms-2 pt-1  "
-        :style="modePillStyle"
-        @click="toggleConfig"
-      >
+      <span class="ms-2 pt-1" :style="modePillStyle" @click="toggleConfig">
         <i class="fa me-1" :class="modeIcon"> </i> {{ modeString }}
         <span class="fa-solid fa-lg ps-1 buttonIcon" :class="buttonIcon"></span>
       </span>
@@ -23,10 +19,15 @@
         >
           <i class="fa-solid fa-sm fa-car"> </i>
           <span class="px-2">{{ chargepoint.vehicleName }}</span>
+
           <span
-            v-if="chargepoint.scheduledCharging" 
-            class="fa-solid fa-xs fa-clock pl-1"
-            :style="{ color: 'var(--color-fg)' }"
+            v-if="chargepoint.hasPriority"
+            class="fa-solid fa-xs fa-star ps-1"
+          >
+          </span>
+          <span
+            v-if="chargepoint.scheduledCharging"
+            class="fa-solid fa-xs fa-clock ps-1"
           >
           </span>
         </p>
@@ -60,10 +61,7 @@
       @click="toggleConfig"
     >
       <div class="col-6 tablecell m-0 p-0">
-        <span
-          class="me-2 "
-          :style="{ color: statusColor }"
-        >
+        <span class="me-2" :style="{ color: statusColor }">
           <i :class="statusIcon"></i>
           {{ statusString }}
         </span>
@@ -134,13 +132,16 @@ const chargeEnergyString = computed(() => {
   if (props.chargepoint.dailyYield > 0) {
     return (
       formatWattH(props.chargepoint.dailyYield, globalConfig.decimalPlaces) +
-         
-        ((props.chargepoint.averageConsumption) ?
-        ' / ' + (Math.round(props.chargepoint.dailyYield /
-          props.chargepoint.averageConsumption /
-          10) 
-          + ' km') : ""
-    ))
+      (props.chargepoint.averageConsumption
+        ? ' / ' +
+          (Math.round(
+            props.chargepoint.dailyYield /
+              props.chargepoint.averageConsumption /
+              10,
+          ) +
+            ' km')
+        : '')
+    )
   } else {
     return '0 Wh'
   }
@@ -236,7 +237,14 @@ function toggleConfig() {
   background: 'var(--bg) ';
 }
 .buttonIcon {
-  color: var(--color-menu)
+  color: var(--color-menu);
+}
+
+.fa-star {
+  color: var(--color-evu);
+}
+.fa-clock {
+  color: var(--color-battery);
 }
 </style>
 >
