@@ -6,23 +6,19 @@
     </p>
 
     <!-- Ampere -->
-    <CPChargeConfigItem title="Stromstärke:">
-      <input
-        type="range"
-        class="form-range"
-        id="targetCurrent"
-        min="6"
-        max="32"
-        v-model.number="cp.instantTargetCurrent"
-      />
-      <span class="d-flex justify-content-center align-items-center"
-        >{{ cp.instantTargetCurrent }} A</span
-      >
+    <CPChargeConfigItem title="Stromstärke">
+    <RangeInput
+      id="targetCurrent"
+      :min="6"
+      :max="32"
+      :step="1"
+      unit="A"
+      v-model="cp.instantTargetCurrent"
+    ></RangeInput>
     </CPChargeConfigItem>
-
     <hr v-if="cp.instantChargeLimitMode != 'none'" />
     <!-- Limit Mode -->
-    <CPChargeConfigItem :title="'Begrenzung:'">
+    <CPChargeConfigItem title="Begrenzung">
       <select
         v-model="cp.instantChargeLimitMode"
         class="form-select chargeConfigSelect"
@@ -42,38 +38,31 @@
     <!-- Max SoC -->
     <CPChargeConfigItem
       v-if="cp.instantChargeLimitMode == 'soc'"
-      title="Maximaler SoC:"
+      title="Maximaler SoC"
     >
-      <input
-        type="range"
-        class="form-range"
-        id="maxSoc"
-        min="0"
-        max="100"
-        v-model.number="cp.instantTargetSoc"
-      />
-      <span class="d-flex justify-content-center align-items-center">
-        {{ cp.instantTargetSoc }} %</span
-      >
+    <RangeInput
+      id="maxSoc"
+      :min="0"
+      :max="100"
+      :step="1"
+      unit="%"
+      v-model="cp.instantTargetSoc"
+    ></RangeInput>
     </CPChargeConfigItem>
 
     <!-- Max Energy -->
     <CPChargeConfigItem
       v-if="cp.instantChargeLimitMode == 'amount'"
-      title="Zu ladende Energie:"
+      title="Zu ladende Energie"
     >
-      <input
-        type="range"
-        class="form-range"
-        id="maxEnergy"
-        min="0"
-        max="100"
-        v-model.number="cp.instantMaxEnergy"
-        
-      />
-      <span class="d-flex justify-content-center align-items-center"
-        >{{ cp.instantMaxEnergy }} kW</span
-      >
+    <RangeInput
+      id="maxEnergy"
+      :min="0"
+      :max="100"
+      :step="1"
+      unit="kWh"
+      v-model="cp.instantMaxEnergy"
+    ></RangeInput>
     </CPChargeConfigItem>
   </div>
 </template>
@@ -81,36 +70,19 @@
 <script setup lang="ts">
 // import { eventBus } from '@/main.js'
 import { ref, computed } from 'vue'
-import { vehicles, chargeTemplates } from './model'
 import type { ChargePoint } from './model'
 import CPChargeConfigItem from './CPChargeConfigItem.vue'
-  const props = defineProps<{
-    chargepoint: ChargePoint
-  }>()
-      const cp = ref(props.chargepoint)
-      const instantChargeLimitModes= [
-        {name: "keine", id: 'none'},
-        {name: 'EV-SoC', id: 'soc'},
-        {name: 'Energiemenge', id: 'amount'}
-      ]
-  // methods
-    function setTargetCurrent () {
-      // eventBus.$emit ('update', 'instantTargetCurrent', +this.cp.instantTargetCurrent, this.chargeTemplateId)
-    }
-    function setChargeLimitMode() {
-      // eventBus.$emit('update', 'instantChargeLimit', this.cp.instantChargeLimitMode, this.chargeTemplateId)
-    }
-    function setTargetSoc() {
-      // eventBus.$emit('update', 'instantTargetSoc', +this.cp.instantTargetSoc, this.chargeTemplateId)
-    }
-    function setMaxEnergy() {
-      // eventBus.$emit('update', 'instantMaxEnergy', +this.cp.instantMaxEnergy, this.chargeTemplateId)
-    }
-  // computed
-    const chargeTemplateId = computed (() => {
-      console.log (cp.value)
-      return cp.value.chargeTemplate
-    })
+import RangeInput from '@/components/RangeInput.vue'
+const props = defineProps<{
+  chargepoint: ChargePoint
+}>()
+const cp = ref(props.chargepoint)
+const instantChargeLimitModes = [
+  { name: 'keine', id: 'none' },
+  { name: 'EV-SoC', id: 'soc' },
+  { name: 'Energiemenge', id: 'amount' },
+]
+// methods
 </script>
 
 <style scoped>

@@ -1,5 +1,5 @@
 <template>
-  <div class="row p-1">
+  <div class="row p-1 pt-2 d-flex align-items-center">
     <div class="col-4">
       {{ title }}
     </div>
