@@ -2,7 +2,7 @@
   <WBWidget>
     <template v-slot:title>Aktuelle Leistung</template>
     <template v-slot:buttons>
-      <PMMenu v-on:resetArcs="resetArcs"></PMMenu>
+      <PMMenu @resetArcs="resetArcs"></PMMenu>
     </template>
     <figure id="powermeter" class="p-0 m-0">
       <svg :viewBox="'0 0 ' + width + ' ' + height">
@@ -14,21 +14,17 @@
             :cornerRadius="cornerRadius"
             :circleGapSize="circleGapSize"
             :emptyPower="emptyPower"
-            scaleColor="var(--color-scale)"
-            bgColor="var(--color-bg)"
           ></PMSourceArc>
-         
-        <PMUsageArc
+
+          <PMUsageArc
             :usageSummary="usageSummary"
             :shDevice="shDevices"
             :radius="radius"
             :cornerRadius="cornerRadius"
             :circleGapSize="circleGapSize"
             :emptyPower="emptyPower"
-            scaleColor="scaleColor"
-            bgColor="bgColor"
-          ></PMUsageArc> 
-          
+          ></PMUsageArc>
+
           <!-- Show the values for the different categories -->
           <PMLabel
             :x="0"
@@ -132,8 +128,9 @@
             text-anchor="middle"
             fill="var(--color-axis)"
             font-size="12"
-          >Peak: {{ maxPowerString }}</text>
-  
+          >
+            Peak: {{ maxPowerString }}
+          </text>
         </g>
       </svg>
     </figure>
@@ -152,8 +149,6 @@ import PMLabel from "./PMLabel.vue";
 import WBWidget from "../WBWidget.vue";
 import { formatWatt } from "@/assets/js/helpers";
 
-
-
 // state:
 const width = 500
 const margin = 20
@@ -167,18 +162,6 @@ const height = computed(() => {
 const radius = computed(() => {
   return width / 2 - margin;
 })
-const emptyPower = computed(() => {
-  // with relative arcs, this is the empty portion of the arc
-  let result = 0;
-  if (globalConfig.showRelativeArcs) {
-    result =
-      globalConfig.maxPower -
-      (sourceSummary.pv.power +
-        sourceSummary.evuIn.power +
-        sourceSummary.batOut.power);
-  }
-  return result < 0 ? 0 : result;
-})
 const currentConsumptionString = computed(() => {
   return formatWatt(
     globalData.housePower +
@@ -188,7 +171,6 @@ const currentConsumptionString = computed(() => {
     globalConfig.decimalPlaces
   );
 })
-
 const maxPowerString = computed(() => {
   let currentPower =
     sourceSummary.pv.power +
@@ -201,31 +183,30 @@ const maxPowerString = computed(() => {
 const chargepoints  = computed(() => {
   return Object.values(chargePoints);
 })
-
-
+const emptyPower = computed(() => {
+  // with relative arcs, this is the empty portion of the arc
+  let result = 0
+  if (globalConfig.showRelativeArcs) {
+    result =
+      globalConfig.maxPower -
+      (sourceSummary.pv.power +
+        sourceSummary.evuIn.power +
+        sourceSummary.batOut.power)
+  }
+  return result < 0 ? 0 : result
+})
 // methods
-// Toggle the view between fixed and variable arc lengths
-function toggleFixArcs() {
-  globalConfig.showRelativeArcs = !globalConfig.showRelativeArcs;
-  // eventBus.$emit("writeCookie");
-}
 function resetArcs() {
   let maxPower =
     sourceSummary.pv.power +
     sourceSummary.evuIn.power +
     sourceSummary.batOut.power;
-  // this.config.maxPower = this.maxPower;
-  //eventBus.$emit("resetArcs", maxPower);
+
+    globalConfig.maxPower = maxPower
 }
 function soc(i: number) {
   return chargepoints.value[i].soc
-  //let carId = this.chargepoints[i].carId
-  //return (this.vehicle.length > carId) ? this.vehicle[carId].soc : 0
-
 }
-  
-
-
 </script>
 
 <style></style>

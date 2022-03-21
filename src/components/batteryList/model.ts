@@ -25,3 +25,9 @@ export function addBattery(index: number) {
     }
   }
   
+  export function resetBatteries() {
+    Object.keys(batteries).forEach((key) => {
+      delete batteries [parseInt(key)]
+    })
+  }
+  

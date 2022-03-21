@@ -15,14 +15,14 @@
         ><span class="fa fa-th px-0"></span> Graph: Raster an/aus</a
       >
       <a class="dropdown-item" href="#" v-on:click="toggleFixArcs"
-        ><span class="fa fa-chart-area px-0"></span> Fixe Bögen an/aus </a
-      >
+        ><span class="fa fa-chart-area px-0"></span> Fixe Bögen an/aus
+      </a>
       <a
         v-if="globalConfig.showRelativeArcs"
         class="dropdown-item"
         id="meterResetButton"
         href="#"
-        @click="$emit('resetArcs')"
+        @click="emit('resetArcs')"
         ><span class="fa fa-undo"></span> Bögen reset</a
       >
       <a class="dropdown-item" href="#" v-on:click="switchDecimalPlaces"
@@ -38,8 +38,15 @@
 </template>
 
 <script setup lang="ts">
-import { globalConfig, switchTheme, toggleGrid, toggleFixArcs, switchDecimalPlaces, switchSmarthomeColors  }  from '@/assets/js/themeConfig'
+import {
+  globalConfig,
+  switchTheme,
+  toggleGrid,
+  toggleFixArcs,
+  switchDecimalPlaces,
+  switchSmarthomeColors,
+} from '@/assets/js/themeConfig'
+const emit = defineEmits(['resetArcs'])
 </script>
 
-<style>
-</style>
+<style></style>

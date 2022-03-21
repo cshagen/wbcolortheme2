@@ -257,3 +257,8 @@ export function addChargePoint(chargePointIndex: number) {
     console.info('Duplicate chargepoint message: ' + chargePointIndex)
   }
 }
+export function resetChargePoints() {
+  Object.keys(chargePoints).forEach((key) => {
+    delete chargePoints [parseInt(key)]
+  })
+}

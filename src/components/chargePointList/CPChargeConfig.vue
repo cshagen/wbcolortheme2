@@ -21,27 +21,20 @@
       </div>
     </CPChargeConfigItem>
     <!-- Select the vehicle -->
-    <CPChargeConfigItem :title="'Fahrzeug'">
-      <select
-        v-model="cp.connectedVehicle"
-        class="form-select chargeConfigSelect"
-      >
-        <option v-for="car in vehicles" :key="car.id" :value="car.id">
-          {{ car.name }}
-        </option>
-      </select>
+    <CPChargeConfigItem title="Fahrzeug">
+      <SelectInput
+        :options="Object.values(vehicles).map((v) => [v.name, v.id])"
+        v-model.number="cp.connectedVehicle"
+      ></SelectInput>
     </CPChargeConfigItem>
     <!-- Select the charge mode -->
     <CPChargeConfigItem :title="'Lademodus'">
-      <select v-model="cp.chargeMode" class="form-select chargeConfigSelect">
-        <option
-          v-for="(key, index) in Object.keys(chargemodes)"
-          :key="index"
-          :value="key"
-        >
-          {{ chargemodes[key].name }}
-        </option>
-      </select>
+      <SelectInput
+        :options="
+          Object.keys(chargemodes).map((v) => [chargemodes[v].name, v])
+        "
+        v-model="cp.chargeMode"
+      ></SelectInput>
     </CPChargeConfigItem>
     <!-- Priority -->
     <CPChargeConfigItem title="Priorität">
@@ -101,8 +94,7 @@ import { ChargePoint, vehicles, chargeTemplates } from './model'
 import CPChargeConfigItem from './CPChargeConfigItem.vue'
 import CPConfigInstant from './CPConfigInstant.vue'
 import CPConfigPv from './CPConfigPv.vue'
-// import { eventBus } from '@/main.js'
-
+import SelectInput from '@/components/SelectInput.vue'
 const props = defineProps<{
   chargepoint: ChargePoint
 }>()
@@ -112,7 +104,7 @@ const cp = props.chargepoint
 
 // methods
 function toggleConfig() {
-  console.log (vehicles)
+  console.log(vehicles)
   emit('closeConfig')
 }
 </script>

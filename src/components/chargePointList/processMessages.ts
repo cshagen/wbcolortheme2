@@ -120,13 +120,16 @@ export function processChargepointMessages(topic: string, message: string) {
 }
 export function processVehicleMessages(topic: string, message: string) {
   let index = getIndex(topic)
-  if (index) {
-    if (!(index in vehicles)) {
-      let v = new Vehicle(index)
-      vehicles[index] = v
-      console.info('New vehicle created: ' + index)
-    }
+  if (index != undefined) {
+    
     if (topic.match(/^openwb\/vehicle\/[0-9]+\/name$/i)) {
+      // create vehicle entry if not yet existing
+      console.log("VEHICLE: "+ message)
+      if (!(index in vehicles)) {
+        let v = new Vehicle(index)
+        vehicles[index] = v
+        console.info('New vehicle created: ' + index)
+      }
       // set car Name for charge point
       Object.values(chargePoints).forEach((cp) => {
         if (cp.connectedVehicle == index) {

@@ -55,10 +55,10 @@
         aria-labelledby="showall-tab"
       >
         <div class="row py-0 m-0">
-          <ChargePointList></ChargePointList>
-          <BatteryList></BatteryList>
-          <SmartHomeList></SmartHomeList>
-          <PriceChart></PriceChart>
+          <ChargePointList :variableWidth="widgetCount < 3"> </ChargePointList>
+          <BatteryList :variableWidth="widgetCount < 3"> </BatteryList>
+          <SmartHomeList :variableWidth="widgetCount < 3"> </SmartHomeList>
+          <PriceChart :variableWidth="widgetCount < 3"> </PriceChart>
         </div>
       </div>
       <div
@@ -68,7 +68,10 @@
         aria-labelledby="chargepoint-tab"
       >
         <div class="row py-0 m-0">
-          <ChargePointList></ChargePointList>
+          <ChargePointList
+            :variableWidth="Object.values(chargePoints).length < 3"
+          >
+          </ChargePointList>
         </div>
       </div>
       <div
@@ -78,7 +81,7 @@
         aria-labelledby="battery-tab"
       >
         <div class="row py-0 m-0">
-          <BatteryList></BatteryList>
+          <BatteryList :variable-width="false"></BatteryList>
         </div>
       </div>
       <div
@@ -115,7 +118,7 @@
 <script setup lang="ts">
 import { reactive, computed, onMounted, provide } from 'vue'
 import { usageSummary, shDevices, globalData } from '../assets/js/model'
-import { chargePoints, vehicles } from './chargePointList/model'
+import { chargePoints } from './chargePointList/model'
 import { etData } from './priceChart/model'
 import { initConfig } from '@/assets/js/themeConfig'
 import PowerMeter from './powerMeter/PowerMeter.vue'
@@ -148,6 +151,15 @@ const usageDetails = computed(() => {
 })
 const chargepointsToDisplay = computed(() => {
   return Object.values(chargePoints)
+})
+const widgetCount = computed(() => {
+  let result = Object.values(chargePoints).length
+  if (globalData.isBatteryConfigured) {
+    result = result + 1
+  }
+  // Smarthome tbd
+  result = result + 1
+  return result
 })
 // methods
 function init() {

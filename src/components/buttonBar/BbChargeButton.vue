@@ -1,12 +1,13 @@
 <template>
-  <div class="col-lg p-0 m-0 mt-1">
+  <div class="p-0 m-0 mt-1" :class="columnSetting">
     <div class="d-grid gap-2">
       <button
         type="button"
         class="btn mx-1 mb-1 p-1 largeTextSize chargeButton"
         @click="cpSelected"
         :style="buttonStyle"
-        data-bs-toggle="modal" :data-bs-target="'#'+ modalId"
+        data-bs-toggle="modal"
+        :data-bs-target="'#' + modalId"
       >
         <div class="container-fluid m-0 p-0">
           <div class="row m-0 p-0">
@@ -15,10 +16,9 @@
               <span
                 v-if="chargepoint.isPluggedIn"
                 class="mx-1 badge rounded-pill smallTextSize plugIndicator"
-                
               >
                 <i :class="plugPillClass"></i>
-                <span class="ms-2"> {{ formatWatt(chargepoint.power) }} </span>
+                <span v-if="chargepoint.isCharging" class="ms-2"> {{ formatWatt(chargepoint.power) }} </span>
               </span>
             </div>
             <!-- Chargepoint name -->
@@ -45,10 +45,7 @@
         </div>
       </button>
     </div>
-    <BBSelectModal
-      :cpId="chargepoint.id"
-      :modalId="modalId"
-    ></BBSelectModal>
+    <BBSelectModal :cpId="chargepoint.id" :modalId="modalId"></BBSelectModal>
   </div>
 </template>
 
@@ -63,7 +60,8 @@ import BBSelectModal  from './BBSelectModal.vue'
 
 //props
 const props = defineProps<{
-  chargepoint: ChargePoint
+  chargepoint: ChargePoint,
+  chargePointCount: number
 }>()
 
 // const emit = defineEmits(['cpSelected'])
@@ -81,7 +79,7 @@ const buttonStyle = computed(() => {
     style.background = 'var(--color-charging)'
   } else if (props.chargepoint.isPluggedIn) {
     style.background = 'var(--color-battery)'
-  } 
+  }
   return style
 })
 interface buttonStyle {
@@ -145,22 +143,14 @@ const plugPillClass = computed(() => {
   }
   return 'fa ' + icon
 })
-/* const plugPillStyle = computed(() => {
-  let style= {
-    color: 'white',
-    border: 'white'
-  }
-/*    if (props.chargepoint.isLocked) {
-    style.background = 'var(--color-evu)'
-  } else if (props.chargepoint.isCharging) {
-    style.background = 'var(--color-charging)'
-  } else if (props.chargepoint.isPluggedIn) {
-    style.background = 'var(--color-battery)'
+const columnSetting = computed(() => {
+  if (props.chargePointCount > 3) {
+    return "col-lg-4"
   } else {
-    style.background = 'var(--color-evu)'
-  } */
-//  return style 
-//}) */
+    return "col-lg"
+  }
+})
+
 // methods
 function cpSelected() {
   modalConfig.showSelectModal.push(props.chargepoint.id)
@@ -176,7 +166,7 @@ function swapcolors(style: buttonStyle): buttonStyle {
 
 <style scoped>
 .plugIndicator {
-   color: white;
+  color: white;
   border: 1px solid white;
   text-align: left;
 }

@@ -12,6 +12,7 @@
             v-for="(cp, index) in chargepointsToDisplay"
             :key="index"
             :chargepoint="cp"
+            :chargePointCount="Object.values(chargePoints).length"
             @cpSelected="cpSelected"
           ></BbChargeButton>
         </div>
@@ -22,12 +23,10 @@
 
 <script setup lang="ts">
 import { reactive, ref, computed } from 'vue'
-import { globalData } from '../../assets/js/model'
-import type { ChargePoint, Vehicle } from '../chargePointList/model';
-import { chargePoints, vehicles } from '../chargePointList/model';
+import type { ChargePoint} from '../chargePointList/model';
+import { chargePoints } from '../chargePointList/model';
 // import { eventBus } from '@/main.js'
 import BbChargeButton from './BbChargeButton.vue'
-import BBSelectModal from './BBSelectModal.vue'
 import { modalConfig } from './model';
 
 // state  

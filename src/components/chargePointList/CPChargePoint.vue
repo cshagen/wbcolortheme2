@@ -1,5 +1,5 @@
 <template>
-  <WBWidget>
+  <WBWidget :variable-width="variableWidth">
     <template v-slot:title>
       <span @click="toggleConfig">{{ props.chargepoint.name }}</span>
     </template>
@@ -11,11 +11,14 @@
       </span>
     </template>
 
-    <div class="row m-0 p-1 mt-1" @click="toggleConfig">
+    <!-- First row -->
+    <div class="row m-0 p-1 mt-1" >
       <div class="col m-0 p-0 d-flex justify-content-between">
+        <!-- Car info -->
         <p
-          class="tablecell nameButtonCell p-0 m-0"
+          class="tablecell carinfo p-0 m-0"
           :style="{ color: chargepoint.color }"
+          @click="toggleConfig"
         >
           <i class="fa-solid fa-sm fa-car"> </i>
           <span class="px-2">{{ chargepoint.vehicleName }}</span>
@@ -31,8 +34,7 @@
           >
           </span>
         </p>
-      
-        <!-- SoC Information -->
+        <!-- SoC Info -->
         <p
           class="tablecell p-0 m-0"
           style="text-align: right; vertical-align: middle"
@@ -54,29 +56,30 @@
         </p>
       </div>
     </div>
+    <!-- Second row -->
     <div
       class="row m-1 mt-2 p-0"
-      style="vertical-align: middle"
       @click="toggleConfig"
     >
       <div class="col tablecell m-0 p-0 d-flex justify-content-between">
+        <!-- Status information -->
         <p>
-        <span class="me-2" :style="{ color: statusColor }">
-          <i :class="statusIcon"></i>
-          {{ statusString }}
-        </span>
-        <span
-          v-if="chargepoint.isCharging && !chargepoint.isLocked"
-          class="mx-1"
-        >
-          {{ chargePowerString }}
-        </span>
+          <span class="me-2" :style="{ color: statusColor }">
+            <i :class="statusIcon"></i>
+            {{ statusString }}
+          </span>
+          <span
+            v-if="chargepoint.isCharging && !chargepoint.isLocked"
+            class="mx-1"
+          >
+            {{ chargePowerString }}
+            </span>
         </p>
         <p>
-        <span class="energylabel me-2">Geladen:</span>
-        <span>
-          {{ chargeEnergyString }}
-        </span>
+          <span class="energylabel me-2">Geladen:</span>
+          <span>
+            {{ chargeEnergyString }}
+          </span>
         </p>
       </div>
     </div>
@@ -92,33 +95,20 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { formatWatt, formatWattH } from '@/assets/js/helpers'
-import type { ChargePoint, Vehicle } from './model'
+import type { ChargePoint } from './model'
 import { globalConfig, chargemodes } from '@/assets/js/themeConfig'
 import WBWidget from '../WBWidget.vue'
 import CPChargeConfig from './CPChargeConfig.vue'
 
 const props = defineProps<{
-  chargepoint: ChargePoint
+  chargepoint: ChargePoint,
+  variableWidth: boolean
 }>()
 // state
 const phaseSymbols = ['/', '\u2460', '\u2461', '\u2462']
 let showConfig = ref(false)
 
 // computed
-const switchStyle = computed(() => {
-  return {
-    'fa-toggle-on': true,
-    'fa-toggle-off': false,
-    'text-green': true,
-    'text-red': false,
-  }
-})
-const plugStyle = computed(() => {
-  return {
-    'text-orange': !props.chargepoint.isCharging,
-    'text-green': props.chargepoint.isCharging,
-  }
-})
 const chargePowerString = computed(() => {
   return (
     formatWatt(props.chargepoint.power, globalConfig.decimalPlaces) +
@@ -248,7 +238,8 @@ function toggleConfig() {
   color: var(--color-battery);
 }
 .energylabel {
-  color: var(--color-menu)
+  color: var(--color-menu);
 }
+
 </style>
 >

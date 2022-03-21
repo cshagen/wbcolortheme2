@@ -7,47 +7,39 @@
 
     <!-- Ampere -->
     <CPChargeConfigItem title="Stromstärke">
-    <RangeInput
-      id="targetCurrent"
-      :min="6"
-      :max="32"
-      :step="1"
-      unit="A"
-      v-model="cp.instantTargetCurrent"
-    ></RangeInput>
+      <RangeInput
+        id="targetCurrent"
+        :min="6"
+        :max="32"
+        :step="1"
+        unit="A"
+        v-model="cp.instantTargetCurrent"
+      ></RangeInput>
     </CPChargeConfigItem>
     <hr v-if="cp.instantChargeLimitMode != 'none'" />
     <!-- Limit Mode -->
     <CPChargeConfigItem title="Begrenzung">
-      <select
+      <SelectInput
+        :options="instantChargeLimitModes.map((e) => [e.name, e.id])"
         v-model="cp.instantChargeLimitMode"
-        class="form-select chargeConfigSelect"
+      
+        ></SelectInput
       >
-        <option
-          v-for="(mode, index) in instantChargeLimitModes"
-          :key="index"
-          :value="mode.id"
-          class="d-flex justify-content-center align-items-center"
-        >
-          <span class="d-flex justify-content-center align-items-center">{{
-            mode.name
-          }}</span>
-        </option>
-      </select>
+      
     </CPChargeConfigItem>
     <!-- Max SoC -->
     <CPChargeConfigItem
       v-if="cp.instantChargeLimitMode == 'soc'"
       title="Maximaler SoC"
     >
-    <RangeInput
-      id="maxSoc"
-      :min="0"
-      :max="100"
-      :step="1"
-      unit="%"
-      v-model="cp.instantTargetSoc"
-    ></RangeInput>
+      <RangeInput
+        id="maxSoc"
+        :min="0"
+        :max="100"
+        :step="1"
+        unit="%"
+        v-model="cp.instantTargetSoc"
+      ></RangeInput>
     </CPChargeConfigItem>
 
     <!-- Max Energy -->
@@ -55,14 +47,14 @@
       v-if="cp.instantChargeLimitMode == 'amount'"
       title="Zu ladende Energie"
     >
-    <RangeInput
-      id="maxEnergy"
-      :min="0"
-      :max="100"
-      :step="1"
-      unit="kWh"
-      v-model="cp.instantMaxEnergy"
-    ></RangeInput>
+      <RangeInput
+        id="maxEnergy"
+        :min="0"
+        :max="100"
+        :step="1"
+        unit="kWh"
+        v-model="cp.instantMaxEnergy"
+      ></RangeInput>
     </CPChargeConfigItem>
   </div>
 </template>
@@ -73,6 +65,7 @@ import { ref, computed } from 'vue'
 import type { ChargePoint } from './model'
 import CPChargeConfigItem from './CPChargeConfigItem.vue'
 import RangeInput from '@/components/RangeInput.vue'
+import SelectInput from '@/components/SelectInput.vue'
 const props = defineProps<{
   chargepoint: ChargePoint
 }>()

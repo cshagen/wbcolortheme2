@@ -5,8 +5,8 @@ import { globalData, sourceSummary, usageSummary } from './model'
 import { processGraphMessages, initGraph } from '../../components/powerGraph/processGraphData'
 import { processBatteryMessages } from '@/components/batteryList/processMessages'
 import { processEtProviderMessages } from '@/components/priceChart/processMessages'
-import { addChargePoint } from '@/components/chargePointList/model'
-import { addBattery } from '@/components/batteryList/model'
+import { addChargePoint, resetChargePoints } from '@/components/chargePointList/model'
+import { addBattery, resetBatteries } from '@/components/batteryList/model'
 import {
   processChargepointMessages,
   processVehicleMessages,
@@ -94,6 +94,9 @@ function processGlobalCounterMessages(topic: string, message: string) {
   if (topic.match(/^openwb\/counter\/get\/hierarchy$/i)) {
     var hierarchy = JSON.parse(message)
     if (hierarchy.length) {
+      resetChargePoints()
+      resetBatteries()
+
       for (const element of hierarchy) {
         if (element.type == 'counter') {
           globalData.evuId = element.id
@@ -115,7 +118,7 @@ function processGlobalCounterMessages(topic: string, message: string) {
 function processHierarchy(hierarchy: Hierarchy) {
   switch (hierarchy.type) {
     case 'counter':
-      console.warn('Counter in Hierachy: ' + hierarchy.id)
+      console.info('counter in hierachy: ' + hierarchy.id)
       break
     case 'cp':
       addChargePoint(hierarchy.id)
@@ -125,7 +128,7 @@ function processHierarchy(hierarchy: Hierarchy) {
       break
     case 'inverter':
       // addInverter (todo)
-      console.info('Inverter ID ' + hierarchy.id)
+      console.info('inverter id ' + hierarchy.id)
       break
     default:
       console.warn('Ignored Hierarchy type: ' + hierarchy.type)
