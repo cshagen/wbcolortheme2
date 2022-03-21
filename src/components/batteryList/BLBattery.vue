@@ -1,6 +1,5 @@
 <template>
-  <WBWidget
-    :variable-width="variableWidth">
+  <WBWidget>
     <template v-slot:title>Speicher</template>
     <template v-slot:buttons>
       <i class="fa battery-color" :class="batterySymbol"></i>
@@ -40,7 +39,6 @@ import type { Battery } from './model'
 // props
 const props = defineProps<{
   bat: Battery
-  variableWidth: boolean
 }>()
 // computed
 const powerTag = computed(() => {

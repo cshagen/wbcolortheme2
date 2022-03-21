@@ -1,14 +1,10 @@
 <template>
-  <BLBattery v-for="battery in batteries" :bat="battery" :variableWidth="variableWidth"> </BLBattery>
+  <BLBattery v-for="battery in batteries" :bat="battery"> </BLBattery>
 </template>
 
 <script setup lang="ts">
 import { batteries } from './model'
 import BLBattery from './BLBattery.vue'
-
-const props = defineProps<{
-  variableWidth: boolean
-}>()
 </script>
 
 <style scoped>

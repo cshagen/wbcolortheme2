@@ -1,5 +1,5 @@
 <template>
-  <WBWidget :variable-width="variableWidth">
+  <WBWidget>
     <template v-slot:title>
       <span @click="toggleConfig">{{ props.chargepoint.name }}</span>
     </template>
@@ -101,8 +101,7 @@ import WBWidget from '../WBWidget.vue'
 import CPChargeConfig from './CPChargeConfig.vue'
 
 const props = defineProps<{
-  chargepoint: ChargePoint,
-  variableWidth: boolean
+  chargepoint: ChargePoint
 }>()
 // state
 const phaseSymbols = ['/', '\u2460', '\u2461', '\u2462']

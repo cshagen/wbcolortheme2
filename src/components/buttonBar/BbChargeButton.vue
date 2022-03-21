@@ -1,5 +1,5 @@
 <template>
-  <div class="p-0 m-0 mt-1" :class="columnSetting">
+  <div class="col-lg-4 p-0 m-0 mt-1">
     <div class="d-grid gap-2">
       <button
         type="button"
@@ -61,7 +61,6 @@ import BBSelectModal  from './BBSelectModal.vue'
 //props
 const props = defineProps<{
   chargepoint: ChargePoint,
-  chargePointCount: number
 }>()
 
 // const emit = defineEmits(['cpSelected'])
@@ -142,13 +141,6 @@ const plugPillClass = computed(() => {
     icon = 'fa-plug'
   }
   return 'fa ' + icon
-})
-const columnSetting = computed(() => {
-  if (props.chargePointCount > 3) {
-    return "col-lg-4"
-  } else {
-    return "col-lg"
-  }
 })
 
 // methods

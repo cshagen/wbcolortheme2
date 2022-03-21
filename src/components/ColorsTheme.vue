@@ -54,11 +54,11 @@
         role="tabpanel"
         aria-labelledby="showall-tab"
       >
-        <div class="row py-0 m-0">
-          <ChargePointList :variableWidth="widgetCount < 3"> </ChargePointList>
-          <BatteryList :variableWidth="widgetCount < 3"> </BatteryList>
-          <SmartHomeList :variableWidth="widgetCount < 3"> </SmartHomeList>
-          <PriceChart :variableWidth="widgetCount < 3"> </PriceChart>
+        <div class="row py-0 m-0 d-flex justify-content-center">
+          <ChargePointList> </ChargePointList>
+          <BatteryList> </BatteryList>
+          <SmartHomeList> </SmartHomeList>
+          <PriceChart> </PriceChart>
         </div>
       </div>
       <div
@@ -67,7 +67,7 @@
         role="tabpanel"
         aria-labelledby="chargepoint-tab"
       >
-        <div class="row py-0 m-0">
+        <div class="row py-0 m-0 d-flex justify-content-center">
           <ChargePointList
             :variableWidth="Object.values(chargePoints).length < 3"
           >
@@ -80,7 +80,7 @@
         role="tabpanel"
         aria-labelledby="battery-tab"
       >
-        <div class="row py-0 m-0">
+        <div class="row py-0 m-0 d-flex justify-content-center">
           <BatteryList :variable-width="false"></BatteryList>
         </div>
       </div>
@@ -90,7 +90,7 @@
         role="tabpanel"
         aria-labelledby="smarthome-tab"
       >
-        <div class="row py-0 m-0">
+        <div class="row py-0 m-0 d-flex justify-content-center">
           <SmartHomeList></SmartHomeList>
         </div>
       </div>
@@ -100,7 +100,7 @@
         role="tabpanel"
         aria-labelledby="pricechart-tab"
       >
-        <div class="row py-0 m-0">
+        <div class="row py-0 m-0 d-flex justify-content-center">
           <PriceChart></PriceChart>
         </div>
       </div>
