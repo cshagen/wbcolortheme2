@@ -21,18 +21,18 @@
 				</li> -->
 
 				<li class="nav-item">
-					<a class="nav-link" id="navStatus" href="settings/#/Status">Status</a>
+					<a class="nav-link" id="navStatus" href="#">Status</a>
 				</li>
 				<li class="nav-item hide" id="navStromtarifInfo">
 					<!-- link will be setup with mqtt topic -->
 					<a class="nav-link etproviderLink" href="#">Stromtarif-Info</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="hilfe/hilfe.php">Hilfe</a>
+					<a class="nav-link" href="#">Hilfe</a>
 				</li>
 
 				<li class="nav-item">
-					<a class="nav-link" id="navSettings" href="settings/">Einstellungen</a>
+					<a class="nav-link" id="navSettings" href="/settings/index.html">Einstellungen</a>
 				</li>
 
 			</ul>
