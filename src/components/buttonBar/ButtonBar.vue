@@ -7,7 +7,7 @@
     
     <div class="col p-0 m-0">
       <div class="container-fluid p-0 m-0">
-        <div class="row p-0 m-0 d-flex justify-content-around">
+        <div class="row p-0 m-0 d-flex justify-content-center">
           <BbChargeButton
             v-for="(cp, index) in chargepointsToDisplay"
             :key="index"

@@ -111,8 +111,9 @@ function toggleConfig() {
 
 <style scoped>
 .status-string {
-  font-size: var(--font-small);
+  font-size: var(--font-normal);
   font-style: italic;
+  color: var(--color-battery);
 }
 .chargeConfigSelect {
   background: var(--color-bg);
