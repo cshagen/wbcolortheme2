@@ -5,7 +5,7 @@ Alpha version, basierend auf der Alpha der openwb2.
 
 ![dark background](colors1.png)
 ![white background](colors2.png)
-Das theme ist noch nicht in die openwb2 integriert. Es läuft standalone auf dem gleichen Rechner wie die openwb2 selbst. Entweder direkt auf dem Raspberry Pi oder in einem Docker Container:
+Das theme ist noch nicht in die openwb2 integriert. (Die openWB-Konfiguration ist aber integriert.) Es läuft standalone auf dem gleichen Rechner wie die openwb2 selbst. Entweder direkt auf dem Raspberry Pi oder in einem Docker Container:
 
 ## Installation auf Raspi mit openwb2 (node.js notwendig):
 
@@ -40,7 +40,7 @@ In einer shell den Container starten:
 In einer zweiten shell das colors-theme starten:
 ``` docker exec -ti openwb2 sh -c "cd /home/pi/wbcolortheme2;npm run serve" ```
 
-Im Browser kann nun das Standard-Theme (inklusive Konfiguration) und das colors-theme zugegriffen werden:
+Im Browser kann nun das Standard-Theme und das colors-theme zugegriffen werden:
 
 openwb2 frontend (mit standard-theme und Konfiguration):
 ``` http://localhost:7080 ```
