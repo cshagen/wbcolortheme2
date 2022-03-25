@@ -3,8 +3,8 @@
     <div class="d-grid gap-2">
       <button
         type="button"
-        class="btn mx-1 mb-1 p-1 largeTextSize chargeButton"
-        @click="cpSelected"
+        class="btn mx-1 mb-0 p-1 largeTextSize chargeButton shadow"
+       
         :style="buttonStyle"
         data-bs-toggle="modal"
         :data-bs-target="'#' + modalId"
@@ -54,7 +54,6 @@ import { globalData } from '@/assets/js/model'
 import { ChargePoint, ChargeMode } from '@/components/chargePointList/model'
 import { chargemodes } from '@/assets/js/themeConfig'
 import { computed } from 'vue'
-import { modalConfig } from './model'
 import { formatWatt } from '@/assets/js/helpers'
 import BBSelectModal  from './BBSelectModal.vue'
 
@@ -62,8 +61,6 @@ import BBSelectModal  from './BBSelectModal.vue'
 const props = defineProps<{
   chargepoint: ChargePoint,
 }>()
-
-// const emit = defineEmits(['cpSelected'])
 const modalId = "chargeSelectModal" + props.chargepoint.id
 const modeString = computed(() => {
   return chargemodes[props.chargepoint.chargeMode].name
@@ -144,10 +141,6 @@ const plugPillClass = computed(() => {
 })
 
 // methods
-function cpSelected() {
-  modalConfig.showSelectModal.push(props.chargepoint.id)
-  // emit("cpSelected", props.chargepoint);
-}
 function swapcolors(style: buttonStyle): buttonStyle {
   let c = style.color
   style.color = style.background

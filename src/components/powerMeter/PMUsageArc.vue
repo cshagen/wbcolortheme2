@@ -17,7 +17,6 @@ const props = defineProps<{
 }>()
 //  computed: {
 const draw = computed(() => {
-  console.log (usageSummary)
   // Draw the arc using d3
   let emptyPowerItem: PowerItem = {
     name: '',

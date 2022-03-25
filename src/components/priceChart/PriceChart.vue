@@ -55,7 +55,7 @@
 import { computed, ref } from 'vue'
 import * as d3 from 'd3'
 import { etData } from './model'
-import WBWidget from '../WBWidget.vue'
+import WBWidget from '../shared/WBWidget.vue'
 
 const width = 400
 const height = 120

@@ -1,6 +1,6 @@
 <template>
   <WBWidget>
-    <template v-slot:title>Speicher</template>
+    <template v-slot:title><span class="battery-title">Speicher</span></template>
     <template v-slot:buttons>
       <i class="fa battery-color" :class="batterySymbol"></i>
       <span class="battery-color ms-2">
@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import WBWidget from '../WBWidget.vue'
+import WBWidget from '../shared/WBWidget.vue'
 import { formatWatt, formatWattH } from '@/assets/js/helpers'
 import type { Battery } from './model'
 // props
@@ -92,6 +92,9 @@ const batterySymbol = computed(() => {
 </script>
 
 <style scoped>
+.battery-title {
+  color: var(--color-battery);
+}
 .battery-color {
   color: var(--color-battery);
 }

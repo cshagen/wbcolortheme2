@@ -1,5 +1,5 @@
 import { mqttPublish } from './mqttClient'
-import { chargePoints } from '@/components/chargePointList/model'
+import { chargePoints, chargeTemplates } from '@/components/chargePointList/model'
 
 const topics: { [topic: string]: string } = {
   cpLock: 'openWB/set/chargepoint/%/set/manual_lock',
@@ -71,5 +71,12 @@ export function updateServer(
       break
     default:
       mqttPublish(topic, JSON.stringify(value))
+  }
+}
+export function updateChargeTemplate (templateId: number) {
+  let template = chargeTemplates[templateId]
+  if (template) {
+    let topic = 'openWB/set/vehicle/template/charge_template/' + templateId
+  mqttPublish(topic, JSON.stringify(template))
   }
 }

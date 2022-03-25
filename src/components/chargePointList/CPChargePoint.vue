@@ -1,7 +1,7 @@
 <template>
   <WBWidget>
     <template v-slot:title>
-      <span @click="toggleConfig">{{ props.chargepoint.name }}</span>
+      <span :style="cpNameStyle" @click="toggleConfig">{{ props.chargepoint.name }}</span>
     </template>
 
     <template v-slot:buttons>
@@ -21,7 +21,7 @@
           @click="toggleConfig"
         >
           <i class="fa-solid fa-sm fa-car"> </i>
-          <span class="px-2">{{ chargepoint.vehicleName }}</span>
+          <span class="px-2 vehicleName">{{ chargepoint.vehicleName }}</span>
 
           <span
             v-if="chargepoint.hasPriority"
@@ -83,22 +83,22 @@
         </p>
       </div>
     </div>
-    <CPChargeConfig
+    <CPChargeConfigPanel
       :chargepoint="chargepoint"
       v-if="showConfig"
       v-on:closeConfig="toggleConfig"
     >
-    </CPChargeConfig>
+    </CPChargeConfigPanel>
   </WBWidget>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { formatWatt, formatWattH } from '@/assets/js/helpers'
-import type { ChargePoint } from './model'
+import type { ChargePoint, chargePoints } from './model'
 import { globalConfig, chargemodes } from '@/assets/js/themeConfig'
-import WBWidget from '../WBWidget.vue'
-import CPChargeConfig from './CPChargeConfig.vue'
+import WBWidget from '@/components/shared/WBWidget.vue'
+import CPChargeConfigPanel from './CPChargeConfigPanel.vue'
 
 const props = defineProps<{
   chargepoint: ChargePoint
@@ -205,7 +205,9 @@ const buttonIcon = computed(() => {
 const soc = computed(() => {
   return props.chargepoint.soc
 })
-
+const cpNameStyle = computed(() => {
+  return { color: props.chargepoint.color }
+})
 // methods
 function toggleConfig() {
   showConfig.value = !showConfig.value
@@ -239,6 +241,8 @@ function toggleConfig() {
 .energylabel {
   color: var(--color-menu);
 }
-
+.vehicleName {
+  color: var(--color-fg)
+}
 </style>
 >

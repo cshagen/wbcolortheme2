@@ -5,6 +5,7 @@ import {
   chargeTemplates,
   Vehicle,
   ChargeMode,
+  type ChargeTimePlan,
 } from './model'
 import type { ConnectedVehicleConfig, ChargeTemplate } from './model'
 
@@ -124,7 +125,6 @@ export function processVehicleMessages(topic: string, message: string) {
     
     if (topic.match(/^openwb\/vehicle\/[0-9]+\/name$/i)) {
       // create vehicle entry if not yet existing
-      console.log("VEHICLE: "+ message)
       if (!(index in vehicles)) {
         let v = new Vehicle(index)
         vehicles[index] = v
@@ -150,15 +150,27 @@ export function processVehicleMessages(topic: string, message: string) {
   }
 }
 export function processVehicleTemplateMessages(topic: string, message: string) {
-  // console.info("VEH TMPL MSG " + topic + " : " + message)
+   console.info("VEH TMPL MSG " + topic + " : " + message)
   if (topic.match(/^openwb\/vehicle\/template\/charge_template\/[0-9]+$/i)) {
     let match = topic.match(/[0-9]+$/i)
     if (match) {
-      let index = +match
-      let template: ChargeTemplate = JSON.parse(message)
+      let index = +match[0]
+      let template: ChargeTemplate = JSON.parse(message) as ChargeTemplate
+      console.dir(template)
       chargeTemplates[index] = template
+      console.dir(chargeTemplates[index])
       updateCpFromChargeTemplate(index, template)
     }
+  } else if (topic.match(/^openwb\/vehicle\/template\/charge_template\/[0-9]+\/time_charging\/plans\/[0-9]+$/i)) {
+    let tidMatch = topic.match(/(?:\/)([0-9]+)(?:\/)/g)
+    let pidMatch = topic.match(/[0-9]+$/i)
+    if (tidMatch && pidMatch) {
+      let tId = +(tidMatch[0].replace(/[^0-9]+/g,''))
+      let pId = +pidMatch[0]
+      let plan: ChargeTimePlan = JSON.parse(message)
+      chargeTemplates[tId].time_charging.plans[pId] = plan
+    }
+  
   } else {
     console.warn('Ignored VEHICLE TEMPLATE message [' + topic + ']=' + message)
   }

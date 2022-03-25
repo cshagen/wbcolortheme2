@@ -18,7 +18,6 @@ const props = defineProps<{
 }>()
 //  computed: {
 const draw = computed(() => {
-  console.log (sourceSummary)
   // Draw the arc using d3
   const arcCount = Object.values(sourceSummary).length
   let emptyPowerItem: PowerItem = {

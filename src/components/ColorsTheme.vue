@@ -1,8 +1,8 @@
 <template>
-  <div class="container-fluid p-0 m-0 theme-colors">
+  <div class="container-fluid px-2 m-0 theme-colors">
     <!-- Button Bar -->
     <ButtonBar></ButtonBar>
-    <hr />
+    
     <!-- Main Widgets -->
     <div class="row py-0 px-0 m-0">
       <PowerMeter></PowerMeter>
@@ -10,10 +10,10 @@
       <EnergyMeter :usageDetails="usageDetails"></EnergyMeter>
     </div>
     <!-- Tabbed area -->
-    <nav class="nav nav-tabs nav-justified mx-1 mt-4" role="tablist">
+    <nav class="nav nav-tabs nav-justified mx-1 mt-2 shadow" role="tablist">
       <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#showAll">
         <i class="fa-solid fa-lg fa-circle-info me-1"></i>
-        <span class="d-none d-md-inline ms-2">Alle</span>
+        <span class="d-none d-md-inline ms-2">Details</span>
       </a>
       <a
         class="nav-link"
@@ -68,9 +68,7 @@
         aria-labelledby="chargepoint-tab"
       >
         <div class="row py-0 m-0 d-flex justify-content-center">
-          <ChargePointList
-            :variableWidth="Object.values(chargePoints).length < 3"
-          >
+          <ChargePointList>
           </ChargePointList>
         </div>
       </div>
@@ -81,7 +79,7 @@
         aria-labelledby="battery-tab"
       >
         <div class="row py-0 m-0 d-flex justify-content-center">
-          <BatteryList :variable-width="false"></BatteryList>
+          <BatteryList></BatteryList>
         </div>
       </div>
       <div
@@ -149,23 +147,10 @@ const usageDetails = computed(() => {
     )
     .concat([usageSummary.batIn, usageSummary.house])
 })
-const chargepointsToDisplay = computed(() => {
-  return Object.values(chargePoints)
-})
-const widgetCount = computed(() => {
-  let result = Object.values(chargePoints).length
-  if (globalData.isBatteryConfigured) {
-    result = result + 1
-  }
-  // Smarthome tbd
-  result = result + 1
-  return result
-})
 // methods
 function init() {
   initConfig()
 }
-
 // lifecycle
 onMounted(() => {
   init()
@@ -177,6 +162,7 @@ onMounted(() => {
 <style scoped>
 .nav-tabs {
   border-bottom: 0.5px solid var(--color-menu);
+  background-color: var(--color-bg);
 }
 .nav-tabs .nav-link {
   color: var(--color-menu);
@@ -192,7 +178,7 @@ onMounted(() => {
   background-color: var(--color-bg);
   opacity: 1;
   border: 1px solid var(--color-menu);
-  border-bottom: 0px;
+  border-bottom: 1px solid var(--color-menu);
 }
 .fa-circle-info {
   color: var(--color-fg);

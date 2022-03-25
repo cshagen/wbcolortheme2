@@ -1,5 +1,5 @@
 <template>
-  <select class="form-select" v-model="v">
+  <select class="form-select" v-model="v" id="selectme">
     <option v-for="element in options" :value="element[1]">
       {{ element[0] }}
     </option>
@@ -25,8 +25,8 @@ const v = computed({
 
 <style scoped>
 .form-select {
-  background-color: var(--color-bg);
-  color: var(--color-fg);
-  border: 1px solid var(--color-menu    );
+  background-color: var(--color-input);
+  color: black;
+  border: 1px solid var(--color-bg);
 }
 </style>

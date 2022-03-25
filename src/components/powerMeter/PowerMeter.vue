@@ -146,7 +146,7 @@ import PMMenu from "./PMMenu.vue";
 import PMSourceArc from './PMSourceArc.vue';
 import PMUsageArc from './PMUsageArc.vue'
 import PMLabel from "./PMLabel.vue";
-import WBWidget from "../WBWidget.vue";
+import WBWidget from "../shared/WBWidget.vue";
 import { formatWatt } from "@/assets/js/helpers";
 
 // state:

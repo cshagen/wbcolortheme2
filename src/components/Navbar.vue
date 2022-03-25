@@ -1,7 +1,7 @@
 <template>
   <!-- Fixed navbar -->
 	<nav class="navbar navbar-expand-sm bg-dark navbar-dark px-3">
-		<a class="navbar-brand" href="./index.php">
+		<a class="navbar-brand" href="/">
 			<span>openWB</span>
 		</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
@@ -22,10 +22,6 @@
 
 				<li class="nav-item">
 					<a class="nav-link" id="navStatus" href="#">Status</a>
-				</li>
-				<li class="nav-item hide" id="navStromtarifInfo">
-					<!-- link will be setup with mqtt topic -->
-					<a class="nav-link etproviderLink" href="#">Stromtarif-Info</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="#">Hilfe</a>

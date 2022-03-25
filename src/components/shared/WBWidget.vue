@@ -1,6 +1,6 @@
 <template>
   <div class="col-lg-4 p-1 m-0">
-    <div class="wb-widget p-2 m-0 rounded">
+    <div class="wb-widget p-2 m-0 rounded shadow">
             <div class="d-flex justify-content-between">
             <h3 class="mt-0">
               <slot name="title"> (title goes here) </slot>

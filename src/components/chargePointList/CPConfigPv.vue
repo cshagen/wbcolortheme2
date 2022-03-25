@@ -1,22 +1,10 @@
 <template>
-  <div v-if="cp.chargeMode == 'pv_charging'">
-    <hr />
-    <p style="text-align: center; color: var(--color-menu)">
-      Einstellungen für PV-Laden
+  <div class="pt-2">
+    <p class="heading ms-1">
+      PV-Laden:
     </p>
 
     <!-- Priority -->
-    <CPChargeConfigItem title="Einspeisegrenze beachten">
-      <div class="form-check form-switch">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          role="switch"
-          id="feedInLimitSwitch"
-          v-model="cp.pvFeedInLimit"
-        />
-      </div>
-    </CPChargeConfigItem>
     <!-- Minimum Current -->
     <CPChargeConfigItem title="Minimale Stromstärke">
       <RangeInput
@@ -39,32 +27,18 @@
         v-model="cp.pvMaxSoc"
       ></RangeInput>
     </CPChargeConfigItem>
-    <hr />
-    <p style="text-align: center; color: var(--color-menu)">
-      Netz-Laden bis zu Mindest-SoC
-    </p>
-    <!-- Minimum SoC -->
-    <CPChargeConfigItem title="Mindest-SoC">
-      <RangeInput
-        id="minSoc"
-        :min="0"
-        :max="100"
-        :step="1"
-        unit="%"
-        v-model="cp.pvMinSoc"
-      ></RangeInput>
+    <CPChargeConfigItem title="Einspeisegrenze beachten">
+      <div class="form-check form-switch">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          role="switch"
+          id="feedInLimitSwitch"
+          v-model="cp.pvFeedInLimit"
+        />
+      </div>
     </CPChargeConfigItem>
-    <!-- Minimum Soc Current -->
-    <CPChargeConfigItem title="Stromstärke bis Mindest-SoC">
-      <RangeInput
-        id="minSocCurrent"
-        :min="6"
-        :max="32"
-        :step="1"
-        unit="A"
-        v-model="cp.pvMinSocCurrent"
-      ></RangeInput>
-    </CPChargeConfigItem>
+    
   </div>
 </template>
 
@@ -72,7 +46,7 @@
 import { ref, computed } from 'vue'
 import type { ChargePoint } from './model'
 import CPChargeConfigItem from './CPChargeConfigItem.vue'
-import RangeInput from '../RangeInput.vue'
+import RangeInput from '@/components/shared/RangeInput.vue'
 const props = defineProps<{
   chargepoint: ChargePoint
 }>()
@@ -106,5 +80,8 @@ const chargeTemplateId = computed(() => {
 .chargeConfigSelect {
   background: var(--color-bg);
   color: var(--color-fg);
+}
+.heading {
+  color: var(--color-pv);
 }
 </style>

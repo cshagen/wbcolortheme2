@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import WBWidget from '../WBWidget.vue'
+import WBWidget from '../shared/WBWidget.vue'
 import PGSourceGraph from './PGSourceGraph.vue'
 import PGUsageGraph from './PGUsageGraph.vue'
 import PGXAxis from './PGXAxis.vue'

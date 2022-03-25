@@ -1,8 +1,8 @@
 <template>
   <div class="modal" :id="modalId">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-fullscreen-md-down">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header ">
           <h3 class="modal-title">Lademodus für Ladepunkt {{ cp.name }}</h3>
 
           <button
@@ -97,16 +97,15 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-success buttonTextSize"
+              class="btn btn-success buttonTextSize float-end m-1"
               data-bs-dismiss="modal"
             >
               OK
             </button>
           </div>
+          
         </div>
       </div>
     </div>

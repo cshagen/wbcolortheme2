@@ -218,10 +218,34 @@ export enum ChargeMode {
   standby = 'standby',
   stop = 'stop',
 }
+export interface ChargeTimePlan {
+  frequency: {
+    once: Array<string>
+    selected: string
+    weekly: boolean[]
+  }
+  name: string
+  time: Array<string>
+  current: number
+}
+export function createChargeTimePlan () : ChargeTimePlan {
+  return {
+    frequency: {
+      once: ['2022-02-02','2022-02-22'],
+      selected: 'daily',
+      weekly: [false,false,false,false,false,false,false]
+    },
+    name: 'Neuer Plan',
+    time: ['00:01','23:59'],
+    current: 16
+  }
+}
 export interface ChargeTemplate {
+  name: string
   prio: boolean
   time_charging: {
     active: boolean
+    plans: {[key:string]:ChargeTimePlan}
   }
   chargemode: {
     selected: ChargeMode
@@ -241,6 +265,9 @@ export interface ChargeTemplate {
       min_soc_current: number
     }
   }
+  disable_after_unplug: boolean
+  load_default: boolean
+ 
 }
 
 export const chargePoints: { [key: number]: ChargePoint } = reactive({})

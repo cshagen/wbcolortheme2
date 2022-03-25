@@ -27,64 +27,6 @@ h4 {
 body > .container-fluid {
   padding: 55px 15px 0 15px;
 }
-@keyframes alertPulsation {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@-o-keyframes alertPulsation {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@-moz-keyframes alertPulsation {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@-webkit-keyframes alertPulsation {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.cursor-pointer {
-  cursor: pointer;
-}
-
-.vaRow {
-  /* vertical alignment of content in rows */
-  display: flex;
-  align-items: center;
-}
-
-.hide {
-  display: none;
-}
 
 /* Extra small devices (portrait phones, less than 576px) */
 /* No media query since this is the default in Bootstrap */
@@ -183,6 +125,7 @@ h3 {
   --color-charging: #1f78b4;
   --color-export: #b2df8a;
   --color-battery: goldenrod;
+  --color-input: lightgrey;
   --font-normal: 1rem;
   --font-large: 1.2rem;
   --font-small: 0.8rem;
@@ -289,7 +232,7 @@ h3 {
 }
 
 .wb-subwidget {
-  border: 0.5px solid var(--color-subframe);
+  border: 0px solid var(--color-subframe);
   padding: var(--padding-widget);
 }
 th {

@@ -47,7 +47,7 @@ import EMMenu from './EMMenu.vue'
 import EMBarGraph from './EMBarGraph.vue'
 import EMYAxis from "./EMYAxis.vue";
 import EMLabels from "./EMLabels.vue";
-import WBWidget from '../WBWidget.vue'
+import WBWidget from '../shared/WBWidget.vue'
 import { globalConfig } from '@/assets/js/themeConfig';
 
 // props

@@ -1,8 +1,7 @@
 <template>
-  <div v-if="cp.chargeMode == 'instant_charging'">
-    <hr />
-    <p style="text-align: center; color: var(--color-menu)">
-      Einstellungen für Sofortladen
+  <div class="mt-2">
+    <p class="heading ms-1">
+      Sofortladen:
     </p>
 
     <!-- Ampere -->
@@ -64,8 +63,8 @@
 import { ref, computed } from 'vue'
 import type { ChargePoint } from './model'
 import CPChargeConfigItem from './CPChargeConfigItem.vue'
-import RangeInput from '@/components/RangeInput.vue'
-import SelectInput from '@/components/SelectInput.vue'
+import RangeInput from '@/components/shared/RangeInput.vue'
+import SelectInput from '@/components/shared/SelectInput.vue'
 const props = defineProps<{
   chargepoint: ChargePoint
 }>()
@@ -82,5 +81,8 @@ const instantChargeLimitModes = [
 .chargeConfigSelect {
   background: var(--color-bg);
   color: var(--color-fg);
+}
+.heading {
+  color: var(--color-charging);
 }
 </style>
