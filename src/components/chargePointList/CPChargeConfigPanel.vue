@@ -130,7 +130,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { ChargePoint, vehicles, chargeTemplates } from './model'
 import CPChargeConfigItem from './CPChargeConfigItem.vue'
 import CPConfigInstant from './CPConfigInstant.vue'
@@ -156,6 +156,17 @@ const cpid = computed(() => {
 function toggleConfig() {
   emit('closeConfig')
 }
+// lifecycle
+onMounted(() => {
+  console.log ("MMMOOOUUUNNNTTTEEEDD")
+  let carselect = document.getElementById ('chargeSettings'+cpid)
+  if (carselect) {
+    console.log ("ÏD FOUND")
+    carselect.focus()
+  } else {
+    console.log("CARSELECT NOT FOUND")
+  }
+})
 </script>
 
 <style scoped>

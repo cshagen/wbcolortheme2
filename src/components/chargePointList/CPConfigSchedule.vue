@@ -1,7 +1,7 @@
 <template>
   <div class="pt-2">
-    <p class="heading ms-1">Zeitpläne:</p>
-    <table class="table table-borderless">
+    <p class="heading ms-1 d-flex ">Zeitpläne:</p>
+    <table class="table table-borderless ">
       <thead>
         <tr>
           <th class="tableheader left">Von</th>
@@ -48,6 +48,7 @@
         </tr>
       </tbody>
     </table>
+  
     <ModalComponent v-if="Object.keys(plans).length > 0" :modalId="modalId">
       <template v-slot:title> Zeitplan bearbeiten </template>
       <CPEditTimeplan
@@ -129,10 +130,12 @@ const plans = computed(() => {
 .tablecell {
   color: var(--color-fg);
   text-align: center;
+  font-size: var(--font-small);
 }
 .tableheader {
   color: var(--color-menu);
   text-align: center;
+  font-size: var(--font-small);
 }
 .heading {
   color: var(--color-battery);

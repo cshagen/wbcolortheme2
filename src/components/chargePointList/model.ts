@@ -236,7 +236,7 @@ export function createChargeTimePlan () : ChargeTimePlan {
       weekly: [false,false,false,false,false,false,false]
     },
     name: 'Neuer Plan',
-    time: ['00:01','23:59'],
+    time: ['10:00','16:00'],
     current: 16
   }
 }
