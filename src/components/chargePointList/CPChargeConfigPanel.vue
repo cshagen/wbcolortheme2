@@ -38,15 +38,6 @@
     <a
       class="nav-link"
       data-bs-toggle="tab"
-      :data-bs-target="'#minsocSettings'+cpid"
-      v-if="chargepoint.chargeMode == 'pv_charging'"
-    >
-      <i class="fa-solid fa-battery-half"></i>
-    </a>
-
-    <a
-      class="nav-link"
-      data-bs-toggle="tab"
       :data-bs-target="'#timeSettings'+cpid"
       v-if="chargepoint.scheduledCharging"
     >
@@ -90,19 +81,7 @@
       >
       </CPConfigPv>
     </div>
-    <div
-      class="tab-pane"
-      :id="'minsocSettings'+cpid"
-      role="tabpanel"
-      aria-labelledby="pv-tab"
-    >
-      <CPConfigMinSoc
-        :chargepoint="cp"
-        :vehicles="vehicles"
-        :chargeTemplates="chargeTemplates"
-      >
-      </CPConfigMinSoc>
-    </div>
+   
     <div
       class="tab-pane"
       :id="'timeSettings'+cpid"
@@ -135,7 +114,7 @@ import { ChargePoint, vehicles, chargeTemplates } from './model'
 import CPChargeConfigItem from './CPChargeConfigItem.vue'
 import CPConfigInstant from './CPConfigInstant.vue'
 import CPConfigPv from './CPConfigPv.vue'
-import CPConfigMinSoc from './CPConfigMinSoc.vue'
+import CPConfigPvOptions from './CPConfigPvOptions.vue'
 import CPConfigSchedule from './CPConfigSchedule.vue'
 import CPChargeConfig from './CPChargeConfig.vue'
 const props = defineProps<{

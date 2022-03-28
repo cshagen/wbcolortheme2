@@ -1,7 +1,7 @@
 <template>
   <div class="pt-2">
     <p class="heading ms-1 d-flex ">Zeitpläne:</p>
-    <table class="table table-borderless ">
+    <table class="table table-borderless m-2">
       <thead>
         <tr>
           <th class="tableheader left">Von</th>
@@ -39,7 +39,7 @@
             <span
               class="addButton"
               @click="addPlan"
-              data-bs-toggle="modal"
+              
               :data-bs-target="'#' + modalId"
             >
               <i class="fa-solid fa-xl fa-square-plus ms-2"></i>
@@ -49,12 +49,12 @@
       </tbody>
     </table>
   
-    <ModalComponent v-if="Object.keys(plans).length > 0" :modalId="modalId">
+    <ModalComponent v-for="planId in plansToEdit" :modalId="modalId">
       <template v-slot:title> Zeitplan bearbeiten </template>
       <CPEditTimeplan
-        v-if="Object.keys(plans).length > 0"
+        
         :chargeTemplateId ="chargeTemplateId"
-        :planId="planIdToEdit"
+        :planId="planId"
         @savePlan="savePlan"
         @deletePlan="deletePlan"
         @abort="abortEdit"
@@ -83,11 +83,10 @@ const props = defineProps<{
 }>()
 
 const modalId = 'timesettingmodal' + props.chargeTemplateId
-const planIdToEdit = (Object.keys(props.chargeTemplate.time_charging.plans).length >0) ? ref(Object.keys(props.chargeTemplate.time_charging.plans)[0]) : ref('0')
-
+// const planIdToEdit = (Object.keys(props.chargeTemplate.time_charging.plans).length >0) ? ref(Object.keys(props.chargeTemplate.time_charging.plans)[0]) : ref('0')
+const plansToEdit : string[] = reactive(["0"])
 function setPlanToEdit(key: string) {
-  console.log('CLICK')
-  planIdToEdit.value = key
+  plansToEdit[0] = key
 }
 function savePlansToServer(id: string) {
   updateChargeTemplate(props.chargeTemplateId)
@@ -96,10 +95,9 @@ function savePlan(id: string) {
   savePlansToServer(id)
 }
 function abortEdit() {
-  console.log('abort')
+  console.log('abort edit')
  }
 function deletePlan(id: string) {
-  console.log('delete')
   delete props.chargeTemplate.time_charging.plans[id]
   savePlansToServer(id)
 }
@@ -109,18 +107,27 @@ function addPlan() {
     props.chargeTemplate.time_charging.plans={}
   }
   let max = 0
-  Object.keys(plans).forEach((k) => {
+  Object.keys(plans.value).forEach((k) => {
     if (+k > max) {
       max = +k
     }
   })
   max = max + 1
   props.chargeTemplate.time_charging.plans[max.toString()] = p
-  planIdToEdit.value = max.toString()
+  setPlanToEdit (max.toString())
+  console.log (plans.value)
+  showModal()
+}
+function showModal() {
+  let element = document.getElementById(modalId)
+  if (element) {
+  let modal = new Modal(element)
+  modal.show()
+  } else {
+    console.log ("NO MODAL ELEMENT")
+  }
 }
 const plans = computed(() => {
-  console.dir(props.chargeTemplate)
-  console.dir(props.chargeTemplate.time_charging.plans)
   let result = props.chargeTemplate.time_charging.plans
   return (result)? result : {}
   })

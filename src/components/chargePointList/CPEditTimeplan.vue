@@ -54,14 +54,14 @@
           Löschen
         </button>
         <button
-          class="btn btn-warning"
+          class="btn btn-warning ms-1"
           @click="$emit('abort')"
           data-bs-dismiss="modal"
         >
           Abbrechen
         </button>
         <button
-          class="btn btn-success float-end"
+          class="btn btn-success float-end ms-1"
           @click="$emit('savePlan', planId)"
           data-bs-dismiss="modal"
         >
@@ -74,7 +74,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { chargeTemplates } from './model'
+import { chargeTemplates, createChargeTimePlan } from './model'
 import CPChargeConfigItem from './CPChargeConfigItem.vue'
 import RangeInput from '@/components/shared/RangeInput.vue'
 import SelectInput from '@/components/shared/SelectInput.vue'
@@ -107,7 +107,12 @@ const template = computed(() => {
 })
 const plan = computed(() => {
   console.dir(template.value)
-  return template.value.time_charging.plans[props.planId] 
+  let p = template.value.time_charging.plans[props.planId]
+  if (p) { 
+  return p
+  } else {
+    return createChargeTimePlan() // create a dummy time plan in case the list of plans in the template is empty
+  } 
    
 })
 </script>

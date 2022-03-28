@@ -1,73 +1,10 @@
 <template>
   <div class="pt-2">
     <p class="heading ms-1">
-      PV-Laden:
+      Optionen für PV-Laden:
     </p>
-
-    <!-- Priority -->
-   
-    <!-- Maximum SoC -->
-    <CPChargeConfigItem title="Maximaler SoC">
-      <RangeInput
-        id="maxSoc"
-        :min="0"
-        :max="100"
-        :step="1"
-        unit="%"
-        v-model="cp.pvMaxSoc"
-      ></RangeInput>
-    </CPChargeConfigItem>
-    <CPChargeConfigItem title="Einspeisegrenze beachten">
-      <div class="form-check form-switch">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          role="switch"
-          id="feedInLimitSwitch"
-          v-model="cp.pvFeedInLimit"
-        />
-      </div>
-    </CPChargeConfigItem>
-    <hr/>
     <!-- Min-PV-Laden -->
-    <CPChargeConfigItem title="Mindest-SoC mit Netzstrom laden" >
-      <div class="form-check form-switch">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          role="switch"
-          id="feedInLimitSwitch"
-          v-model="useMinSoc"
-        />
-      </div>
-    </CPChargeConfigItem>
-    
-    <!-- Minimum SoC -->
-    <CPChargeConfigItem title="...bis SoC" v-if="useMinSoc">
-      <RangeInput
-        id="minSoc"
-        :min="0"
-        :max="100"
-        :step="1"
-        unit="%"
-        v-model="cp.pvMinSoc"
-      ></RangeInput>
-    </CPChargeConfigItem>
-    <!-- Minimum Soc Current -->
-    <CPChargeConfigItem title="...mit Ladestrom" v-if="useMinSoc">
-      <RangeInput
-        id="minSocCurrent"
-        :min="6"
-        :max="32"
-        :step="1"
-        unit="A"
-        v-model="cp.pvMinSocCurrent"
-      ></RangeInput>
-    </CPChargeConfigItem>
-    <hr v-if="useMinPV || useMinSoc"/>
-    
-    <!-- Min+PV-Laden -->
-    <CPChargeConfigItem title="Immer laden (Netz wenn nötig)">
+    <CPChargeConfigItem title="Min-PV-Laden">
       <div class="form-check form-switch">
         <input
           class="form-check-input"
@@ -79,7 +16,7 @@
       </div>
     </CPChargeConfigItem>
      <!-- Minimum Current -->
-    <CPChargeConfigItem title="...bei Ladestrom (minimal)" v-if="useMinPV">
+    <CPChargeConfigItem title="...mit Stromstärke" v-if="useMinPV">
       <RangeInput
         id="minCurrent"
         :min="6"
@@ -90,7 +27,41 @@
       ></RangeInput>
       
     </CPChargeConfigItem>
-    
+    <hr v-if="useMinPV || useMinSoc"/>
+    <!-- Min-PV-Laden -->
+    <CPChargeConfigItem title="Netzladen bis Minimal-SoC" >
+      <div class="form-check form-switch">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          role="switch"
+          id="feedInLimitSwitch"
+          v-model="useMinSoc"
+        />
+      </div>
+    </CPChargeConfigItem>
+    <!-- Minimum SoC -->
+    <CPChargeConfigItem title="...bis zu SoC" v-if="useMinSoc">
+      <RangeInput
+        id="minSoc"
+        :min="0"
+        :max="100"
+        :step="1"
+        unit="%"
+        v-model="cp.pvMinSoc"
+      ></RangeInput>
+    </CPChargeConfigItem>
+    <!-- Minimum Soc Current -->
+    <CPChargeConfigItem title="...mit Stromstärke" v-if="useMinSoc">
+      <RangeInput
+        id="minSocCurrent"
+        :min="6"
+        :max="32"
+        :step="1"
+        unit="A"
+        v-model="cp.pvMinSocCurrent"
+      ></RangeInput>
+    </CPChargeConfigItem>
   </div>
 </template>
 
@@ -103,14 +74,6 @@ const props = defineProps<{
   chargepoint: ChargePoint
 }>()
 const cp = ref(props.chargepoint)
-
-// methods:
-
-// computed
-const chargeTemplateId = computed(() => {
-  console.log(cp.value)
-  return cp.value.chargeTemplate
-})
 const useMinPV = computed({
   get() {
     return (cp.value.pvMinCurrent > 5)
