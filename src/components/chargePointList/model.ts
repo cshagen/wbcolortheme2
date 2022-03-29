@@ -195,12 +195,32 @@ export class ChargePoint {
 export class Vehicle {
   id: number
   name = ''
-  chargeTemplateId = 0
-  evTemplateId = 0
+  private _chargeTemplateId = 0
+  private _evTemplateId = 0
   tags: Array<string> = []
   soc = 0
   constructor(index: number) {
     this.id = index
+  }
+  get chargeTemplateId() {
+    return this._chargeTemplateId
+  }
+  set chargeTemplateId (id: number) {
+    this._chargeTemplateId = id
+    updateServer ('vhChargeTemplateId', id, this.id)
+  }
+  updateChargeTemplateId (id: number) {
+    this._chargeTemplateId = id
+  }
+  get evTemplateId() {
+    return this._evTemplateId
+  }
+  set evTemplateId (id: number) {
+    this._evTemplateId = id
+    updateServer ('vhEvTemplateId', id, this.id)
+  }
+  updateEvTemplateId (id: number) {
+    this._evTemplateId = id
   }
 }
 export interface ConnectedVehicleConfig {
@@ -269,10 +289,27 @@ export interface ChargeTemplate {
   load_default: boolean
  
 }
-
+export interface EvTemplate {
+  name: string
+  max_current_multi_phases: number
+  max_phases: number
+  phase_switch_pause: number
+  prevent_switch_stop: boolean
+  control_pilot_interruption: boolean
+  control_pilot_interruption_duration: number
+  average_consump: number
+  min_current: number
+  max_current_one_phase: number
+  battery_capacity: number
+  nominal_difference: number
+  request_interval_charging: number
+  request_interval_not_charging: number
+  request_only_plugged: boolean
+}
 export const chargePoints: { [key: number]: ChargePoint } = reactive({})
 export const vehicles: { [key: number]: Vehicle } = reactive({}) // the list of vehicles, key is the vehicle ID
 export const chargeTemplates: { [key: number]: ChargeTemplate } = reactive({})
+export const evTemplates: { [key: number]: EvTemplate } = reactive({})
 
 export function addChargePoint(chargePointIndex: number) {
   if (!(chargePointIndex in chargePoints)) {

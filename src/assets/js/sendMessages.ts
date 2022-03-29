@@ -31,6 +31,8 @@ const topics: { [topic: string]: string } = {
   cpPvMinSocCurrent:
     'openWB/set/vehicle/template/charge_template/%/chargemode/pv_charging/min_soc_current',
   etMaxPrice: 'openWB/set/optional/et/max_price',
+  vhChargeTemplateId: 'openWB/set/vehicle/%/charge_template',
+  vhEvTemplateId: 'openWB/set/vehicle/%/ev_template'
 }
 export function updateServer(
   item: string,

@@ -9,8 +9,8 @@
     <span style="color: red"> {{ cp.faultStr }} </span>
   </CPChargeConfigItem>
   
-  <div class="shadow m-2 mt-4 p-1">
-    <p class="heading ms-1">Konfiguration</p>
+  <div class="m-0 mt-4 p-1">
+    <p class="heading ms-0">Konfiguration</p>
   <nav class="nav nav-tabs nav-justified mx-1 mt-1" role="tablist">
     <a
       class="nav-link active"
@@ -43,9 +43,17 @@
     >
       <i class="fa-solid fa-clock"></i>
     </a>
+    <a
+      class="nav-link"
+      data-bs-toggle="tab"
+      :data-bs-target="'#carSettings'+cpid"
+      v-if="chargepoint.isPluggedIn"      
+    >
+      <i class="fa-solid fa-car"></i>
+    </a>
   </nav>
   <!-- Tab panes -->
-  <div class="tab-content mx-0 pt-1" id="settingsPanes">
+  <div class="shadow tab-content mx-1 p-1" id="settingsPanes">
     <div
       class="tab-pane active"
       :id="'chargeSettings'+cpid"
@@ -86,15 +94,25 @@
       class="tab-pane"
       :id="'timeSettings'+cpid"
       role="tabpanel"
-      aria-labelledby="pv-tab"
+      aria-labelledby="time-tab"
     >
       <CPConfigSchedule 
       :chargeTemplate="chargeTemplate"
       :chargeTemplateId="cp.chargeTemplate"></CPConfigSchedule>
     </div>
-  </div>
   
-  <div class="row">
+   <div
+      class="tab-pane"
+      :id="'carSettings'+cpid"
+      role="tabpanel"
+      aria-labelledby="car-tab"
+    >
+      <CPConfigVehicle
+      :vehicleId="cp.connectedVehicle"
+      ></CPConfigVehicle>
+    </div>
+  </div>
+  <div class="row mt-2">
     <div class="col">
       <button
         type="button"
@@ -114,8 +132,8 @@ import { ChargePoint, vehicles, chargeTemplates } from './model'
 import CPChargeConfigItem from './CPChargeConfigItem.vue'
 import CPConfigInstant from './CPConfigInstant.vue'
 import CPConfigPv from './CPConfigPv.vue'
-import CPConfigPvOptions from './CPConfigPvOptions.vue'
 import CPConfigSchedule from './CPConfigSchedule.vue'
+import CPConfigVehicle from './CPConfigVehicle.vue'
 import CPChargeConfig from './CPChargeConfig.vue'
 const props = defineProps<{
   chargepoint: ChargePoint
@@ -137,15 +155,7 @@ function toggleConfig() {
 }
 // lifecycle
 onMounted(() => {
-  console.log ("MMMOOOUUUNNNTTTEEEDD")
-  let carselect = document.getElementById ('chargeSettings'+cpid)
-  if (carselect) {
-    console.log ("ÏD FOUND")
-    carselect.focus()
-  } else {
-    console.log("CARSELECT NOT FOUND")
-  }
-})
+  })
 </script>
 
 <style scoped>

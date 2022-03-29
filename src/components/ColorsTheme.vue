@@ -108,13 +108,19 @@
   <div class="row p-2 mt-5">
     <div class="col p-2">
       <hr />
-      <p>Screen Width: {{ screensize.x }}</p>
+      <div class="d-flex justify-content-between">
+      <p class="mx-4">Screen Width: {{ screensize.x }}</p>
+      <button class="btn btn-sm btn-secondary mx-4" @click="toggleMqViewer">MQ Viewer</button>
+      </div>
+      <hr v-if="showMQ"/>
+      <MQTTViewer v-if="showMQ"></MQTTViewer>
+      </div>
     </div>
-  </div>
+  
 </template>
 
 <script setup lang="ts">
-import { reactive, computed, onMounted, provide } from 'vue'
+import { ref, reactive, computed, onMounted, provide } from 'vue'
 import { usageSummary, shDevices, globalData } from '../assets/js/model'
 import { chargePoints } from './chargePointList/model'
 import { etData } from './priceChart/model'
@@ -128,6 +134,7 @@ import BatteryList from './batteryList/BatteryList.vue'
 import PriceChart from './priceChart/PriceChart.vue'
 import SmartHomeList from './smartHome/SmartHomeList.vue'
 import { msgInit } from '@/assets/js/processMessages'
+import MQTTViewer from './mqttViewer/MQTTViewer.vue'
 
 // state
 const screensize = reactive({
@@ -147,9 +154,13 @@ const usageDetails = computed(() => {
     )
     .concat([usageSummary.batIn, usageSummary.house])
 })
+const showMQ = ref(false)
 // methods
 function init() {
   initConfig()
+}
+function toggleMqViewer() {
+  showMQ.value = !showMQ.value
 }
 // lifecycle
 onMounted(() => {

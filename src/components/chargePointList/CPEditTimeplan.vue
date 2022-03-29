@@ -102,11 +102,9 @@ const days = [
   'Sonntag',
 ]
 const template = computed(() => {
-  console.dir(chargeTemplates)
   return chargeTemplates[props.chargeTemplateId]
 })
 const plan = computed(() => {
-  console.dir(template.value)
   let p = template.value.time_charging.plans[props.planId]
   if (p) { 
   return p
