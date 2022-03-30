@@ -260,6 +260,30 @@ export function createChargeTimePlan () : ChargeTimePlan {
     current: 16
   }
 }
+export interface ChargeSchedule {
+  name: string
+  timed: boolean
+  time: string
+  soc: number
+  frequency: {
+    once: Array<string>
+    selected: string
+    weekly: boolean[]
+  }
+}
+export function createChargeSchedule () : ChargeSchedule {
+  return {
+    name: 'Neuer Plan',
+    timed: false,
+    time: '12:00',
+    soc: 80,
+    frequency: {
+      once: ['2022-02-02','2022-02-22'],
+      selected: 'daily',
+      weekly: [false,false,false,false,false,false,false]
+    }
+  }
+}
 export interface ChargeTemplate {
   name: string
   prio: boolean
@@ -283,6 +307,9 @@ export interface ChargeTemplate {
       max_soc: number
       min_soc: number
       min_soc_current: number
+    }
+    scheduled_charging: {
+      plans: {[key:string]:ChargeSchedule}
     }
   }
   disable_after_unplug: boolean

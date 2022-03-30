@@ -1,7 +1,9 @@
 <template>
   <WBWidget>
     <template v-slot:title>
-      <span :style="cpNameStyle" @click="toggleConfig">{{ props.chargepoint.name }}</span>
+      <span :style="cpNameStyle" @click="toggleConfig">{{
+        props.chargepoint.name
+      }}</span>
     </template>
 
     <template v-slot:buttons>
@@ -12,7 +14,7 @@
     </template>
 
     <!-- First row -->
-    <div class="row m-0 p-1 mt-1" >
+    <div class="row m-0 p-1 mt-1">
       <div class="col m-0 p-0 d-flex justify-content-between">
         <!-- Car info -->
         <p
@@ -57,13 +59,10 @@
       </div>
     </div>
     <!-- Second row -->
-    <div
-      class="row m-1 mt-2 p-0"
-      @click="toggleConfig"
-    >
-      <div class="col tablecell m-0 p-0 d-flex justify-content-between">
+    <div class="row m-1 mt-2 p-0" @click="toggleConfig">
+      <div class="col tablecell m-0 mb-1 p-0 d-flex justify-content-between">
         <!-- Status information -->
-        <p>
+        <span>
           <span class="me-2" :style="{ color: statusColor }">
             <i :class="statusIcon"></i>
             {{ statusString }}
@@ -73,14 +72,14 @@
             class="mx-1"
           >
             {{ chargePowerString }}
-            </span>
-        </p>
-        <p>
+          </span>
+        </span>
+        <span>
           <span class="energylabel me-2">Geladen:</span>
           <span>
             {{ chargeEnergyString }}
           </span>
-        </p>
+        </span>
       </div>
     </div>
     <CPChargeConfigPanel
@@ -242,7 +241,7 @@ function toggleConfig() {
   color: var(--color-menu);
 }
 .vehicleName {
-  color: var(--color-fg)
+  color: var(--color-fg);
 }
 </style>
 >

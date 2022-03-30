@@ -1,5 +1,5 @@
 <template>
-  <p class="settingsheader mt-2 ms-1">Profile für Fahrzeug {{ vehicles[vehicleId].name }}:</p>
+  <p class="settingsheader mt-2 ms-1">Profile für  {{ vehicles[vehicleId].name }}:</p>
   <!-- Select the charge mode -->
   <CPChargeConfigItem title="Ladeprofil">
     <SelectInput
@@ -8,13 +8,12 @@
      ></SelectInput>
   </CPChargeConfigItem>
   <!-- Select the Vehicle Template -->
-  <CPChargeConfigItem title="Fahrzeugprofil">
+  <CPChargeConfigItem title="Fahrzeug-Vorlage" class="mb-2">
     <SelectInput
       :options="Object.keys(evTemplates).map((v) => [evTemplates[+v].name, v])"
       v-model.number="vehicles[vehicleId].evTemplateId"
       ></SelectInput>
   </CPChargeConfigItem>
- 
   
 </template>
 

@@ -1,21 +1,29 @@
 <template>
   <div class="container-fluid p-0 m-0">
-    <CPChargeConfigItem title="Beginn">
-      <TimeInput v-model="plan.time[0]"> </TimeInput>
-    </CPChargeConfigItem>
-
-    <CPChargeConfigItem title="Ende">
-      <TimeInput v-model="plan.time[1]"> </TimeInput>
-    </CPChargeConfigItem>
-    <CPChargeConfigItem title="Ladestrom">
-      <RangeInput
-        id="current"
-        :min="6"
-        :max="32"
+    <CPChargeConfigItem title="Ladestand">
+       <RangeInput
+        id="soc"
+        :min="0"
+        :max="100"
         :step="1"
-        unit="A"
-        v-model="plan.current"
+        unit="%"
+        v-model="plan.soc"
       ></RangeInput>
+      
+    </CPChargeConfigItem>
+<CPChargeConfigItem title="Zielzeit beachten">
+    <div class="form-check form-switch">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        role="switch"
+        id="timedSwitch"
+        v-model="plan.timed"
+      />
+    </div>
+  </CPChargeConfigItem>
+    <CPChargeConfigItem title="Uhrzeit">
+      <TimeInput v-model="plan.time"> </TimeInput>
     </CPChargeConfigItem>
     <CPChargeConfigItem title="Wiederholungen">
       <SelectInput
@@ -74,7 +82,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { chargeTemplates, createChargeTimePlan } from './model'
+import { chargeTemplates, createChargeSchedule } from './model'
 import CPChargeConfigItem from './CPChargeConfigItem.vue'
 import RangeInput from '@/components/shared/RangeInput.vue'
 import SelectInput from '@/components/shared/SelectInput.vue'
@@ -105,12 +113,13 @@ const template = computed(() => {
   return chargeTemplates[props.chargeTemplateId]
 })
 const plan = computed(() => {
-  let p = template.value.time_charging.plans[props.planId]
-  if (p) {
-    return p
+  let p = template.value.chargemode.scheduled_charging.plans[props.planId]
+  if (p) { 
+  return p
   } else {
-    return createChargeTimePlan() // create a dummy time plan in case the list of plans in the template is empty
-  }
+    return createChargeSchedule() // create a dummy time plan in case the list of plans in the template is empty
+  } 
+   
 })
 </script>
 

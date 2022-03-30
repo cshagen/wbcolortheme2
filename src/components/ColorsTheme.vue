@@ -10,7 +10,7 @@
       <EnergyMeter :usageDetails="usageDetails"></EnergyMeter>
     </div>
     <!-- Tabbed area -->
-    <nav class="nav nav-tabs nav-justified mx-1 mt-2 shadow" role="tablist">
+    <nav class="nav nav-tabs nav-justified mx-1 mt-2" role="tablist">
       <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#showAll">
         <i class="fa-solid fa-lg fa-circle-info me-1"></i>
         <span class="d-none d-md-inline ms-2">Details</span>
@@ -188,8 +188,9 @@ onMounted(() => {
   color: var(--color-fg);
   background-color: var(--color-bg);
   opacity: 1;
-  border: 1px solid var(--color-menu);
-  border-bottom: 1px solid var(--color-menu);
+  border: .5px solid var(--color-menu);
+  border-bottom: 0px solid var(--color-menu);
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
 }
 .fa-circle-info {
   color: var(--color-fg);

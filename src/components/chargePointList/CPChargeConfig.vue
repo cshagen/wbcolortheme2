@@ -1,7 +1,7 @@
 <template>
   <p class="settingsheader mt-2 ms-1">Ladepunkt:</p>
   <!-- Select the charge mode -->
-  <CPChargeConfigItem :title="'Lademodus'">
+  <CPChargeConfigItem :title="'Lademodus'" tooltip="Der Lademodus für diesen Ladepunkt">
     <SelectInput
       :options="Object.keys(chargemodes).map((v) => [chargemodes[v].name, v])"
       v-model="cp.chargeMode"

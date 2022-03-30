@@ -4,7 +4,6 @@
       <button
         type="button"
         class="btn mx-1 mb-0 p-1 largeTextSize chargeButton shadow"
-       
         :style="buttonStyle"
         data-bs-toggle="modal"
         :data-bs-target="'#' + modalId"
@@ -18,7 +17,9 @@
                 class="mx-1 badge rounded-pill smallTextSize plugIndicator"
               >
                 <i :class="plugPillClass"></i>
-                <span v-if="chargepoint.isCharging" class="ms-2"> {{ formatWatt(chargepoint.power) }} </span>
+                <span v-if="chargepoint.isCharging" class="ms-2">
+                  {{ formatWatt(chargepoint.power) }}
+                </span>
               </span>
             </div>
             <!-- Chargepoint name -->
@@ -55,13 +56,13 @@ import { ChargePoint, ChargeMode } from '@/components/chargePointList/model'
 import { chargemodes } from '@/assets/js/themeConfig'
 import { computed } from 'vue'
 import { formatWatt } from '@/assets/js/helpers'
-import BBSelectModal  from './BBSelectModal.vue'
+import BBSelectModal from './BBSelectModal.vue'
 
 //props
 const props = defineProps<{
-  chargepoint: ChargePoint,
+  chargepoint: ChargePoint
 }>()
-const modalId = "chargeSelectModal" + props.chargepoint.id
+const modalId = 'chargeSelectModal' + props.chargepoint.id
 const modeString = computed(() => {
   return chargemodes[props.chargepoint.chargeMode].name
 })
@@ -69,7 +70,7 @@ const buttonStyle = computed(() => {
   let style = {
     background: 'var(--color-menu)',
   }
-   if (props.chargepoint.isLocked) {
+  if (props.chargepoint.isLocked) {
     style.background = 'var(--color-evu)'
   } else if (props.chargepoint.isCharging) {
     style.background = 'var(--color-charging)'

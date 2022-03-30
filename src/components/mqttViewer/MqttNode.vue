@@ -1,11 +1,6 @@
 <template>
   <div class="row p-0 mb-0 mx-0">
-    <div
-      class="col-md m-0 px-2"
-      :style="leafStyle"
-      style="font-size: 1rem; border: 1px solid white"
-      @click="toggle"
-    >
+    <div class="col-md m-0 px-2 node" :style="leafStyle" @click="toggle">
       <p class="py-2 m-0">{{ displaytext }}{{ counter }}</p>
       <hr v-if="showContent" />
       <p v-if="showContent" style="background-color: white" class="p-2">
@@ -31,14 +26,13 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import type { node } from './model'
+import type { Node } from './model'
 const props = defineProps<{
-  node: node
+  node: Node
   level: number
   hide: boolean
   expandAll: boolean
 }>()
-
 let expanded = ref(!props.hide)
 let showContent = ref(false)
 const displaytext = computed(() => {
@@ -54,39 +48,30 @@ const counter = computed(() => {
     return ''
   }
 })
-
-const leftclass = computed(() => {
-  if (expanded.value) {
-    return 'col-md-3 m-0 p-2'
-  } else {
-    return 'col-md m-0 p-2'
-  }
-})
 const childCount = computed(() => {
   return props.node.children.length
 })
-const buttonText = computed(() => {
-  if (expanded.value) {
-    return '-'
-  } else {
-    return '+'
-  }
-})
 const leafStyle = computed(() => {
-  if (childCount.value == 0) {
+    if (props.node.lastValue !='') {
     return { 'background-color': 'lightgoldenrodyellow' }
   } else {
     return { 'background-color': 'lightsteelblue' }
   }
 })
-
 function toggle() {
   if (childCount.value > 0) {
     expanded.value = !expanded.value
-  } else {
+  } 
+  if (props.node.lastValue !='') {
     showContent.value = !showContent.value
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.node {
+  font-size: 1rem;
+  color: black;
+  border: 1px solid white;
+}
+</style>
