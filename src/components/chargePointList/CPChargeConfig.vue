@@ -1,20 +1,20 @@
 <template>
   <p class="settingsheader mt-2 ms-1">Ladepunkt:</p>
   <!-- Select the charge mode -->
-  <CPChargeConfigItem :title="'Lademodus'" tooltip="Der Lademodus für diesen Ladepunkt">
+  <CPChargeConfigItem title="Lademodus" :infotext="infotext['chargemode']">
     <SelectInput
       :options="Object.keys(chargemodes).map((v) => [chargemodes[v].name, v])"
       v-model="cp.chargeMode"
     ></SelectInput>
   </CPChargeConfigItem>
   <!-- Select the vehicle -->
-  <CPChargeConfigItem title="Fahrzeug">
+  <CPChargeConfigItem title="Fahrzeug" :infotext="infotext['vehicle']">
     <SelectInput
       :options="Object.values(vehicles).map((v) => [v.name, v.id])"
       v-model.number="cp.connectedVehicle"
     ></SelectInput>
   </CPChargeConfigItem>
-  <CPChargeConfigItem title="Sperren">
+  <CPChargeConfigItem title="Sperren" :infotext="infotext['locked']">
     <div class="form-check form-switch">
       <input
         class="form-check-input"
@@ -26,7 +26,7 @@
     </div>
   </CPChargeConfigItem>
   <!-- Priority -->
-  <CPChargeConfigItem title="Priorität">
+  <CPChargeConfigItem title="Priorität" :infotext="infotext['priority']">
     <div class="form-check form-switch">
       <input
         class="form-check-input"
@@ -38,7 +38,7 @@
     </div>
   </CPChargeConfigItem>
   <!-- Scheduled Charging -->
-  <CPChargeConfigItem title="Zeitplan beachten">
+  <CPChargeConfigItem title="Zeitplan" :infotext="infotext['timeplan']">
     <div class="form-check form-switch">
       <input
         class="form-check-input"
@@ -56,6 +56,7 @@ import { chargemodes } from '@/assets/js/themeConfig'
 import { ChargePoint, vehicles } from './model'
 import CPChargeConfigItem from './CPChargeConfigItem.vue'
 import SelectInput from '@/components/shared/SelectInput.vue'
+import { infotext } from '@/assets/js/themeConfig'
 const props = defineProps<{
   chargepoint: ChargePoint
 }>()

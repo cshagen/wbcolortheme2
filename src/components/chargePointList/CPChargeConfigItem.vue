@@ -1,39 +1,53 @@
 <template>
   <div class="row p-1 pt-2 d-flex align-items-center">
     <div class="col-4">
-      <i class="fa-solid fa-circle-info me-1" 
-      data-bs-toggle="popover" 
-      title="Erklärung" 
-      :data-bs-content="tooltip"
-      data-bs-placement="top"
-      
-      ></i>
-      {{ title }}
+      <span @click="toggleInfo">{{ title }}</span>
     </div>
     <div class="col-8">
-      <slot></slot>
+      
+      <span class="d-flex justify-content-stretch">
+        <span class="flex-fill"><slot></slot></span>
+        <i
+          class="fa-solid fa-circle-info ms-2"
+          :style="iconstyle"
+          @click="toggleInfo"
+        ></i>
+      </span>
+      <p
+        v-if="showInfo"
+        @click="toggleInfo"
+        class="infotext shadow m-0 ps-2 mb-1 p-1"
+      >
+        <i class="me-1 fa-solid fa-sm fa-circle-info"></i>
+        {{ infotext }}
+      </p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Popover } from 'bootstrap';
-import { onMounted } from 'vue';
+import { ref, computed } from 'vue'
 
 const props = defineProps<{
   title: string
-  tooltip?: string
+  infotext?: string
 }>()
-onMounted(()=> {
-  var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-  var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-  return new Popover(popoverTriggerEl)
-})
+const showInfo = ref(false)
+function toggleInfo() {
+  showInfo.value = !showInfo.value
+}
+const iconstyle = computed(() => {
+  let style = { color: 'var(--color-menu)' }
+  if (showInfo.value) {
+    style.color = 'var(--color-battery)'
+  }
+  return style
 })
 </script>
 
 <style scoped>
-.fa-circle-info {
-  color: var(--color-menu);
+.infotext {
+  font-size: var(--font-small);
+  color: var(--color-battery);
 }
 </style>

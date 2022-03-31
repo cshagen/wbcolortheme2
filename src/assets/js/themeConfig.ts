@@ -131,7 +131,15 @@ export function switchSmarthomeColors() {
   }
   savePrefs()
 }
-
+export const infotext : {[key:string]:string} = {
+  'chargemode': 'Der Lademodus für diesen Ladepunkt',
+  'vehicle': 'Das Fahrzeug, das an diesem Ladepounkt geladen wird',
+  'locked': 'Diesen Ladepunkt sperren',
+  'priority': 'Diesen Ladepunkt auf hohe Priorität setzen',
+  'timeplan': 'An diesem Ladepunkt nach dem konfigurierten Zeitplan laden',
+  'minsoc': 'Immer mindestens bis zum eingestellten Ladestand laden. Wenn notwendig mit Netzstrom.',
+  'minpv': 'Durchgehend mit mindestens dem eingestellten Strom laden. Wenn notwendig mit Netzstrom.'
+}
 interface Preferences {
   hideSH?: number[]
   showLG?: boolean

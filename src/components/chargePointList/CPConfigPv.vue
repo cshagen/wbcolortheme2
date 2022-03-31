@@ -30,7 +30,7 @@
     </CPChargeConfigItem>
     <hr/>
     <!-- Min-PV-Laden -->
-    <CPChargeConfigItem title="Mindest-SoC mit Netzstrom laden" >
+    <CPChargeConfigItem title="Min-SoC-Laden" :infotext="infotext['minsoc']">
       <div class="form-check form-switch">
         <input
           class="form-check-input"
@@ -44,7 +44,8 @@
     
     <!-- Minimum SoC -->
     <CPChargeConfigItem title="...bis SoC" v-if="useMinSoc">
-      <RangeInput
+    <template v-slot:info>{{ infotext['minsoc'] }}</template>
+        <RangeInput
         id="minSoc"
         :min="0"
         :max="100"
@@ -67,7 +68,7 @@
     <hr v-if="useMinPV || useMinSoc"/>
     
     <!-- Min+PV-Laden -->
-    <CPChargeConfigItem title="Immer laden (Netz wenn nötig)">
+    <CPChargeConfigItem title="Min+PV-Laden" :infotext="infotext['minpv']">
       <div class="form-check form-switch">
         <input
           class="form-check-input"
@@ -99,6 +100,7 @@ import { ref, computed } from 'vue'
 import type { ChargePoint } from './model'
 import CPChargeConfigItem from './CPChargeConfigItem.vue'
 import RangeInput from '@/components/shared/RangeInput.vue'
+import { infotext } from '@/assets/js/themeConfig'
 const props = defineProps<{
   chargepoint: ChargePoint
 }>()

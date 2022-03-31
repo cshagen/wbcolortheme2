@@ -1,11 +1,11 @@
 <template>
-  <span class="d-flex justify-content-between">
+  <span class="d-flex flex-fill justify-content-between">
     <span class="minusButton" @click="stepDown">
       <i class="fa fa-xl fa-minus-square me-2"></i>
     </span>
     <input
       type="range"
-      class="form-range"
+      class="form-range flex-fill"
       :id="id"
       :min="min"
       :max="max"
