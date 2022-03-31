@@ -162,6 +162,12 @@ export function processVehicleTemplateMessages(topic: string, message: string) {
     if (match) {
       let index = +match[0]
       let template: ChargeTemplate = JSON.parse(message) as ChargeTemplate
+      if (!template.chargemode.scheduled_charging.plans) {
+        template.chargemode.scheduled_charging.plans={}
+      }
+      if (!template.time_charging.plans) {
+        template.time_charging.plans={}
+      }
       chargeTemplates[index] = template
       updateCpFromChargeTemplate(index, template)
     }
