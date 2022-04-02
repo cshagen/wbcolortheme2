@@ -1,25 +1,25 @@
 <template>
   <p class="settingsheader mt-2 ms-1">Profile für  {{ vehicles[vehicleId].name }}:</p>
   <!-- Select the charge mode -->
-  <CPChargeConfigItem title="Ladeprofil">
+  <ConfigItem title="Ladeprofil">
     <SelectInput
       :options="Object.keys(chargeTemplates).map((v) => [chargeTemplates[+v].name, v])"
       v-model.number="vehicles[vehicleId].chargeTemplateId"
      ></SelectInput>
-  </CPChargeConfigItem>
+  </ConfigItem>
   <!-- Select the Vehicle Template -->
-  <CPChargeConfigItem title="Fahrzeug-Vorlage" class="mb-2">
+  <ConfigItem title="Fahrzeug-Vorlage" class="mb-2">
     <SelectInput
       :options="Object.keys(evTemplates).map((v) => [evTemplates[+v].name, v])"
       v-model.number="vehicles[vehicleId].evTemplateId"
       ></SelectInput>
-  </CPChargeConfigItem>
+  </ConfigItem>
   
 </template>
 
 <script setup lang="ts">
 import { vehicles, chargeTemplates, evTemplates } from './model'
-import CPChargeConfigItem from './CPChargeConfigItem.vue'
+import ConfigItem from '../shared/ConfigItem.vue'
 import SelectInput from '@/components/shared/SelectInput.vue'
 const props = defineProps<{
   vehicleId: number

@@ -1,13 +1,13 @@
 <template>
   <div class="container-fluid p-0 m-0">
-    <CPChargeConfigItem title="Beginn">
+    <ConfigItem title="Beginn">
       <TimeInput v-model="plan.time[0]"> </TimeInput>
-    </CPChargeConfigItem>
+    </ConfigItem>
 
-    <CPChargeConfigItem title="Ende">
+    <ConfigItem title="Ende">
       <TimeInput v-model="plan.time[1]"> </TimeInput>
-    </CPChargeConfigItem>
-    <CPChargeConfigItem title="Ladestrom">
+    </ConfigItem>
+    <ConfigItem title="Ladestrom">
       <RangeInput
         id="current"
         :min="6"
@@ -16,26 +16,26 @@
         unit="A"
         v-model="plan.current"
       ></RangeInput>
-    </CPChargeConfigItem>
-    <CPChargeConfigItem title="Wiederholungen">
+    </ConfigItem>
+    <ConfigItem title="Wiederholungen">
       <SelectInput
         :options="frequencies"
         v-model="plan.frequency.selected"
       ></SelectInput>
-    </CPChargeConfigItem>
-    <CPChargeConfigItem
+    </ConfigItem>
+    <ConfigItem
       v-if="plan.frequency.selected == 'once'"
       title="Gültig ab"
     >
       <DateInput v-model="plan.frequency.once[0]"> </DateInput>
-    </CPChargeConfigItem>
-    <CPChargeConfigItem
+    </ConfigItem>
+    <ConfigItem
       v-if="plan.frequency.selected == 'once'"
       title="Gültig bis"
     >
       <DateInput v-model="plan.frequency.once[1]"> </DateInput>
-    </CPChargeConfigItem>
-    <CPChargeConfigItem
+    </ConfigItem>
+    <ConfigItem
       v-if="plan.frequency.selected == 'weekly'"
       title="Wochentage"
     >
@@ -43,7 +43,7 @@
         :options="days"
         v-model="plan.frequency.weekly"
       ></CheckBoxInput>
-    </CPChargeConfigItem>
+    </ConfigItem>
     <div class="row">
       <div class="col d-flex justify-content-end">
         <button
@@ -75,7 +75,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { chargeTemplates, createChargeTimePlan } from './model'
-import CPChargeConfigItem from './CPChargeConfigItem.vue'
+import ConfigItem from '../shared/ConfigItem.vue'
 import RangeInput from '@/components/shared/RangeInput.vue'
 import SelectInput from '@/components/shared/SelectInput.vue'
 import CheckBoxInput from '@/components/shared/CheckBoxInput.vue'

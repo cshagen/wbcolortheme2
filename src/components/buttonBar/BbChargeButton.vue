@@ -46,7 +46,10 @@
         </div>
       </button>
     </div>
-    <BBSelectModal :cpId="chargepoint.id" :modalId="modalId"></BBSelectModal>
+    <ModalComponent :modalId="modalId">
+    <template v-slot:title>Lademodus für {{ chargepoint.name }}</template>
+      <BBSelect :cpId="chargepoint.id"></BBSelect>
+    </ModalComponent>
   </div>
 </template>
 
@@ -56,7 +59,8 @@ import { ChargePoint, ChargeMode } from '@/components/chargePointList/model'
 import { chargemodes } from '@/assets/js/themeConfig'
 import { computed } from 'vue'
 import { formatWatt } from '@/assets/js/helpers'
-import BBSelectModal from './BBSelectModal.vue'
+import BBSelect from './BBSelect.vue'
+import ModalComponent from '@/components/shared/ModalComponent.vue'
 
 //props
 const props = defineProps<{

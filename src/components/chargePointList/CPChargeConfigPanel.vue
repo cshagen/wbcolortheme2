@@ -1,12 +1,12 @@
 <template>
   <div class="shadow m-2 mt-4 p-1 rounded">
-    <CPChargeConfigItem title="Status">
+    <ConfigItem title="Status">
       <span class="status-string">{{ cp.stateStr }}</span>
-    </CPChargeConfigItem>
+    </ConfigItem>
   </div>
-  <CPChargeConfigItem v-if="cp.faultState != 0" title="Fehler">
+  <ConfigItem v-if="cp.faultState != 0" title="Fehler">
     <span style="color: red"> {{ cp.faultStr }} </span>
-  </CPChargeConfigItem>
+  </ConfigItem>
 
   <div class="m-0 mt-4 p-1">
     <p class="heading ms-0">Konfiguration</p>
@@ -60,7 +60,7 @@
       </a>
     </nav>
     <!-- Tab panes -->
-    <div class="shadow tab-content mx-1 p-1" id="settingsPanes">
+    <div class="shadow tab-content mx-1 p-1 pb-3" id="settingsPanes">
       <div
         class="tab-pane active"
         :id="'chargeSettings' + cpid"
@@ -129,14 +129,14 @@
         <CPConfigVehicle :vehicleId="cp.connectedVehicle"></CPConfigVehicle>
       </div>
     </div>
-    <div class="row mt-2">
-      <div class="col">
+    <div class="row mt-2 me-0">
+      <div class="col m-0 p-0">
         <button
           type="button"
-          class="btn btn-outline-success float-end m-2"
+          class="btn btn-secondary float-end mt-2 me-0"
           @click="toggleConfig"
         >
-          OK
+          Schliessen
         </button>
       </div>
     </div>
@@ -146,7 +146,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { ChargePoint, vehicles, chargeTemplates } from './model'
-import CPChargeConfigItem from './CPChargeConfigItem.vue'
+import ConfigItem from '../shared/ConfigItem.vue'
 import CPConfigInstant from './CPConfigInstant.vue'
 import CPConfigPv from './CPConfigPv.vue'
 import CPConfigScheduled from './CPConfigScheduled.vue'

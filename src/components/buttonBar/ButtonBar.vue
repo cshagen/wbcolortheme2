@@ -1,5 +1,4 @@
-// ButtonBar.vue 
-// Display configuration buttons for all chargepoints
+// ButtonBar.vue // Display configuration buttons for all chargepoints
 <template>
   <div class="row p-0 mt-0 mb-1 m-0">
     <div class="col p-0 m-0">

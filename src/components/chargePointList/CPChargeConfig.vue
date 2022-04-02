@@ -1,62 +1,39 @@
 <template>
   <p class="settingsheader mt-2 ms-1">Ladepunkt:</p>
   <!-- Select the charge mode -->
-  <CPChargeConfigItem title="Lademodus" :infotext="infotext['chargemode']">
+  <ConfigItem title="Lademodus" icon="fa-charging-station" :infotext="infotext['chargemode']">
     <SelectInput
       :options="Object.keys(chargemodes).map((v) => [chargemodes[v].name, v])"
       v-model="cp.chargeMode"
     ></SelectInput>
-  </CPChargeConfigItem>
+  </ConfigItem>
   <!-- Select the vehicle -->
-  <CPChargeConfigItem title="Fahrzeug" :infotext="infotext['vehicle']">
+  <ConfigItem title="Fahrzeug" icon = "fa-car" :infotext="infotext['vehicle']">
     <SelectInput
       :options="Object.values(vehicles).map((v) => [v.name, v.id])"
       v-model.number="cp.connectedVehicle"
     ></SelectInput>
-  </CPChargeConfigItem>
-  <CPChargeConfigItem title="Sperren" :infotext="infotext['locked']">
-    <div class="form-check form-switch">
-      <input
-        class="form-check-input"
-        type="checkbox"
-        role="switch"
-        id="lockCPSwitch"
-        v-model="cp.isLocked"
-      />
-    </div>
-  </CPChargeConfigItem>
+  </ConfigItem>
+  <ConfigItem title="Sperren" icon = "fa-lock" :infotext="infotext['locked']">
+    <SwitchInput v-model="cp.isLocked"></SwitchInput> 
+  </ConfigItem>
   <!-- Priority -->
-  <CPChargeConfigItem title="Priorität" :infotext="infotext['priority']">
-    <div class="form-check form-switch">
-      <input
-        class="form-check-input"
-        type="checkbox"
-        role="switch"
-        id="prioritySwitch"
-        v-model="cp.hasPriority"
-      />
-    </div>
-  </CPChargeConfigItem>
+  <ConfigItem title="Priorität" icon = "fa-star" :infotext="infotext['priority']">
+    <SwitchInput v-model="cp.hasPriority"></SwitchInput> 
+  </ConfigItem>
   <!-- Scheduled Charging -->
-  <CPChargeConfigItem title="Zeitplan" :infotext="infotext['timeplan']">
-    <div class="form-check form-switch">
-      <input
-        class="form-check-input"
-        type="checkbox"
-        role="switch"
-        id="scheduledChargingSwitch"
-        v-model="cp.scheduledCharging"
-      />
-    </div>
-  </CPChargeConfigItem>
+  <ConfigItem title="Zeitplan" icon = "fa-clock" :infotext="infotext['timeplan']">
+    <SwitchInput v-model="cp.scheduledCharging"></SwitchInput> 
+  </ConfigItem>
 </template>
 
 <script setup lang="ts">
 import { chargemodes } from '@/assets/js/themeConfig'
 import { ChargePoint, vehicles } from './model'
-import CPChargeConfigItem from './CPChargeConfigItem.vue'
+import ConfigItem from '../shared/ConfigItem.vue'
 import SelectInput from '@/components/shared/SelectInput.vue'
 import { infotext } from '@/assets/js/themeConfig'
+import SwitchInput from '../shared/SwitchInput.vue'
 const props = defineProps<{
   chargepoint: ChargePoint
 }>()

@@ -152,7 +152,7 @@ h3 {
   --evuCol: rgba(255, 0, 0, 0.7);
 }
 
-.theme-dark {
+.theme-blue {
   --color-bg: midnightblue;
   --color-axis: steelblue;
   --color-grid: steelblue;
@@ -165,7 +165,7 @@ h3 {
   --padding-widget: 0px;
 }
 
-.theme-gray {
+.theme-dark {
   --color-bg: #333333;
   --color-export: #b2df8a;
   --color-axis: #666666;

@@ -2,8 +2,10 @@
   <WBWidget>
     <template v-slot:title>Aktuelle Leistung</template>
     <template v-slot:buttons>
-      <PMMenu @resetArcs="resetArcs"></PMMenu>
-    </template>
+      <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#themeconfig">
+      <span class="fa fa-bars px-0"></span>
+    </button>
+      </template>
     <figure id="powermeter" class="p-0 m-0">
       <svg :viewBox="'0 0 ' + width + ' ' + height">
         <g :transform="'translate(' + width / 2 + ',' + height / 2 + ')'">
@@ -134,20 +136,25 @@
         </g>
       </svg>
     </figure>
+    <ModalComponent modal-id="themeconfig">
+      <template v-slot:title>Look & Feel</template>
+    <ThemeSettings @resetArcs="resetArcs"></ThemeSettings>
+    </ModalComponent>
   </WBWidget>
 </template>
 
 <script setup lang="ts">
-import { reactive, computed, ref } from 'vue'
+import { computed } from 'vue'
 import { globalConfig } from '@/assets/js/themeConfig'
 import { globalData, shDevices, sourceSummary, usageSummary } from '@/assets/js/model'
 import { chargePoints } from '@/components/chargePointList/model'
-import PMMenu from "./PMMenu.vue";
 import PMSourceArc from './PMSourceArc.vue';
 import PMUsageArc from './PMUsageArc.vue'
 import PMLabel from "./PMLabel.vue";
 import WBWidget from "../shared/WBWidget.vue";
 import { formatWatt } from "@/assets/js/helpers";
+import ModalComponent from "../shared/ModalComponent.vue";
+import ThemeSettings from "../ThemeSettings.vue";
 
 // state:
 const width = 500

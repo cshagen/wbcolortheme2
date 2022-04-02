@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid p-0 m-0">
-    <CPChargeConfigItem title="Ladestand">
+    <ConfigItem title="Ladestand">
        <RangeInput
         id="soc"
         :min="0"
@@ -10,40 +10,32 @@
         v-model="plan.soc"
       ></RangeInput>
       
-    </CPChargeConfigItem>
-<CPChargeConfigItem title="Zielzeit beachten">
-    <div class="form-check form-switch">
-      <input
-        class="form-check-input"
-        type="checkbox"
-        role="switch"
-        id="timedSwitch"
-        v-model="plan.timed"
-      />
-    </div>
-  </CPChargeConfigItem>
-    <CPChargeConfigItem title="Uhrzeit">
+    </ConfigItem>
+    <ConfigItem title="Zielzeit beachten">
+      <SwitchInput v-model="plan.timed"></SwitchInput>
+    </ConfigItem>
+    <ConfigItem title="Uhrzeit">
       <TimeInput v-model="plan.time"> </TimeInput>
-    </CPChargeConfigItem>
-    <CPChargeConfigItem title="Wiederholungen">
+    </ConfigItem>
+    <ConfigItem title="Wiederholungen">
       <SelectInput
         :options="frequencies"
         v-model="plan.frequency.selected"
       ></SelectInput>
-    </CPChargeConfigItem>
-    <CPChargeConfigItem
+    </ConfigItem>
+    <ConfigItem
       v-if="plan.frequency.selected == 'once'"
       title="Gültig ab"
     >
       <DateInput v-model="plan.frequency.once[0]"> </DateInput>
-    </CPChargeConfigItem>
-    <CPChargeConfigItem
+    </ConfigItem>
+    <ConfigItem
       v-if="plan.frequency.selected == 'once'"
       title="Gültig bis"
     >
       <DateInput v-model="plan.frequency.once[1]"> </DateInput>
-    </CPChargeConfigItem>
-    <CPChargeConfigItem
+    </ConfigItem>
+    <ConfigItem
       v-if="plan.frequency.selected == 'weekly'"
       title="Wochentage"
     >
@@ -51,8 +43,8 @@
         :options="days"
         v-model="plan.frequency.weekly"
       ></CheckBoxInput>
-    </CPChargeConfigItem>
-    <div class="row">
+    </ConfigItem>
+    <div class="row mt-2">
       <div class="col d-flex justify-content-end">
         <button
           class="btn btn-danger"
@@ -83,12 +75,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { chargeTemplates, createChargeSchedule } from './model'
-import CPChargeConfigItem from './CPChargeConfigItem.vue'
+import ConfigItem from '../shared/ConfigItem.vue'
 import RangeInput from '@/components/shared/RangeInput.vue'
 import SelectInput from '@/components/shared/SelectInput.vue'
 import CheckBoxInput from '@/components/shared/CheckBoxInput.vue'
 import TimeInput from '@/components/shared/TimeInput.vue'
 import DateInput from '@/components/shared/DateInput.vue'
+import SwitchInput from '../shared/SwitchInput.vue'
 const props = defineProps<{
   chargeTemplateId: number
   planId: string

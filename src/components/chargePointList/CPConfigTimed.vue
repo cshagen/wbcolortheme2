@@ -113,7 +113,6 @@ function addPlan() {
   max = max + 1
   props.chargeTemplate.time_charging.plans[max.toString()] = p
   setPlanToEdit (max.toString())
-  console.log (plans.value)
   showModal()
 }
 function showModal() {

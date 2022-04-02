@@ -5,38 +5,67 @@ import type { ChargeModeInfo } from './types'
 import { shDevices } from './model'
 
 export class Config {
-  showRelativeArcs: boolean = false
+  private _showRelativeArcs: boolean = false
   showTodayGraph: boolean = true
   graphMode: string = 'live'
   graphPreference: string = 'live'
   usageStackOrder: number = 0
-  displayMode: string = 'gray'
-  showGrid: boolean = false
-  smartHomeColors: string = 'normal'
-  decimalPlaces: number = 1
+  private _displayMode: string = 'dark'
+  private _showGrid: boolean = false
+  private _smartHomeColors: string = 'normal'
+  private _decimalPlaces: number = 1
   maxPower: number = 4000
   isEtEnabled: boolean = false
   etPrice: number = 20.5
   constructor() {}
+  get displayMode() {
+    return this._displayMode
+  }
+  set displayMode(mode: string) {
+    this._displayMode = mode
+    switchTheme(mode)
+  }
+  get showGrid() {
+    return this._showGrid
+  }
+  set showGrid(setting: boolean) {
+    this._showGrid = setting
+    savePrefs()
+  }
+  get showRelativeArcs() {
+    return this._showRelativeArcs
+  }
+  set showRelativeArcs(setting: boolean) {
+    this._showRelativeArcs = setting
+    savePrefs()
+  }
+  get decimalPlaces() {
+    return this._decimalPlaces
+  }
+  set decimalPlaces(setting: number) {
+    this._decimalPlaces = setting
+    savePrefs()
+  }
+  get smartHomeColors() {
+    return this._smartHomeColors
+  }
+  set smartHomeColors(setting: string) {
+    this._smartHomeColors = setting
+    switchSmarthomeColors(setting)
+  }
 }
 
-export function initConfig () {
+export function initConfig() {
   readCookie()
-    // set the background
-    const doc = d3.select("html");
-    doc.classed("theme-dark", globalConfig.displayMode == "dark");
-    doc.classed("theme-light", globalConfig.displayMode == "light");
-    doc.classed("theme-gray", globalConfig.displayMode == "gray");
-    // set the color scheme for devices
-    doc.classed(
-      "shcolors-standard",
-      globalConfig.smartHomeColors == "standard"
-    );
-    doc.classed(
-      "shcolors-advanced",
-      globalConfig.smartHomeColors == "advanced"
-    );
-    doc.classed("shcolors-normal", globalConfig.smartHomeColors == "normal");
+  // set the background
+  const doc = d3.select('html')
+  doc.classed('theme-dark', globalConfig.displayMode == 'dark')
+  doc.classed('theme-light', globalConfig.displayMode == 'light')
+  doc.classed('theme-blue', globalConfig.displayMode == 'blue')
+  // set the color scheme for devices
+  doc.classed('shcolors-standard', globalConfig.smartHomeColors == 'standard')
+  doc.classed('shcolors-advanced', globalConfig.smartHomeColors == 'advanced')
+  doc.classed('shcolors-normal', globalConfig.smartHomeColors == 'normal')
 }
 
 export const globalConfig = reactive(new Config())
@@ -50,7 +79,7 @@ export const chargemodes: { [key: string]: ChargeModeInfo } = {
   pv_charging: { name: 'PV', color: 'var(--color-pv', icon: 'fa-solar-panel' },
   scheduled_charging: {
     name: 'Zielladen',
-    color: 'var(--color-battery',
+    color: 'var(--color-battery)',
     icon: 'fa-bullseye',
   },
   standby: { name: 'Standby', color: 'var(--color-axis', icon: 'fa-pause' },
@@ -60,24 +89,12 @@ export const chargemodes: { [key: string]: ChargeModeInfo } = {
 export function savePrefs() {
   writeCookie()
 }
-export function switchTheme() {
+export function switchTheme(mode: string) {
   const doc = d3.select('html')
-  switch (globalConfig.displayMode) {
-    case 'gray':
-      globalConfig.displayMode = 'light'
-      break
-    case 'light':
-      globalConfig.displayMode = 'dark'
-      break
-    case 'dark':
-      globalConfig.displayMode = 'gray'
-      break
-    default:
-      break
-  }
-  doc.classed('theme-dark', globalConfig.displayMode == 'dark')
-  doc.classed('theme-light', globalConfig.displayMode == 'light')
-  doc.classed('theme-gray', globalConfig.displayMode == 'gray')
+
+  doc.classed('theme-dark', mode == 'dark')
+  doc.classed('theme-light', mode == 'light')
+  doc.classed('theme-blue', mode == 'blue')
   savePrefs()
 }
 export function toggleGrid() {
@@ -85,7 +102,7 @@ export function toggleGrid() {
   savePrefs()
 }
 export function toggleFixArcs() {
-  globalConfig.etPrice = globalConfig.etPrice + 10
+  // globalConfig.etPrice = globalConfig.etPrice + 10
   globalConfig.showRelativeArcs = !globalConfig.showRelativeArcs
   savePrefs()
 }
@@ -101,44 +118,23 @@ export function switchDecimalPlaces() {
   }
   savePrefs()
 }
-export function switchSmarthomeColors() {
+export function switchSmarthomeColors(setting: string) {
   const doc = d3.select('html')
-  switch (globalConfig.smartHomeColors) {
-    case 'normal':
-      globalConfig.smartHomeColors = 'standard'
-      doc.classed('shcolors-normal', false)
-      doc.classed('shcolors-standard', true)
-      doc.classed('shcolors-advanced', false)
-      break
-    case 'standard':
-      globalConfig.smartHomeColors = 'advanced'
-      doc.classed('shcolors-normal', false)
-      doc.classed('shcolors-standard', false)
-      doc.classed('shcolors-advanced', true)
-      break
-    case 'advanced':
-      globalConfig.smartHomeColors = 'normal'
-      doc.classed('shcolors-normal', true)
-      doc.classed('shcolors-standard', false)
-      doc.classed('shcolors-advanced', false)
-      break
-    default:
-      globalConfig.smartHomeColors = 'normal'
-      doc.classed('shcolors-normal', true)
-      doc.classed('shcolors-standard', false)
-      doc.classed('shcolors-advanced', false)
-      break
-  }
+  doc.classed('shcolors-normal', setting == 'normal')
+  doc.classed('shcolors-standard', setting == 'standard')
+  doc.classed('shcolors-advanced', setting == 'advanced')
   savePrefs()
 }
-export const infotext : {[key:string]:string} = {
-  'chargemode': 'Der Lademodus für diesen Ladepunkt',
-  'vehicle': 'Das Fahrzeug, das an diesem Ladepounkt geladen wird',
-  'locked': 'Diesen Ladepunkt sperren',
-  'priority': 'Diesen Ladepunkt auf hohe Priorität setzen',
-  'timeplan': 'An diesem Ladepunkt nach dem konfigurierten Zeitplan laden',
-  'minsoc': 'Immer mindestens bis zum eingestellten Ladestand laden. Wenn notwendig mit Netzstrom.',
-  'minpv': 'Durchgehend mit mindestens dem eingestellten Strom laden. Wenn notwendig mit Netzstrom.'
+export const infotext: { [key: string]: string } = {
+  chargemode: 'Der Lademodus für diesen Ladepunkt',
+  vehicle: 'Das Fahrzeug, das an diesem Ladepounkt geladen wird',
+  locked: 'Diesen Ladepunkt sperren',
+  priority: 'Diesen Ladepunkt auf hohe Priorität setzen',
+  timeplan: 'An diesem Ladepunkt nach dem konfigurierten Zeitplan laden',
+  minsoc:
+    'Immer mindestens bis zum eingestellten Ladestand laden. Wenn notwendig mit Netzstrom.',
+  minpv:
+    'Durchgehend mit mindestens dem eingestellten Strom laden. Wenn notwendig mit Netzstrom.',
 }
 interface Preferences {
   hideSH?: number[]

@@ -1,16 +1,19 @@
 <template>
   <div class="row p-1 pt-2 d-flex align-items-center">
     <div class="col-4">
-      <span @click="toggleInfo">{{ title }}</span>
+      <span @click="toggleInfo">
+        <i v-if="icon" class="fa-solid fa-sm me-1 item-icon" :class="icon"></i>
+        {{ title }}</span
+      >
     </div>
     <div class="col-8">
-      
-      <span class="d-flex justify-content-stretch">
+      <span class="d-flex justify-content-stretch align-items-center">
         <span class="flex-fill"><slot></slot></span>
         <i
-          class="fa-solid fa-circle-info ms-2"
+          class="fa-solid fa-sm fa-circle-question ms-2"
           :style="iconstyle"
           @click="toggleInfo"
+          v-if="infotext"
         ></i>
       </span>
       <p
@@ -31,13 +34,14 @@ import { ref, computed } from 'vue'
 const props = defineProps<{
   title: string
   infotext?: string
+  icon?: string
 }>()
 const showInfo = ref(false)
 function toggleInfo() {
   showInfo.value = !showInfo.value
 }
 const iconstyle = computed(() => {
-  let style = { color: 'var(--color-menu)' }
+  let style = { color: 'var(--color-charging)' }
   if (showInfo.value) {
     style.color = 'var(--color-battery)'
   }
@@ -49,5 +53,10 @@ const iconstyle = computed(() => {
 .infotext {
   font-size: var(--font-small);
   color: var(--color-battery);
+}
+
+
+.item-icon {
+  color: var(--color-menu);;
 }
 </style>
