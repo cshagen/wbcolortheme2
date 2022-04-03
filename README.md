@@ -5,6 +5,8 @@ Alpha version, basierend auf der Alpha der openwb2.
 
 ![dark background](colors1.png)
 ![white background](colors2.png)
+![responsive view](colors3.png)
+
 Das theme ist noch nicht in die openwb2 integriert. (Die openWB-Konfiguration ist aber integriert.) Es läuft standalone auf dem gleichen Rechner wie die openwb2 selbst. Entweder direkt auf dem Raspberry Pi oder in einem Docker Container:
 
 ## Installation auf Raspi mit openwb2 (node.js notwendig):
