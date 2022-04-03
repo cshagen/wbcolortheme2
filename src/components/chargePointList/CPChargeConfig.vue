@@ -2,17 +2,17 @@
   <p class="settingsheader mt-2 ms-1">Ladepunkt:</p>
   <!-- Select the charge mode -->
   <ConfigItem title="Lademodus" icon="fa-charging-station" :infotext="infotext['chargemode']">
-    <SelectInput
-      :options="Object.keys(chargemodes).map((v) => [chargemodes[v].name, v])"
+    <RadioInput
+      :options="Object.keys(chargemodes).map((v) => [chargemodes[v].name, v, chargemodes[v].color, chargemodes[v].icon])"
       v-model="cp.chargeMode"
-    ></SelectInput>
+    ></RadioInput>
   </ConfigItem>
   <!-- Select the vehicle -->
   <ConfigItem title="Fahrzeug" icon = "fa-car" :infotext="infotext['vehicle']">
-    <SelectInput
+    <RadioInput
       :options="Object.values(vehicles).map((v) => [v.name, v.id])"
       v-model.number="cp.connectedVehicle"
-    ></SelectInput>
+    ></RadioInput>
   </ConfigItem>
   <ConfigItem title="Sperren" icon = "fa-lock" :infotext="infotext['locked']">
     <SwitchInput v-model="cp.isLocked"></SwitchInput> 
@@ -34,6 +34,8 @@ import ConfigItem from '../shared/ConfigItem.vue'
 import SelectInput from '@/components/shared/SelectInput.vue'
 import { infotext } from '@/assets/js/themeConfig'
 import SwitchInput from '../shared/SwitchInput.vue'
+import RadioInput from '@/components/shared/RadioInput.vue'
+
 const props = defineProps<{
   chargepoint: ChargePoint
 }>()

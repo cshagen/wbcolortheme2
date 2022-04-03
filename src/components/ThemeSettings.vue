@@ -1,9 +1,9 @@
 <template>
   <ConfigItem title="Farbschema" icon="fa-adjust" infotext="Hintergrundfarbe">
-    <SelectInput
+    <RadioInput
       :options="colorschemes"
       v-model="globalConfig.displayMode"
-    ></SelectInput>
+    ></RadioInput>
   </ConfigItem>
   <ConfigItem
     title="Grafik: Raster"
@@ -34,10 +34,10 @@
     ></SelectInput>
   </ConfigItem>
   <ConfigItem title="Farbschema Smart-Home-Geräte" icon="fa-palette" infotext="Für die Smart-Home-Geräte stehen mehrere Schemata zur Verfügung.">
-    <SelectInput
+    <RadioInput
       :options="shSchemes"
       v-model="globalConfig.smartHomeColors"
-    ></SelectInput>
+    ></RadioInput>
   </ConfigItem>
    <button
           class="btn btn-secondary float-end mt-3 ms-1"
@@ -54,6 +54,7 @@ import {
 import SelectInput from '@/components/shared/SelectInput.vue'
 import ConfigItem from '@/components/shared/ConfigItem.vue'
 import SwitchInput from './shared/SwitchInput.vue'
+import RadioInput from './shared/RadioInput.vue'
 const emit = defineEmits(['resetArcs'])
 const colorschemes: [string, string][] = [
   ['Dunkel', 'dark'],
@@ -68,8 +69,8 @@ const decimalDisplay: [string,string][] = [
   ['3141 W', '4']
 ]
 const shSchemes: [string, string][] = [
-  ['Normal', 'normal'],
-  ['Standard', 'standard'],
-  ['Fortgeschritten', 'advanced'],
+  ['Orange', 'normal'],
+  ['Grün/Violett', 'standard'],
+  ['Bunt', 'advanced'],
 ]
 </script>

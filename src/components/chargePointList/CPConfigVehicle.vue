@@ -2,17 +2,17 @@
   <p class="settingsheader mt-2 ms-1">Profile für  {{ vehicles[vehicleId].name }}:</p>
   <!-- Select the charge mode -->
   <ConfigItem title="Ladeprofil">
-    <SelectInput
+    <RadioInput
       :options="Object.keys(chargeTemplates).map((v) => [chargeTemplates[+v].name, v])"
       v-model.number="vehicles[vehicleId].chargeTemplateId"
-     ></SelectInput>
+     ></RadioInput>
   </ConfigItem>
   <!-- Select the Vehicle Template -->
   <ConfigItem title="Fahrzeug-Vorlage" class="mb-2">
-    <SelectInput
+    <RadioInput
       :options="Object.keys(evTemplates).map((v) => [evTemplates[+v].name, v])"
       v-model.number="vehicles[vehicleId].evTemplateId"
-      ></SelectInput>
+      ></RadioInput>
   </ConfigItem>
   
 </template>
@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import { vehicles, chargeTemplates, evTemplates } from './model'
 import ConfigItem from '../shared/ConfigItem.vue'
-import SelectInput from '@/components/shared/SelectInput.vue'
+import RadioInput from '../shared/RadioInput.vue'
 const props = defineProps<{
   vehicleId: number
 }>()

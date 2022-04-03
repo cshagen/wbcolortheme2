@@ -1,6 +1,6 @@
 <template>
-  <div class="shadow m-2 mt-4 p-1 rounded">
-    <ConfigItem title="Status">
+  <div class="m-0 mt-0">
+    <ConfigItem title="Status" icon="fa-info-circle">
       <span class="status-string">{{ cp.stateStr }}</span>
     </ConfigItem>
   </div>
