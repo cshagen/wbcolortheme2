@@ -5,7 +5,8 @@
     </p>
 
     <!-- Ampere -->
-    <ConfigItem title="Stromstärke">
+    <ConfigItem title="Stromstärke"
+    icon="fa-bolt">
       <RangeInput
         id="targetCurrent"
         :min="6"
@@ -17,12 +18,12 @@
     </ConfigItem>
     <hr v-if="cp.instantChargeLimitMode != 'none'" />
     <!-- Limit Mode -->
-    <ConfigItem title="Begrenzung">
-      <SelectInput
+    <ConfigItem title="Begrenzung" icon="fa-hand">
+      <RadioInput
         :options="instantChargeLimitModes.map((e) => [e.name, e.id])"
         v-model="cp.instantChargeLimitMode"
       
-        ></SelectInput
+        ></RadioInput
       >
       
     </ConfigItem>
@@ -61,10 +62,10 @@
 <script setup lang="ts">
 // import { eventBus } from '@/main.js'
 import { ref, computed } from 'vue'
-import type { ChargePoint } from './model'
-import ConfigItem from '../shared/ConfigItem.vue'
+import type { ChargePoint } from '../model'
+import ConfigItem from '../../shared/ConfigItem.vue'
 import RangeInput from '@/components/shared/RangeInput.vue'
-import SelectInput from '@/components/shared/SelectInput.vue'
+import RadioInput from '@/components/shared/RadioInput.vue'
 const props = defineProps<{
   chargepoint: ChargePoint
 }>()

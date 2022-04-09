@@ -79,9 +79,9 @@ const powerSymbol = computed(() => {
 const batterySymbol = computed(() => {
   if (props.bat.soc <= 10) {
     return 'fa-battery-empty'
-  } else if (props.bat.soc <= 50) {
+  } else if (props.bat.soc < 50) {
     return 'fa-battery-quarter'
-  } else if (props.bat.soc <= 75) {
+  } else if (props.bat.soc < 75) {
     return 'fa-battery-half'
   } else if (props.bat.soc < 95) {
     return 'fa-battery-three-quarters'

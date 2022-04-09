@@ -74,8 +74,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { chargeTemplates, createChargeTimePlan } from './model'
-import ConfigItem from '../shared/ConfigItem.vue'
+import { chargeTemplates, createChargeTimePlan } from '../model'
+import ConfigItem from '../../shared/ConfigItem.vue'
 import RangeInput from '@/components/shared/RangeInput.vue'
 import SelectInput from '@/components/shared/SelectInput.vue'
 import CheckBoxInput from '@/components/shared/CheckBoxInput.vue'

@@ -66,7 +66,7 @@ export class ChargePoint {
   }
   set connectedVehicle(vId: number) {
     this._connectedVehicle = vId
-    updateServer ('cpVehicle', +vId, this.id)
+    updateServer ('cpVehicle', vId, this.id)
   }
   updateConnectedVehicle (id: number) {
     this._connectedVehicle = id

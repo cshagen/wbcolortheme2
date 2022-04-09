@@ -6,14 +6,17 @@
       :options="Object.keys(chargemodes).map((v) => [chargemodes[v].name, v, chargemodes[v].color, chargemodes[v].icon])"
       v-model="cp.chargeMode"
     ></RadioInput>
+    
   </ConfigItem>
+  <hr class="my-0" />
   <!-- Select the vehicle -->
   <ConfigItem title="Fahrzeug" icon = "fa-car" :infotext="infotext['vehicle']">
     <RadioInput
       :options="Object.values(vehicles).map((v) => [v.name, v.id])"
       v-model.number="cp.connectedVehicle"
     ></RadioInput>
-  </ConfigItem>
+     </ConfigItem>
+ <hr class="my-0 py-0" />
   <ConfigItem title="Sperren" icon = "fa-lock" :infotext="infotext['locked']">
     <SwitchInput v-model="cp.isLocked"></SwitchInput> 
   </ConfigItem>
@@ -29,11 +32,11 @@
 
 <script setup lang="ts">
 import { chargemodes } from '@/assets/js/themeConfig'
-import { ChargePoint, vehicles } from './model'
-import ConfigItem from '../shared/ConfigItem.vue'
+import { ChargePoint, vehicles } from '../model'
+import ConfigItem from '../../shared/ConfigItem.vue'
 import SelectInput from '@/components/shared/SelectInput.vue'
 import { infotext } from '@/assets/js/themeConfig'
-import SwitchInput from '../shared/SwitchInput.vue'
+import SwitchInput from '../../shared/SwitchInput.vue'
 import RadioInput from '@/components/shared/RadioInput.vue'
 
 const props = defineProps<{
@@ -83,5 +86,8 @@ function toggleConfig() {
 
 .settingsheader {
   color: var(--color-charging);
+}
+hr {
+  color: var(--color-menu);
 }
 </style>

@@ -39,6 +39,20 @@
       v-model="globalConfig.smartHomeColors"
     ></RadioInput>
   </ConfigItem>
+  <ConfigItem
+    title="Schnellzugriffs-Leiste"
+      icon="fa-filter"
+      infotext="Die Schnellzugriff-Buttons ermöglichen die Darstellung nur einer bestimmten Kategorie von Informationen, z.B,. nur Ladepunkte oder nur Speicher. Bei einer grossen Anlage steigt so die Übersichtlichkeit. Bei einer kleinen Installation können sie ausgeblendet werden."
+  >
+    <SwitchInput v-model="globalConfig.showQuickAccess"></SwitchInput>
+  </ConfigItem>
+  <ConfigItem
+    title="Einfache Ladepunkt-Liste"
+    icon="fa-list"
+      infotext="Zeige eine einfache Ladepunktliste statt einzelner Elemente pro Ladepunkt"
+  >
+    <SwitchInput v-model="globalConfig.simpleCpList"></SwitchInput>
+  </ConfigItem>
    <button
           class="btn btn-secondary float-end mt-3 ms-1"
           data-bs-dismiss="modal"

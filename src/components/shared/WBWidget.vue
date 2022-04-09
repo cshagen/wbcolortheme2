@@ -1,5 +1,5 @@
 <template>
-  <div class="col-lg-4 p-1 m-0">
+  <div class="col-lg-4 p-1 m-0 d-flex">
     <div class="wb-widget p-2 m-0 rounded shadow">
             <div class="d-flex justify-content-between">
             <h3 class="mt-0">
@@ -26,4 +26,8 @@
 <script setup lang="ts">
 </script>
 
-<style></style>
+<style scoped>
+.wb-widget {
+  width: 100%;
+}
+</style>

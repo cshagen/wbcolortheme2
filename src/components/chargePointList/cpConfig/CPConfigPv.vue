@@ -79,8 +79,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import type { ChargePoint } from './model'
-import ConfigItem from '../shared/ConfigItem.vue'
+import type { ChargePoint } from '../model'
+import ConfigItem from '../../shared/ConfigItem.vue'
 import RangeInput from '@/components/shared/RangeInput.vue'
 import SwitchInput from '@/components/shared/SwitchInput.vue'
 import { infotext } from '@/assets/js/themeConfig'

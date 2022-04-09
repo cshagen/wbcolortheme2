@@ -145,8 +145,8 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
-import { ChargePoint, vehicles, chargeTemplates } from './model'
-import ConfigItem from '../shared/ConfigItem.vue'
+import { ChargePoint, vehicles, chargeTemplates } from '../model'
+import ConfigItem from '../../shared/ConfigItem.vue'
 import CPConfigInstant from './CPConfigInstant.vue'
 import CPConfigPv from './CPConfigPv.vue'
 import CPConfigScheduled from './CPConfigScheduled.vue'

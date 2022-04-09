@@ -97,7 +97,7 @@ import { formatWatt, formatWattH } from '@/assets/js/helpers'
 import type { ChargePoint, chargePoints } from './model'
 import { globalConfig, chargemodes } from '@/assets/js/themeConfig'
 import WBWidget from '@/components/shared/WBWidget.vue'
-import CPChargeConfigPanel from './CPChargeConfigPanel.vue'
+import CPChargeConfigPanel from './cpConfig/CPChargeConfigPanel.vue'
 
 const props = defineProps<{
   chargepoint: ChargePoint
@@ -188,9 +188,9 @@ const modeIcon = computed(() => {
 const batterySymbol = computed(() => {
   if (soc.value <= 10) {
     return 'fa-battery-empty'
-  } else if (soc.value <= 50) {
+  } else if (soc.value < 50) {
     return 'fa-battery-quarter'
-  } else if (soc.value <= 75) {
+  } else if (soc.value < 75) {
     return 'fa-battery-half'
   } else if (soc.value < 95) {
     return 'fa-battery-three-quarters'

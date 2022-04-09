@@ -18,9 +18,9 @@
 </template>
 
 <script setup lang="ts">
-import { vehicles, chargeTemplates, evTemplates } from './model'
-import ConfigItem from '../shared/ConfigItem.vue'
-import RadioInput from '../shared/RadioInput.vue'
+import { vehicles, chargeTemplates, evTemplates } from '../model'
+import ConfigItem from '../../shared/ConfigItem.vue'
+import RadioInput from '../../shared/RadioInput.vue'
 const props = defineProps<{
   vehicleId: number
 }>()

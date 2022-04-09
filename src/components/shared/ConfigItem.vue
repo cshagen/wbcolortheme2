@@ -1,20 +1,26 @@
 <template>
-  <div class="row p-1 pt-2 d-flex align-items-center">
-    <div class="col-4">
-      <span @click="toggleInfo">
-        <i v-if="icon" class="fa-solid fa-sm me-1 item-icon" :class="icon"></i>
+  <div class="row ms-1 p-0 pt-2 d-flex align-items-center">
+    <div class="col-4 titlecolumn m-0 p-0">
+      <span @click="toggleInfo" class="d-flex align-items-baseline m-0 p-0">
+        <i
+          v-if="icon"
+          class="fa-solid fa-sm m-0 p-0 me-2 item-icon"
+          :class="icon"
+        ></i>
         {{ title }}</span
       >
     </div>
-    <div class="col-8">
+    <div class="col me-1 p-0 ps-4">
       <span class="d-flex justify-content-stretch align-items-center">
         <span class="flex-fill"><slot></slot></span>
-        <i
-          class="fa-solid fa-sm fa-circle-question ms-2"
-          :style="iconstyle"
-          @click="toggleInfo"
-          v-if="infotext"
-        ></i>
+        <span>
+          <i
+            class="fa-solid fa-sm fa-circle-question ms-4 me-2"
+            :style="iconstyle"
+            @click="toggleInfo"
+            v-if="infotext"
+          ></i>
+        </span>
       </span>
       <p
         v-if="showInfo"
@@ -55,8 +61,11 @@ const iconstyle = computed(() => {
   color: var(--color-battery);
 }
 
-
 .item-icon {
-  color: var(--color-menu);;
+  color: var(--color-menu);
 }
+.titlecolumn {
+  color: var(--color-fg);
+}
+
 </style>

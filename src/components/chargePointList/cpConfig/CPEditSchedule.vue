@@ -74,14 +74,14 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { chargeTemplates, createChargeSchedule } from './model'
-import ConfigItem from '../shared/ConfigItem.vue'
+import { chargeTemplates, createChargeSchedule } from '../model'
+import ConfigItem from '../../shared/ConfigItem.vue'
 import RangeInput from '@/components/shared/RangeInput.vue'
 import SelectInput from '@/components/shared/SelectInput.vue'
 import CheckBoxInput from '@/components/shared/CheckBoxInput.vue'
 import TimeInput from '@/components/shared/TimeInput.vue'
 import DateInput from '@/components/shared/DateInput.vue'
-import SwitchInput from '../shared/SwitchInput.vue'
+import SwitchInput from '../../shared/SwitchInput.vue'
 const props = defineProps<{
   chargeTemplateId: number
   planId: string

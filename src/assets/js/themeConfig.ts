@@ -14,6 +14,8 @@ export class Config {
   private _showGrid: boolean = false
   private _smartHomeColors: string = 'normal'
   private _decimalPlaces: number = 1
+  private _showQuickAccess  = true
+  private _simpleCpList = false
   maxPower: number = 4000
   isEtEnabled: boolean = false
   etPrice: number = 20.5
@@ -53,6 +55,20 @@ export class Config {
     this._smartHomeColors = setting
     switchSmarthomeColors(setting)
   }
+  get showQuickAccess() {
+    return this._showQuickAccess
+  }
+  set showQuickAccess (show: boolean) {
+    this._showQuickAccess = show
+    savePrefs()
+  }
+  get simpleCpList() {
+    return this._simpleCpList
+  }
+  set simpleCpList (show: boolean) {
+    this._simpleCpList = show
+    savePrefs()
+  }
 }
 
 export function initConfig() {
@@ -83,7 +99,7 @@ export const chargemodes: { [key: string]: ChargeModeInfo } = {
     icon: 'fa-bullseye',
   },
   standby: { name: 'Standby', color: 'var(--color-axis', icon: 'fa-pause' },
-  stop: { name: 'Stop', color: 'black', icon: 'fa-power-off' },
+  stop: { name: 'Stop', color: 'var(--color-fg)', icon: 'fa-power-off' },
 }
 // methods
 export function savePrefs() {
@@ -146,6 +162,8 @@ interface Preferences {
   smartHomeC?: string
   relPM?: boolean
   maxPow?: number
+  showQA?: boolean
+  simpleCP? : boolean
 }
 
 function writeCookie() {
@@ -161,6 +179,8 @@ function writeCookie() {
   prefs.smartHomeC = globalConfig.smartHomeColors
   prefs.relPM = globalConfig.showRelativeArcs
   prefs.maxPow = globalConfig.maxPower
+  prefs.showQA = globalConfig.showQuickAccess
+  prefs.simpleCP = globalConfig.simpleCpList
   document.cookie =
     'openWBColorTheme=' + JSON.stringify(prefs) + '; max-age=16000000'
 }
@@ -172,32 +192,39 @@ function readCookie() {
   )
   if (myCookie.length > 0) {
     let prefs = JSON.parse(myCookie[0].split('=')[1]) as Preferences
-    if (prefs.decimalP) {
+    if (prefs.decimalP !== undefined) {
       globalConfig.decimalPlaces = prefs.decimalP
     }
-    if (prefs.smartHomeC) {
+    if (prefs.smartHomeC !== undefined) {
       globalConfig.smartHomeColors = prefs.smartHomeC
     }
-    if (prefs.hideSH) {
+    if (prefs.hideSH !== undefined) {
       prefs.hideSH.map((i) => (shDevices[i].showInGraph = false))
     }
-    if (prefs.showLG) {
+    if (prefs.showLG !== undefined) {
       globalConfig.graphPreference = prefs.showLG ? 'live' : 'day'
     }
-    if (prefs.maxPow) {
+    if (prefs.maxPow !== undefined) {
       globalConfig.maxPower = +prefs.maxPow
     }
-    if (prefs.relPM) {
+    if (prefs.relPM !== undefined) {
       globalConfig.showRelativeArcs = prefs.relPM
     }
-    if (prefs.displayM) {
+    if (prefs.displayM !== undefined) {
       globalConfig.displayMode = prefs.displayM
     }
-    if (prefs.stackO) {
+    if (prefs.stackO !== undefined) {
       globalConfig.usageStackOrder = prefs.stackO
     }
-    if (prefs.showGr) {
+    if (prefs.showGr !== undefined) {
       globalConfig.showGrid = prefs.showGr
+    }
+    if (prefs.showQA !== undefined) {
+      globalConfig.showQuickAccess = prefs.showQA
+      console.log ("show qa: " + globalConfig.showQuickAccess)
+    }
+    if (prefs.simpleCP !== undefined) {
+      globalConfig.simpleCpList = prefs.simpleCP
     }
   }
 }
