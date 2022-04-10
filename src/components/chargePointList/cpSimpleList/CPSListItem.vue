@@ -13,7 +13,7 @@
       {{ chargepoint.vehicleName }} 
       <br />
       <span v-if="chargepoint.isSocConfigured">
-        <i class="fa" :class="batterySymbol"></i>
+        <i class="fa batSymbol" :class="batterySymbol"></i>
         {{ chargepoint.soc }} %
         <i
             v-if="chargepoint.isSocManual"
@@ -205,5 +205,7 @@ function toggleConfig() {
 .fa-clock {
   color: var(--color-battery);
 }
-
+.batSymbol {
+  color: var(--color-menu);
+}
 </style>

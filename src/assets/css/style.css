@@ -253,8 +253,9 @@ th {
   color: white;
   background: var(--color-menu);
   font-size: var(--font-verysmall);
-  padding: 0.3rem;
-  padding-bottom: 0.3rem;
+  padding: 0.4rem;
+  padding-bottom: 0.1rem;
+  padding-top: 0.2rem;
   margin: 0.2rem;
   margin-top: 0rem;
   margin-bottom: 0rem;
