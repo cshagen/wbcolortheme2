@@ -12,7 +12,6 @@
         <span class="fa-solid fa-lg ps-1 buttonIcon" :class="buttonIcon"></span>
       </span>
     </template>
-
     <!-- First row -->
     <div class="row m-0 p-1 mt-1">
       <div class="col m-0 p-0 d-flex justify-content-between">
@@ -62,7 +61,7 @@
     <div class="row m-1 mt-2 p-0" @click="toggleConfig">
       <div class="col tablecell m-0 mb-1 p-0 d-flex justify-content-between">
         <!-- Status information -->
-        <span>
+        <span class="d-flex align-items-baseline">
           <span class="me-2" :style="{ color: statusColor }">
             <i :class="statusIcon"></i>
             {{ statusString }}
@@ -71,7 +70,13 @@
             v-if="chargepoint.isCharging && !chargepoint.isLocked"
             class="mx-1"
           >
-            {{ chargePowerString }}
+            <span class="d-flex align-items-center">
+              {{ chargePowerString }}
+              <span class="badge phasesInUse rounded-pill">
+                {{ chargePhasesString }}</span
+              >
+              {{ chargeAmpereString }}
+            </span>
           </span>
         </span>
         <span>
@@ -108,14 +113,13 @@ let showConfig = ref(false)
 
 // computed
 const chargePowerString = computed(() => {
-  return (
-    formatWatt(props.chargepoint.power, globalConfig.decimalPlaces) +
-    ' ' +
-    phaseSymbols[props.chargepoint.phasesInUse] +
-    ' ' +
-    props.chargepoint.current +
-    ' A'
-  )
+  return formatWatt(props.chargepoint.power, globalConfig.decimalPlaces)
+})
+const chargeAmpereString = computed(() => {
+  return props.chargepoint.current + ' A'
+})
+const chargePhasesString = computed(() => {
+  return props.chargepoint.phasesInUse
 })
 const chargeEnergyString = computed(() => {
   if (props.chargepoint.dailyYield > 0) {
@@ -243,5 +247,6 @@ function toggleConfig() {
 .vehicleName {
   color: var(--color-fg);
 }
+
 </style>
 >

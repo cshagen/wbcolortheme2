@@ -248,4 +248,16 @@ th {
   color: var(--color-axis);
   stroke-width: 0;
 }
+.phasesInUse {
+  font-family:monospace;
+  color: white;
+  background: var(--color-menu);
+  font-size: var(--font-verysmall);
+  padding: 0.3rem;
+  padding-bottom: 0.3rem;
+  margin: 0.2rem;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+  
+}
 

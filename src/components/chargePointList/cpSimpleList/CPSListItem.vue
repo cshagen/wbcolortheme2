@@ -15,20 +15,30 @@
       <span v-if="chargepoint.isSocConfigured">
         <i class="fa" :class="batterySymbol"></i>
         {{ chargepoint.soc }} %
+        <i
+            v-if="chargepoint.isSocManual"
+            class="fa-solid fa-sm fas fa-edit"
+            :style="{ color: 'var(--color-menu)' }"
+          ></i>
+          <i
+            v-if="!chargepoint.isSocManual"
+            class="fa-solid fa-sm fa-sync"
+            :style="{ color: 'var(--color-menu)' }"
+          ></i>
       </span>
     </td>
     <!-- Column 3: Mode, Power -->
     <td class="tablecell left" @click="toggleConfig" >
+      <span class="d-flex align-items-center">
+        {{ chargePowerString }}
+        <span class="badge phasesInUse rounded-pill"> {{ chargePhasesString}}</span>
+         {{ chargeAmpereString }}
+      </span>
+      
       <span :style="modeStyle">
         <i class="fa me-1" :class="modeIcon"> </i> {{ modeString }}
       </span>
-      <br />
-      <span class="d-flex align-items-center">
-        {{ chargePowerString }} &nbsp;
-        <span class="badge phasesInUse rounded-pill"> {{ chargePhasesString}}</span>
-        &nbsp; {{ chargeAmpereString }}
-      </span>
-    </td>
+      </td>
     <!-- Column 4: Energy, Range -->
     <td class="tablecell left" @click="toggleConfig">
       <span>{{ chargeEnergyString }}</span> <br />
@@ -170,7 +180,7 @@ function toggleConfig() {
   padding-left: 2px;
   padding-right: 2px;
   vertical-align:baseline;
-  line-height: 1.2rem;
+  line-height: 1.4rem;
 }
 .tablecell.left {
   text-align: left;
@@ -195,11 +205,5 @@ function toggleConfig() {
 .fa-clock {
   color: var(--color-battery);
 }
-.phasesInUse {
-  color:white;
-  background: var(--color-charging);
-  font-size: var(--font-verysmall);
-  padding-bottom: 3px;
-  padding-top: 2px
-}
+
 </style>
