@@ -2,50 +2,75 @@
   <tr class="tablerow">
     <!-- Column 1: CP Name and flags-->
     <td class="tablecell left" @click="toggleConfig">
-      <i :class="statusIcon" class="me-1" :style="statusColor"></i>
-      <span class="me-1" :style="nameCellStyle()"> {{ chargepoint.name }}</span>
-      <i v-if="chargepoint.hasPriority" class="fa-solid fa-xs fa-star"> </i>
-      <i v-if="chargepoint.scheduledCharging" class="fa-solid fa-xs fa-clock">
-      </i>
+      <div class="d-flex flex-wrap">
+        <span>
+          <i :class="statusIcon" class="me-1" :style="statusColor"></i>
+          <span class="me-1" :style="nameCellStyle()">
+            {{ chargepoint.name }}</span
+          >
+        </span>
+        <span
+          ><i v-if="chargepoint.hasPriority" class="fa-solid fa-xs fa-star">
+          </i>
+          <i
+            v-if="chargepoint.scheduledCharging"
+            class="fa-solid fa-xs fa-clock"
+          >
+          </i>
+        </span>
+      </div>
     </td>
     <!-- Column 2: Vehicle, SoC-->
     <td class="tablecell left">
-      {{ chargepoint.vehicleName }} 
-      <br />
-      <span v-if="chargepoint.isSocConfigured">
-        <i class="fa batSymbol" :class="batterySymbol"></i>
-        {{ chargepoint.soc }} %
-        <i
+      <div class="d-flex flex-column">
+        <span class="me-2">{{ chargepoint.vehicleName }}</span>
+        <span v-if="chargepoint.isSocConfigured" class="flex-wrap">
+          <span class="me-2">
+            <i class="fa batSymbol" :class="batterySymbol"></i>
+            {{ chargepoint.soc }} %
+          </span>
+          <i
             v-if="chargepoint.isSocManual"
-            class="fa-solid fa-sm fas fa-edit"
+            class="fa-solid fa-sm fas fa-edit me-2"
             :style="{ color: 'var(--color-menu)' }"
           ></i>
           <i
             v-if="!chargepoint.isSocManual"
-            class="fa-solid fa-sm fa-sync"
+            class="fa-solid fa-sm fa-sync me-2"
             :style="{ color: 'var(--color-menu)' }"
           ></i>
-      </span>
+        </span>
+      </div>
     </td>
     <!-- Column 3: Mode, Power -->
-    <td class="tablecell left" @click="toggleConfig" >
-      <span class="d-flex align-items-center">
-        {{ chargePowerString }}
-        <span class="badge phasesInUse rounded-pill"> {{ chargePhasesString}}</span>
-         {{ chargeAmpereString }}
-      </span>
-      
-      <span :style="modeStyle">
-        <i class="fa me-1" :class="modeIcon"> </i> {{ modeString }}
-      </span>
-      </td>
+    <td class="tablecell left" @click="toggleConfig">
+      <div class="d-flex flex-column">
+        <span class="d-flex align-items-center flex-wrap">
+          <span>{{ chargePowerString }}</span>
+
+          <span class="d-flex align-items-center me-1">
+            <span class="badge phasesInUse rounded-pill">
+              {{ chargePhasesString }}</span
+            >
+            <span>
+              {{ chargeAmpereString }}
+            </span>
+          </span>
+        </span>
+        <span :style="modeStyle">
+          <i class="fa me-1" :class="modeIcon"> </i> {{ modeString }}
+        </span>
+      </div>
+    </td>
     <!-- Column 4: Energy, Range -->
     <td class="tablecell left" @click="toggleConfig">
-      <span>{{ chargeEnergyString }}</span> <br />
-      <span>{{ chargedRangeString }}</span>
+      <div class="d-flex flex-wrap">
+        <span class="me-2">{{ chargeEnergyString }}</span>
+        <span>{{ chargedRangeString }}</span>
+      </div>
     </td>
 
-    <td class="tablecell right">
+    <td class="buttoncell right">
       <span
         class="fa-solid fa-lg fa-edit ps-1 tableicon"
         @click="toggleConfig"
@@ -53,7 +78,7 @@
     </td>
   </tr>
   <tr v-if="showConfig">
-    <td  colspan="5" class="px-0">
+    <td colspan="5" class="px-0">
       <CPChargeConfigPanel
         :chargepoint="chargepoint"
         v-if="showConfig"
@@ -112,15 +137,13 @@ const modeStyle = computed(() => {
   }
 })
 const chargePowerString = computed(() => {
-  return (
-    formatWatt(props.chargepoint.power, globalConfig.decimalPlaces) 
-  )
+  return formatWatt(props.chargepoint.power, globalConfig.decimalPlaces)
 })
 const chargeAmpereString = computed(() => {
-  return (props.chargepoint.current + ' A')
+  return props.chargepoint.current + ' A'
 })
 const chargePhasesString = computed(() => {
-  return (props.chargepoint.phasesInUse)
+  return props.chargepoint.phasesInUse
 })
 const chargeEnergyString = computed(() => {
   if (props.chargepoint.dailyYield > 0) {
@@ -130,11 +153,14 @@ const chargeEnergyString = computed(() => {
   }
 })
 const chargedRangeString = computed(() => {
-  if (props.chargepoint.averageConsumption > 0 && props.chargepoint.dailyYield > 0) {
+  if (
+    props.chargepoint.averageConsumption > 0 &&
+    props.chargepoint.dailyYield > 0
+  ) {
     return (
       '(' +
       Math.round(
-        props.chargepoint.dailyYield / props.chargepoint.averageConsumption,
+        props.chargepoint.dailyYield / props.chargepoint.averageConsumption /10
       ).toString() +
       ' km)'
     )
@@ -170,24 +196,26 @@ function toggleConfig() {
 <style scoped>
 .tablerow {
   margin: 14px;
-  
 }
 .tablecell {
   color: var(--color-fg);
   text-align: center;
-  
+
   padding-top: 2px;
   padding-left: 2px;
   padding-right: 2px;
-  vertical-align:baseline;
+  vertical-align: baseline;
   line-height: 1.4rem;
 }
-.tablecell.left {
+.buttoncell {
+  padding: 0;
+  margin: 0;
+}
+.left {
   text-align: left;
 }
 .tablecell.right {
   text-align: right;
-  
 }
 .tablecolum1 {
   color: var(--color-fg);

@@ -23,9 +23,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { chargePoints, type ChargePoint } from '../model'
-import { chargemodes } from '@/assets/js/themeConfig'
-import CPChargePoint from '../CPChargePoint.vue'
+import { chargePoints } from '../model'
 import WBWidget from '@/components/shared/WBWidget.vue'
 import CPSListItem from './CPSListItem.vue'
 const chargepointsToDisplay = computed(() => {
@@ -34,9 +32,6 @@ const chargepointsToDisplay = computed(() => {
 </script>
 
 <style scoped>
-.title {
-  color: var(--color-fg);
-}
 .tableheader {
   margin: 0;
   padding-left: 0;
