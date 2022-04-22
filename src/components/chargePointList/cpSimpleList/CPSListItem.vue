@@ -23,12 +23,11 @@
     <!-- Column 2: Vehicle, SoC-->
     <td class="tablecell left">
       <div class="d-flex flex-column">
-        <span class="me-2">{{ chargepoint.vehicleName }}</span>
+        <span >{{
+          chargepoint.vehicleName
+        }}</span>
         <span v-if="chargepoint.isSocConfigured" class="flex-wrap">
-          <span class="me-2">
-            <i class="fa batSymbol" :class="batterySymbol"></i>
-            {{ chargepoint.soc }} %
-          </span>
+          <BatterySymbol class="me-1" :soc="chargepoint.soc"></BatterySymbol>
           <i
             v-if="chargepoint.isSocManual"
             class="fa-solid fa-sm fas fa-edit me-2"
@@ -57,16 +56,18 @@
             </span>
           </span>
         </span>
-        <span :style="modeStyle">
+        <span :style="modeStyle" >
           <i class="fa me-1" :class="modeIcon"> </i> {{ modeString }}
         </span>
       </div>
     </td>
     <!-- Column 4: Energy, Range -->
     <td class="tablecell left" @click="toggleConfig">
-      <div class="d-flex flex-wrap">
+      <div class="d-flex flex-column">
         <span class="me-2">{{ chargeEnergyString }}</span>
-        <span>{{ chargedRangeString }}</span>
+        <span >{{
+          chargedRangeString
+        }}</span>
       </div>
     </td>
 
@@ -86,7 +87,6 @@
       >
       </CPChargeConfigPanel>
     </td>
-    <header></header>
   </tr>
 </template>
 
@@ -96,6 +96,7 @@ import type { ChargePoint } from '../model'
 import { chargemodes, globalConfig } from '@/assets/js/themeConfig'
 import { formatWatt, formatWattH } from '@/assets/js/helpers'
 import CPChargeConfigPanel from '../cpConfig/CPChargeConfigPanel.vue'
+import BatterySymbol from '../../shared/BatterySymbol.vue'
 const props = defineProps<{
   chargepoint: ChargePoint
 }>()
@@ -160,7 +161,9 @@ const chargedRangeString = computed(() => {
     return (
       '(' +
       Math.round(
-        props.chargepoint.dailyYield / props.chargepoint.averageConsumption /10
+        props.chargepoint.dailyYield /
+          props.chargepoint.averageConsumption /
+          10,
       ).toString() +
       ' km)'
     )
@@ -171,20 +174,6 @@ const chargedRangeString = computed(() => {
 const modeString = computed(() => {
   return chargemodes[props.chargepoint.chargeMode].name
 })
-const batterySymbol = computed(() => {
-  if (props.chargepoint.soc <= 10) {
-    return 'fa-battery-empty'
-  } else if (props.chargepoint.soc < 50) {
-    return 'fa-battery-quarter'
-  } else if (props.chargepoint.soc < 75) {
-    return 'fa-battery-half'
-  } else if (props.chargepoint.soc < 95) {
-    return 'fa-battery-three-quarters'
-  } else {
-    return 'fa-battery-full'
-  }
-})
-
 function nameCellStyle() {
   return { color: props.chargepoint.color }
 }
@@ -200,7 +189,6 @@ function toggleConfig() {
 .tablecell {
   color: var(--color-fg);
   text-align: center;
-
   padding-top: 2px;
   padding-left: 2px;
   padding-right: 2px;
@@ -223,7 +211,6 @@ function toggleConfig() {
   margin: 0;
   padding: 0;
 }
-
 .tableicon {
   color: var(--color-menu);
 }
@@ -232,8 +219,5 @@ function toggleConfig() {
 }
 .fa-clock {
   color: var(--color-battery);
-}
-.batSymbol {
-  color: var(--color-menu);
 }
 </style>

@@ -40,11 +40,18 @@
     ></RadioInput>
   </ConfigItem>
   <ConfigItem
-    title="Vereinfachtes UI"
+    title="Kompakte Ladepunktliste"
     icon="fa-list"
-      infotext="User Interface ohne Schnellzugriffs-Buttons und mit vereinfachter Ladepunktliste. "
+      infotext="Zeige eine einzelne Ladepunktliste statt separater Element pro Ladepunkt."
   >
     <SwitchInput v-model="globalConfig.simpleCpList"></SwitchInput>
+  </ConfigItem>
+  <ConfigItem
+    title="Filter-Buttons"
+    icon="fa-filter"
+      infotext="Hauptseite mit Buttons zur Auswahl der Kategorie."
+  >
+    <SwitchInput v-model="globalConfig.showQuickAccess"></SwitchInput>
   </ConfigItem>
    <button
           class="btn btn-secondary float-end mt-3 ms-1"

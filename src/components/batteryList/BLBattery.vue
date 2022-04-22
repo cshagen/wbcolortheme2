@@ -2,10 +2,7 @@
   <WBWidget>
     <template v-slot:title><span class="battery-title">Speicher</span></template>
     <template v-slot:buttons>
-      <i class="fa battery-color" :class="batterySymbol"></i>
-      <span class="battery-color ms-2">
-        {{ bat.soc + '%' }}
-      </span>
+      <BatterySymbol :soc="bat.soc"></BatterySymbol>
     </template>
     <div class="container-fluid p-0 m-0">
       <div class="row ps-1 pt-1 m-0">
@@ -36,6 +33,7 @@ import { computed } from 'vue'
 import WBWidget from '../shared/WBWidget.vue'
 import { formatWatt, formatWattH } from '@/assets/js/helpers'
 import type { Battery } from './model'
+import BatterySymbol from '../shared/BatterySymbol.vue'
 // props
 const props = defineProps<{
   bat: Battery
@@ -74,19 +72,6 @@ const powerSymbol = computed(() => {
     return 'fa-bolt'
   } else {
     return ''
-  }
-})
-const batterySymbol = computed(() => {
-  if (props.bat.soc <= 10) {
-    return 'fa-battery-empty'
-  } else if (props.bat.soc < 50) {
-    return 'fa-battery-quarter'
-  } else if (props.bat.soc < 75) {
-    return 'fa-battery-half'
-  } else if (props.bat.soc < 95) {
-    return 'fa-battery-three-quarters'
-  } else {
-    return 'fa-battery-full'
   }
 })
 </script>

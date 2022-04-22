@@ -1,13 +1,13 @@
 <template>
   <WBWidget>
     <template v-slot:title> Ladepunkte </template>
-    <table class="table table-borderless px-2">
+    <table class="table table-borderless px-0">
       <thead>
         <tr>
-          <th class="tableheader alignleft">Ladepunkt</th>
-          <th class="tableheader alignleft">Fahrzeug</th>
-          <th class="tableheader alignleft">Ladung</th>
-          <th class="tableheader alignleft">heute</th>
+          <th class="tableheader alignleft"><i class="fa-solid fa-lg fa-charging-station ps-4"></i></th>
+          <th class="tableheader alignleft"><i class="fa-solid fa-lg fa-car ps-2"></i></th>
+          <th class="tableheader alignleft"><i class="fa-solid fa-lg fa-bolt ps-2"></i></th>
+          <th class="tableheader alignleft"><i class="fa-solid fa-lg fa-car-battery ps-2"></i></th>
           <th class="tableheader alignright"></th>
         </tr>
       </thead>

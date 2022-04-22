@@ -40,10 +40,11 @@
           class="tablecell p-0 m-0"
           style="text-align: right; vertical-align: middle"
         >
-          <span v-if="chargepoint.isSocConfigured" class="px-2">
-            <i class="fa" :class="batterySymbol"></i>
-            {{ soc + '%' }}
-          </span>
+          <BatterySymbol
+            v-if="chargepoint.isSocConfigured"
+            :soc="soc"
+            class="me-1"
+          ></BatterySymbol>
           <i
             v-if="chargepoint.isSocManual"
             class="fa-solid fa-sm fas fa-edit"
@@ -71,7 +72,7 @@
             class="mx-1"
           >
             <span class="d-flex align-items-center">
-              {{ chargePowerString }}
+              <FormatWatt :watt="chargepoint.power"></FormatWatt>
               <span class="badge phasesInUse rounded-pill">
                 {{ chargePhasesString }}</span
               >
@@ -82,7 +83,8 @@
         <span>
           <span class="energylabel me-2">Geladen:</span>
           <span>
-            {{ chargeEnergyString }}
+            <FormatWattH :wattH="chargepoint.dailyYield"></FormatWattH>
+            {{ chargedRangeString }}
           </span>
         </span>
       </div>
@@ -98,33 +100,30 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { formatWatt, formatWattH } from '@/assets/js/helpers'
-import type { ChargePoint, chargePoints } from './model'
-import { globalConfig, chargemodes } from '@/assets/js/themeConfig'
+import type { ChargePoint } from './model'
+import { chargemodes } from '@/assets/js/themeConfig'
 import WBWidget from '@/components/shared/WBWidget.vue'
 import CPChargeConfigPanel from './cpConfig/CPChargeConfigPanel.vue'
+import BatterySymbol from '@/components/shared/BatterySymbol.vue'
+import FormatWatt from '@/components/shared/FormatWatt.vue'
+import FormatWattH from '../shared/FormatWattH.vue'
 
 const props = defineProps<{
   chargepoint: ChargePoint
 }>()
 // state
-const phaseSymbols = ['/', '\u2460', '\u2461', '\u2462']
 let showConfig = ref(false)
 
 // computed
-const chargePowerString = computed(() => {
-  return formatWatt(props.chargepoint.power, globalConfig.decimalPlaces)
-})
 const chargeAmpereString = computed(() => {
   return props.chargepoint.current + ' A'
 })
 const chargePhasesString = computed(() => {
   return props.chargepoint.phasesInUse
 })
-const chargeEnergyString = computed(() => {
+const chargedRangeString = computed(() => {
   if (props.chargepoint.dailyYield > 0) {
     return (
-      formatWattH(props.chargepoint.dailyYield, globalConfig.decimalPlaces) +
       (props.chargepoint.averageConsumption
         ? ' / ' +
           (Math.round(
@@ -136,7 +135,7 @@ const chargeEnergyString = computed(() => {
         : '')
     )
   } else {
-    return '0 Wh'
+    return ''
   }
 })
 const statusString = computed(() => {
@@ -172,7 +171,6 @@ const statusIcon = computed(() => {
   }
   return 'fa ' + icon
 })
-
 const modePillStyle = computed(() => {
   switch (props.chargepoint.chargeMode) {
     case 'stop':
@@ -188,19 +186,6 @@ const modeString = computed(() => {
 })
 const modeIcon = computed(() => {
   return chargemodes[props.chargepoint.chargeMode].icon
-})
-const batterySymbol = computed(() => {
-  if (soc.value <= 10) {
-    return 'fa-battery-empty'
-  } else if (soc.value < 50) {
-    return 'fa-battery-quarter'
-  } else if (soc.value < 75) {
-    return 'fa-battery-half'
-  } else if (soc.value < 95) {
-    return 'fa-battery-three-quarters'
-  } else {
-    return 'fa-battery-full'
-  }
 })
 const buttonIcon = computed(() => {
   return showConfig.value ? 'fa-caret-square-up' : 'fa-caret-square-down'
@@ -247,6 +232,5 @@ function toggleConfig() {
 .vehicleName {
   color: var(--color-fg);
 }
-
 </style>
 >

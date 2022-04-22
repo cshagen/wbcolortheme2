@@ -1,7 +1,7 @@
 <template>
 <g id="pmLabel" v-if="showMe">
   <text :x="x" :y="y" :fill="color" :text-anchor = "anchor" :font-size="labelfontsize"  class="pmLabel">
-      {{ text }}
+      {{ text }} <FormatWatt :watt="data.power" v-if="data !== undefined"></FormatWatt>
   </text>
 </g>
 </template>
@@ -11,6 +11,7 @@ import { defineProps, computed } from 'vue'
 import type { PowerItem } from '@/assets/js/types'
 import { formatWatt } from '@/assets/js/helpers'
 import { globalConfig } from '@/assets/js/themeConfig'
+import FormatWatt from '../shared/FormatWatt.vue'
   
   //props 
   const props = defineProps<{
@@ -30,7 +31,7 @@ import { globalConfig } from '@/assets/js/themeConfig'
         return (props.data) ? formatWatt (props.data.power, globalConfig.decimalPlaces) : 0
       })
       const text = computed (() => {
-        return (props.labeltext) ? props.labeltext : ((props.data) ? (props.data.name + ": " + power.value) : '')      
+        return (props.labeltext) ? props.labeltext : ((props.data) ? (props.data.name + ": ") : '')      
         })
       const color  = computed(() => {
         return (props.labelcolor) ? props.labelcolor : ((props.data) ? props.data.color : '')      

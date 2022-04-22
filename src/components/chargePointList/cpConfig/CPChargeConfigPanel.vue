@@ -8,7 +8,7 @@
     <span style="color: red"> {{ cp.faultStr }} </span>
   </ConfigItem>
 
-  <div class="m-0 mt-4 p-1">
+  <div class="m-0 mt-4 p-0">
     <p class="heading ms-0">Konfiguration</p>
     <nav class="nav nav-tabs nav-justified mx-1 mt-1" role="tablist">
       <a

@@ -10,14 +10,14 @@
       <EnergyMeter :usageDetails="usageDetails"></EnergyMeter>
     </div>
     <!-- Detail configuration list -->
-     <div class="row py-0 m-0 d-flex justify-content-center" v-if="globalConfig.simpleCpList">
+     <div class="row py-0 m-0 d-flex justify-content-center" v-if="!globalConfig.showQuickAccess">
           <ChargePointList> </ChargePointList>
           <BatteryList> </BatteryList>
           <SmartHomeList> </SmartHomeList>
           <PriceChart> </PriceChart>
         </div>
     <!-- Tabbed area -->
-    <nav class="nav nav-tabs nav-justified mx-1 mt-2" role="tablist" v-if="!(globalConfig.simpleCpList)">
+    <nav class="nav nav-tabs nav-justified mx-1 mt-2" role="tablist" v-if="(globalConfig.showQuickAccess)">
       <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#showAll">
         <i class="fa-solid fa-lg fa-circle-info me-1"></i>
         <span class="d-none d-md-inline ms-2">Details</span>
@@ -54,7 +54,7 @@
       </a>
     </nav>
     <!-- Tab panes -->
-    <div class="tab-content mx-0 pt-1" id="cpContent" v-if="!(globalConfig.simpleCpList)">
+    <div class="tab-content mx-0 pt-1" id="cpContent" v-if="(globalConfig.showQuickAccess)">
       <div
         class="tab-pane active"
         id="showAll"
