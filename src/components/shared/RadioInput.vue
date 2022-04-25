@@ -69,11 +69,9 @@ const props = defineProps<{
 const emit = defineEmits(['update:modelValue'])
 const v = computed({
   get() {
-    console.log('GET VALUE')
-    return props.modelValue
+   return props.modelValue
   },
   set(value: number | string) {
-    console.log('SET VALUE')
     emit('update:modelValue', value)
   },
 })

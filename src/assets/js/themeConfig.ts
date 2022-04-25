@@ -221,7 +221,6 @@ function readCookie() {
     }
     if (prefs.showQA !== undefined) {
       globalConfig.showQuickAccess = prefs.showQA
-      console.log ("show qa: " + globalConfig.showQuickAccess)
     }
     if (prefs.simpleCP !== undefined) {
       globalConfig.simpleCpList = prefs.simpleCP

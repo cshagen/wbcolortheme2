@@ -155,6 +155,7 @@ function updateDimensions() {
 }
 const usageDetails = computed(() => {
   return [usageSummary.evuOut, usageSummary.charging]
+    .concat(Object.values(chargePoints).map(cp => cp.toPowerItem()))
     .concat(
       Object.values(shDevices).filter(
         (row) => row.configured && row.showInGraph,

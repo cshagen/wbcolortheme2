@@ -80,12 +80,10 @@ const colors: { [key: string]: string } = {
 }
 // computed:
 const draw = computed(() => {
-  console.dir (graphData)
   const graph = d3.select('g#pgUsageGraph')
   graph.selectAll('*').remove()
   const stackGen = d3.stack().keys(keys[props.stackOrder])
   const stackedSeries = stackGen(graphData.data) as unknown
-  console.dir (stackedSeries)
   const iScale = d3
     .scaleLinear()
     .domain([0, graphData.data.length])

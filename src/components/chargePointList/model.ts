@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 import { updateServer } from '@/assets/js/sendMessages'
+import type { PowerItem } from '@/assets/js/types'
 export class ChargePoint {
   id: number
   name = 'Ladepunkt'
@@ -190,6 +191,14 @@ export class ChargePoint {
   }
   updatePvMinSocCurrent (a: number) {
     this._pvMinSocCurrent = a
+  }
+  toPowerItem () : PowerItem {
+    return {
+      name: this.name,
+      power: this.power,
+      energy: this.dailyYield,
+      color: this.color
+    }
   }
 }
 export class Vehicle {
