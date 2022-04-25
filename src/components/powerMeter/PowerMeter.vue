@@ -3,7 +3,7 @@
     <template v-slot:title>Aktuelle Leistung</template>
     <template v-slot:buttons>
       <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#themeconfig">
-      <span class="fa fa-bars px-0"></span>
+      <span class="fa-solid fa-bars px-0"></span>
     </button>
       </template>
     <figure id="powermeter" class="p-0 m-0">
@@ -171,7 +171,7 @@ const radius = computed(() => {
 })
 const currentConsumptionString = computed(() => {
   return formatWatt(
-    globalData.housePower +
+    usageSummary.house.power +
     usageSummary.charging.power +
     usageSummary.devices.power +
     usageSummary.batIn.power,

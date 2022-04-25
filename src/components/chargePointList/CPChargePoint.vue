@@ -22,7 +22,7 @@
           @click="toggleConfig"
         >
           <i class="fa-solid fa-sm fa-car"> </i>
-          <span class="px-2 vehicleName">{{ chargepoint.vehicleName }}</span>
+          <span class="ps-2 pe-1 vehicleName">{{ chargepoint.vehicleName }}</span>
 
           <span
             v-if="chargepoint.hasPriority"

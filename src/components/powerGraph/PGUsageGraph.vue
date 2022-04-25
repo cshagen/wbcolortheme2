@@ -16,11 +16,12 @@ const props = defineProps<{
   width: number
   height: number
   margin: { left: number; top: number; right: number; bottom: number }
+  stackOrder: number
 }>()
 
 //state
 const keys = [
-  ['cp3', 'cp1', 'cp2', 'housePower', 'batIn', 'inverter'],
+  ['cp0', 'cp1', 'cp2','cp3','cp4','cp5','cp6','cp7','cp8','cp9', 'housePower', 'batIn', 'inverter'],
   [
     'housePower',
     'cp0',
@@ -77,14 +78,14 @@ const colors: { [key: string]: string } = {
   cp2: 'var(--color-cp2)',
   cp3: 'var(--color-cp3)',
 }
-const usageStackOrder = 0
-
 // computed:
 const draw = computed(() => {
+  console.dir (graphData)
   const graph = d3.select('g#pgUsageGraph')
   graph.selectAll('*').remove()
-  const stackGen = d3.stack().keys(keys[usageStackOrder])
+  const stackGen = d3.stack().keys(keys[props.stackOrder])
   const stackedSeries = stackGen(graphData.data) as unknown
+  console.dir (stackedSeries)
   const iScale = d3
     .scaleLinear()
     .domain([0, graphData.data.length])
@@ -100,7 +101,7 @@ const draw = computed(() => {
     .enter()
     .append('path')
     .attr('d', (series) => area(series))
-    .attr('fill', (d, i: number) => colors[keys[usageStackOrder][i]])
+    .attr('fill', (d, i: number) => colors[keys[props.stackOrder][i]])
   const yAxis = graph.append('g').attr('class', 'axis')
   yAxis.call(yAxisGenerator.value)
   yAxis

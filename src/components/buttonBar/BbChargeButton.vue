@@ -34,7 +34,7 @@
                 {{ modeString }}
                 <!-- PV priority -->
                 <span
-                  v-if="chargepoint.chargeMode == ChargeMode.pv_charging"
+                  v-if="chargepoint.chargeMode == ChargeMode.pv_charging && globalData.isBatteryConfigured"
                   class="ps-1"
                 >
                   (

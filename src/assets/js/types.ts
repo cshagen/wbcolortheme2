@@ -21,7 +21,6 @@ export class GlobalData {
   batterySoc= 0
   isBatteryConfigured= true
   chargeMode= '0'
-  housePower= 0
   private _pvBatteryPriority= false
   displayLiveGraph= true
   isEtEnabled= true
