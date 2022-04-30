@@ -1,3 +1,9 @@
+/*
+ * model.ts
+ * colors theme for openwb 2.0
+ * Copyright (c) 2022 Claus Hagen
+ */
+
 import { reactive } from 'vue'
 export class Battery {
   id: number

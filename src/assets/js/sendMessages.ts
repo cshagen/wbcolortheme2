@@ -1,3 +1,9 @@
+/*
+ * sendMessages.ts
+ * colors theme for openwb 2.0
+ * Copyright (c) 2022 Claus Hagen
+ */
+
 import { mqttPublish } from './mqttClient'
 import { chargePoints, chargeTemplates } from '@/components/chargePointList/model'
 

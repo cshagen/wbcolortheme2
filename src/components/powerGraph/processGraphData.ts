@@ -38,7 +38,7 @@ export function processGraphMessages(topic: string, message: string) {
     // graph messages if local connection
     reloadLiveGraph(topic, message);
   } else if (topic == "openWB/graph/lastlivevaluesJson") {
-    //  updateLiveGraph(topic, message);
+     updateLiveGraph(topic, message);
   } else if (topic == "openWB/graph/config/duration") {
     //  updateGlobal("liveGraphDuration", JSON.parse(message));
   } else {
@@ -47,6 +47,7 @@ export function processGraphMessages(topic: string, message: string) {
 }
 // incremental update message for the day graph
 export function updateLiveGraph(topic: string, rawString: string) {
+  console.debug ("updatelivegraph")
   let rawItem = (JSON.parse(rawString) as RawGraphDataItem);
   const values = extractValues(rawItem);
   graphRefreshCounter++;
@@ -106,9 +107,12 @@ function extractValues(data: RawGraphDataItem): GraphDataItem {
   if (+data.grid > 0) {
     values.gridPull = +data.grid;
     values.gridPush = 0;
-  } else {
+  } else if(+data.grid <= 0) {
     values.gridPull = 0;
     values.gridPush = -data.grid;
+  } else {
+    values.gridPull = 0;
+    values.gridPush = 0;
   }
   if (+data["pv-all"] <= 0) {
     values.solarPower = -data["pv-all"];

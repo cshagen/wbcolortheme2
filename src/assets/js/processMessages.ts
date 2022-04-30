@@ -1,4 +1,3 @@
-// import { Vue } from 'vue'
 import { mqttRegister, mqttSubscribe } from './mqttClient'
 import type { Hierarchy } from './types'
 import { globalData, sourceSummary, usageSummary } from './model'

@@ -57,7 +57,7 @@
           class="btn btn-secondary float-end mt-3 ms-1"
           data-bs-dismiss="modal"
         >
-          Schliessen
+          Schließen
         </button>
 </template>
 

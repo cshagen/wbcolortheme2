@@ -1,3 +1,9 @@
+/*
+ * helpers.ts
+ * colors theme for openwb 2.0
+ * Copyright (c) 2022 Claus Hagen
+ */
+
 export function formatWatt(watt: number, decimalPlaces = 1) {
 	let wattResult;
 	if (watt >= 1000 && decimalPlaces < 4) {

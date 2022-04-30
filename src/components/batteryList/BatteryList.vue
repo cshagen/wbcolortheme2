@@ -1,3 +1,9 @@
+/*
+ * BatteryList.vue
+ * colors theme for openwb 2.0
+ * Copyright (c) 2022 Claus Hagen
+ */
+
 <template>
   <BLBattery v-for="battery in batteries" :bat="battery"> </BLBattery>
 </template>

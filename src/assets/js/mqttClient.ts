@@ -1,3 +1,9 @@
+/*
+ * mqttClient.ts
+ * colors theme for openwb 2.0
+ * Copyright (c) 2022 Claus Hagen
+ */
+
 // functions to interact with MQTT
 import mqtt from "mqtt"
 

@@ -1,3 +1,9 @@
+/*
+ * model.ts
+ * colors theme for openwb 2.0
+ * Copyright (c) 2022 Claus Hagen
+ */
+
 // this is the model for global data. It contains all values required by the different parts of the front end
 // Components have their local model
 

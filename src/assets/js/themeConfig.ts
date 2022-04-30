@@ -1,3 +1,9 @@
+/*
+ * themeConfig.ts
+ * colors theme for openwb 2.0
+ * Copyright (c) 2022 Claus Hagen
+ */
+
 import { reactive } from 'vue'
 import * as d3 from 'd3'
 import type { ChargeModeInfo } from './types'

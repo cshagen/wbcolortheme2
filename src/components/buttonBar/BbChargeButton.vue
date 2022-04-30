@@ -1,3 +1,9 @@
+/*
+ * BbChargeButton.vue
+ * colors theme for openwb 2.0
+ * Copyright (c) 2022 Claus Hagen
+ */
+
 <template>
   <div class="col-lg-4 p-0 m-0 mt-1">
     <div class="d-grid gap-2">

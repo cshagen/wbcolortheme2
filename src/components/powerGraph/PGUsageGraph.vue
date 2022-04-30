@@ -94,7 +94,7 @@ const draw = computed(() => {
     .y0((d) => yScale.value(d[0]))
     .y1((d) => yScale.value(d[1]))
   graph
-    .selectAll('.sourceareas')
+    .selectAll('.usageareas')
     .data(stackedSeries as [number, number][][])
     .enter()
     .append('path')

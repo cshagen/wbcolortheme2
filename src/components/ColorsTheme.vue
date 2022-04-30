@@ -1,3 +1,9 @@
+/*
+ * ColorsTheme.vue
+ * colors theme for openwb 2.0
+ * Copyright (c) 2022 Claus Hagen
+ */
+
 <template>
   <div class="container-fluid px-2 m-0 theme-colors">
     <!-- Button Bar -->

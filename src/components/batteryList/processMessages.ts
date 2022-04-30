@@ -1,3 +1,9 @@
+/*
+ * processMessages.ts
+ * colors theme for openwb 2.0
+ * Copyright (c) 2022 Claus Hagen
+ */
+
 import { usageSummary, sourceSummary, globalData } from '@/assets/js/model'
 import { batteries } from './model'
 export function processBatteryMessages(topic: string, message: string) {

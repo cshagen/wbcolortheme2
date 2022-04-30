@@ -136,7 +136,7 @@
           class="btn btn-secondary float-end mt-2 me-0"
           @click="toggleConfig"
         >
-          Schliessen
+          Schließen
         </button>
       </div>
     </div>

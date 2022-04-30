@@ -100,6 +100,7 @@ const ticklineWidth = computed(() => {
 const ticklineColor = computed(() => {
   return globalConfig.showGrid ? 'var(--color-grid)' : 'var(--color-bg)'
 })
+
 </script>
 
 <style></style>

@@ -1,3 +1,9 @@
+/*
+ * BLBattery.vue
+ * colors theme for openwb 2.0
+ * Copyright (c) 2022 Claus Hagen
+ */
+
 <template>
   <WBWidget>
     <template v-slot:title><span class="battery-title">Speicher</span></template>

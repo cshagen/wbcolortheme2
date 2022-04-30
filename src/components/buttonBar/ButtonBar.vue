@@ -1,3 +1,9 @@
+/*
+ * ButtonBar.vue
+ * colors theme for openwb 2.0
+ * Copyright (c) 2022 Claus Hagen
+ */
+
 // ButtonBar.vue // Display configuration buttons for all chargepoints
 <template>
   <div class="row p-0 mt-0 mb-1 m-0">

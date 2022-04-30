@@ -1,3 +1,9 @@
+/*
+ * types.ts
+ * colors theme for openwb 2.0
+ * Copyright (c) 2022 Claus Hagen
+ */
+
 // Type definitions for all components
 import { updateServer } from '@/assets/js/sendMessages'
 

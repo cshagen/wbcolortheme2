@@ -4,7 +4,7 @@
     <table class="table table-borderless px-0">
       <thead>
         <tr>
-          <th class="tableheader alignleft"><i class="fa-solid fa-lg fa-charging-station ps-4"></i></th>
+          <th class="tableheader alignleft"><i class="fa-solid fa-lg fa-charging-station ps-2"></i></th>
           <th class="tableheader alignleft"><i class="fa-solid fa-lg fa-car ps-2"></i></th>
           <th class="tableheader alignleft"><i class="fa-solid fa-lg fa-bolt ps-2"></i></th>
           <th class="tableheader alignleft"><i class="fa-solid fa-lg fa-car-battery ps-2"></i></th>
