@@ -54,7 +54,7 @@
         class="nav-link"
         data-bs-toggle="tab"
         :data-bs-target="'#carSettings' + cpid"
-        v-if="chargepoint.isPluggedIn"
+        
       >
         <i class="fa-solid fa-rectangle-list"></i>
       </a>

@@ -42,7 +42,6 @@ export class Node {
           // this is a leaf
           this.count = this.count + 1
           this.lastValue = message
-          // console.log(topicTree);
         }
       }
     }

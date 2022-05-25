@@ -7,10 +7,10 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed } from 'vue'
+import { computed } from 'vue'
 import * as d3 from 'd3'
 import { globalConfig } from '@/assets/js/themeConfig'
-import { graphData } from '@/components/powerGraph/processGraphData'
+import { graphData } from './model'
 
 const props = defineProps<{
   width: number
@@ -86,7 +86,7 @@ const draw = computed(() => {
   const stackedSeries = stackGen(graphData.data) as unknown
   const iScale = d3
     .scaleLinear()
-    .domain([0, graphData.data.length])
+    .domain([0, graphData.data.length-1])
     .range([0, props.width])
   const area = d3
     .area()

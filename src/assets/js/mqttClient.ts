@@ -88,4 +88,7 @@ export function mqttPublish(topic: string, message: string) {
     console.info("Message sent: [" + topic + "](" + message + ')');
   });
 }
+export function mqttClientId () {
+  return mqttConnection.clientId
+}
 

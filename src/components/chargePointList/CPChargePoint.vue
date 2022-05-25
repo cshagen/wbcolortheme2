@@ -22,7 +22,9 @@
           @click="toggleConfig"
         >
           <i class="fa-solid fa-sm fa-car"> </i>
-          <span class="ps-2 pe-1 vehicleName">{{ chargepoint.vehicleName }}</span>
+          <span class="ps-2 pe-1 vehicleName">{{
+            chargepoint.vehicleName
+          }}</span>
 
           <span
             v-if="chargepoint.hasPriority"
@@ -83,7 +85,7 @@
         <span>
           <span class="energylabel me-2">Geladen:</span>
           <span>
-            <FormatWattH :wattH="chargepoint.dailyYield"></FormatWattH>
+            <FormatWattH :wattH="chargepoint.dailyYield * 1000"></FormatWattH>
             {{ chargedRangeString }}
           </span>
         </span>
@@ -123,17 +125,15 @@ const chargePhasesString = computed(() => {
 })
 const chargedRangeString = computed(() => {
   if (props.chargepoint.dailyYield > 0) {
-    return (
-      (props.chargepoint.averageConsumption
-        ? ' / ' +
+    return props.chargepoint.averageConsumption
+      ? ' / ' +
           (Math.round(
-            props.chargepoint.dailyYield /
-              props.chargepoint.averageConsumption /
-              10,
+            (props.chargepoint.dailyYield /
+              props.chargepoint.averageConsumption) *
+              100,
           ) +
             ' km')
-        : '')
-    )
+      : ''
   } else {
     return ''
   }

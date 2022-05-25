@@ -13,8 +13,7 @@ import { shDevices } from './model'
 export class Config {
   private _showRelativeArcs: boolean = false
   showTodayGraph: boolean = true
-  graphMode: string = 'live'
-  graphPreference: string = 'live'
+  private _graphPreference: string = ''
   usageStackOrder: number = 0
   private _displayMode: string = 'dark'
   private _showGrid: boolean = false
@@ -26,6 +25,23 @@ export class Config {
   isEtEnabled: boolean = false
   etPrice: number = 20.5
   constructor() {}
+  get showRelativeArcs() {
+    return this._showRelativeArcs
+  }
+  set showRelativeArcs(setting: boolean) {
+    this._showRelativeArcs = setting
+    savePrefs()
+  }
+  get graphPreference() {
+    return this._graphPreference
+  }
+  set graphPreference(mode: string) {
+    this._graphPreference = mode
+    savePrefs()
+  }
+  setGraphPreference (mode: string) {
+    this._graphPreference = mode
+  }
   get displayMode() {
     return this._displayMode
   }
@@ -40,13 +56,7 @@ export class Config {
     this._showGrid = setting
     savePrefs()
   }
-  get showRelativeArcs() {
-    return this._showRelativeArcs
-  }
-  set showRelativeArcs(setting: boolean) {
-    this._showRelativeArcs = setting
-    savePrefs()
-  }
+  
   get decimalPlaces() {
     return this._decimalPlaces
   }
@@ -147,6 +157,7 @@ export function switchSmarthomeColors(setting: string) {
   doc.classed('shcolors-advanced', setting == 'advanced')
   savePrefs()
 }
+
 export const infotext: { [key: string]: string } = {
   chargemode: 'Der Lademodus für diesen Ladepunkt',
   vehicle: 'Das Fahrzeug, das an diesem Ladepounkt geladen wird',
@@ -208,7 +219,8 @@ function readCookie() {
       prefs.hideSH.map((i) => (shDevices[i].showInGraph = false))
     }
     if (prefs.showLG !== undefined) {
-      globalConfig.graphPreference = prefs.showLG ? 'live' : 'day'
+      globalConfig.setGraphPreference ( prefs.showLG ? 'live' : 'day')
+      // console.log (prefs.showLG)
     }
     if (prefs.maxPow !== undefined) {
       globalConfig.maxPower = +prefs.maxPow

@@ -13,5 +13,4 @@ export function msgInit() {
 }
 function processMqttMessage(topic: string, message: string) {
   add (topic, message)
-  
 }

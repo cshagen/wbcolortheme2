@@ -7,10 +7,10 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed } from 'vue'
+import { computed } from 'vue'
 import * as d3 from 'd3'
 import { globalConfig } from '@/assets/js/themeConfig'
-import { graphData } from '@/components/powerGraph/processGraphData'
+import { graphData } from './model'
 
 const props = defineProps<{
   width: number
@@ -38,7 +38,7 @@ const draw = computed(() => {
   const stackedSeries = stackGen(graphData.data) as unknown
   const iScale = d3
     .scaleLinear()
-    .domain([0, graphData.data.length])
+    .domain([0, graphData.data.length-1])
     .range([0, props.width])
   const area = d3
     .area()
@@ -59,7 +59,6 @@ const draw = computed(() => {
     .selectAll('.tick line')
     .attr('stroke', ticklineColor.value)
     .attr('stroke-width', ticklineWidth.value)
-
   yAxis.select('.domain').attr('stroke', 'var(--color-bg)')
   return 'pgSourceGraph.vue'
 })
@@ -70,11 +69,9 @@ const yScale = computed(() => {
     .domain([0, Math.ceil(extent.value[1])])
 })
 const extent = computed(() => {
-  // console.log(this.graphData)
   let result = d3.extent(graphData.data, (d) =>
     Math.max(d.solarPower + d.gridPull + d.batOut, d.selfUsage + d.gridPush),
   )
-  // console.log(result)
   if (result[0] && result[1]) {
     return result
   } else {

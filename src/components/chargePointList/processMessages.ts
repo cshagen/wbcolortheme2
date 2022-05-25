@@ -23,7 +23,7 @@ export function processChargepointMessages(topic: string, message: string) {
   // General Chargepoint messages
   if (topic == 'openWB/chargepoint/get/power') {
     usageSummary.charging.power = +message
-  } else if (topic == 'openWB/chargepoint/get/daily_yield') {
+  } else if (topic == 'openWB/chargepoint/get/daily_imported') {
     usageSummary.charging.energy = +message / 1000
   }
   if (topic == 'openWB/chargepoint/get/daily_exported') {
@@ -53,9 +53,9 @@ export function processChargepointMessages(topic: string, message: string) {
     ) {
       chargePoints[index].chargedSincePlugged = +message
     } else if (
-      topic.match(/^openWB\/chargepoint\/[0-9]+\/get\/daily_yield$/i)
+      topic.match(/^openWB\/chargepoint\/[0-9]+\/get\/daily_imported$/i)
     ) {
-      chargePoints[index].dailyYield = +message
+      chargePoints[index].dailyYield = +message / 1000
     } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/plug_state$/i)) {
       chargePoints[index].isPluggedIn = message == 'true'
     } else if (

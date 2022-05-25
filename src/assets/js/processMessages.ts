@@ -1,7 +1,9 @@
 import { mqttRegister, mqttSubscribe } from './mqttClient'
 import type { Hierarchy } from './types'
 import { globalData, sourceSummary, usageSummary } from './model'
-import { processGraphMessages, initGraph } from '../../components/powerGraph/processGraphData'
+import { processLiveGraphMessages } from '../../components/powerGraph/processLiveGraphData'
+import { processDayGraphMessages } from '../../components/powerGraph/processDayGraphData'
+import { initGraph } from '@/components/powerGraph/model'
 import { processBatteryMessages } from '@/components/batteryList/processMessages'
 import { processEtProviderMessages } from '@/components/priceChart/processMessages'
 import { addChargePoint, resetChargePoints } from '@/components/chargePointList/model'
@@ -48,7 +50,9 @@ function processMqttMessage(topic: string, message: string) {
   ) {
     processPvConfigMessages(topic, message)
   } else if (topic.match(/^openwb\/graph\//i)) {
-    processGraphMessages(topic, message)
+    processLiveGraphMessages(topic, message)
+  } else if (topic.match(/^openwb\/log\/daily\//i)) {
+    processDayGraphMessages(topic, message)
   } else if (topic.match(/^openwb\/optional\/et\//i)) {
     processEtProviderMessages(topic, message)
   }
@@ -175,10 +179,10 @@ function processEvuMessages(topic: string, message: string) {
         usageSummary.evuOut.power = -message
       }
       break
-    case 'daily_yield_import':
+    case 'daily_imported':
       sourceSummary.evuIn.energy = +message / 1000
       break
-    case 'daily_yield_export':
+    case 'daily_exported':
       usageSummary.evuOut.energy = +message / 1000
       break
     default:

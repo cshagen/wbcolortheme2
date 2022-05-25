@@ -4,7 +4,7 @@
  * Copyright (c) 2022 Claus Hagen
  */
 
-import { mqttPublish } from './mqttClient'
+import { mqttPublish, mqttClientId } from './mqttClient'
 import { chargePoints, chargeTemplates } from '@/components/chargePointList/model'
 
 const topics: { [topic: string]: string } = {
@@ -81,10 +81,15 @@ export function updateServer(
       mqttPublish(topic, JSON.stringify(value))
   }
 }
+
 export function updateChargeTemplate (templateId: number) {
   let template = chargeTemplates[templateId]
   if (template) {
     let topic = 'openWB/set/vehicle/template/charge_template/' + templateId
   mqttPublish(topic, JSON.stringify(template))
   }
+}
+export function sendCommand (event: Object) {
+  console.log ("SENDCOMMAND " + JSON.stringify(event))
+    mqttPublish ('openWB/set/command/' + mqttClientId() + '/todo', JSON.stringify(event))
 }
