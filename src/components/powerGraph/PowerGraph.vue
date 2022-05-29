@@ -33,21 +33,21 @@
         />
         <g :transform="'translate(' + margin.left + ',' + margin.top + ')'">
         <PgSoc
-          v-if="graphConfig.graphMode=='day'"
+          v-if="graphConfig.graphMode=='day' || graphConfig.graphMode == 'today'"
           :width="width - margin.left - 2 * margin.right"
           :height="(height - margin.top - margin.bottom) / 2"
           :margin="margin"
           :cp-id="1"
         ></PgSoc>
         <PgSoc
-          v-if="graphConfig.graphMode=='day'"
+          v-if="graphConfig.graphMode=='day' || graphConfig.graphMode == 'today'"
           :width="width - margin.left - 2 * margin.right"
           :height="(height - margin.top - margin.bottom) / 2"
           :margin="margin"
           :cp-id="2"
         ></PgSoc>
         <PgSocAxis 
-          v-if="graphConfig.graphMode=='day'"
+          v-if="graphConfig.graphMode=='day' || graphConfig.graphMode == 'today'"
           :width="width - margin.left - margin.right"
           :height="(height - margin.top - margin.bottom) / 2"
           :margin="margin"
