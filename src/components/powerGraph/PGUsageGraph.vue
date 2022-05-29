@@ -128,7 +128,7 @@ const extent = computed(() => {
     graphData.data,
     (d) => d.housePower + d.cp1 + d.cp2 + d.cp3 + d.batIn + d.inverter,
   )
-  if (result[0] && result[1]) {
+  if ((result[0] != undefined) && (result[1] != undefined)) {
     return result
   } else {
     return [0, 0]

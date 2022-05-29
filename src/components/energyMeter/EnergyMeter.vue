@@ -41,14 +41,15 @@
 import { defineProps, computed } from 'vue'
 import * as d3 from 'd3'
 import type { ItemList, PowerItem } from '@/assets/js/types'
-import { sourceSummary } from '@/assets/js/model'
+import { sourceSummary, historicSummary } from '@/assets/js/model'
 import { formatMonth } from '@/assets/js/helpers'
 import EMMenu from './EMMenu.vue'
 import EMBarGraph from './EMBarGraph.vue'
 import EMYAxis from "./EMYAxis.vue";
 import EMLabels from "./EMLabels.vue";
 import WBWidget from '../shared/WBWidget.vue'
-import { globalConfig } from '@/assets/js/themeConfig';
+import { globalConfig } from '@/assets/js/themeConfig'
+import { dayGraph, graphConfig } from '@/components/powerGraph/model'
 
 // props
 const props = defineProps<{
@@ -68,29 +69,26 @@ const props = defineProps<{
 // computed
     const plotdata  = computed(() => {
       let result : PowerItem[] = [];
-      switch (globalConfig.graphMode) {
+      switch (graphConfig.graphMode) {
         default:
         case "live":
           result = Object.values(sourceSummary)
             .concat(props.usageDetails)
             .filter((row) => row.energy > 0);
           break;
-        case "day":
-          if (globalConfig.showTodayGraph) {
+        case "today":
             result = Object.values(sourceSummary)
               .concat(props.usageDetails)
-              .filter((row) => row.energy > 0);
-          } // else {
-           // result = Object.values(this.historicSummary).filter(
-           //   (row) => row.energy > 0
-           // );
-         // }
-          break;
+              .filter((row) => row.energy > 0)
+          break
+        case 'day':
+          result = Object.values(historicSummary).filter((row) => row.energy > 0)
+        break
         case "month":
           //result = Object.values(this.historicSummary).filter(
           //  (row) => row.energy > 0
           // );
-          break;
+          // break;
       }
       return result;
     })
@@ -110,22 +108,15 @@ const props = defineProps<{
     const heading = computed(() => {
       let result = "Energie ";
 
-      switch (globalConfig.graphMode) {
+      switch (graphConfig.graphMode) {
         case "live":
+        case 'today':
           result = result + " heute";
           break;
         case "day":
-          if (globalConfig.showTodayGraph) {
-            result = result + " heute";
-          } else //{
-          //  result =
-          //    result +
-          //    globalConfig.graphDate.getDate() +
-          //    "." +
-          //    (globalConfig.graphDate.getMonth() + 1) +
-          //    ".";
-          // }
-          break;
+          result = result + dayGraph.date.getDate() + "." +
+             (dayGraph.date.getMonth() + 1) + "."
+          break
         case "month":
          /*  result =
             "Monatswerte " +

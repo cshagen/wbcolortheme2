@@ -72,7 +72,7 @@ const extent = computed(() => {
   let result = d3.extent(graphData.data, (d) =>
     Math.max(d.solarPower + d.gridPull + d.batOut, d.selfUsage + d.gridPush),
   )
-  if (result[0] && result[1]) {
+  if ((result[0] != undefined)  && (result[1] != undefined)) {
     return result
   } else {
     return [0, 0]

@@ -12,14 +12,14 @@ import { ShDevice, GlobalData } from './types'
 import type { PowerItem } from './types'
 
 export const historicSummary: { [key: string]: PowerItem } = reactive({
-  evuIn: { name: 'Netz', power: 0, energy: 0, color: 'white' },
-  pv: { name: 'PV', power: 0, energy: 0, color: 'white' },
-  batOut: { name: 'Bat >', power: 0, energy: 0, color: 'white' },
-  evuOut: { name: 'Export', power: 0, energy: 0, color: 'white' },
-  charging: { name: 'Laden', power: 0, energy: 0, color: 'white' },
-  devices: { name: 'Geräte', power: 0, energy: 0, color: 'white' },
-  batIn: { name: '> Bat', power: 0, energy: 0, color: 'white' },
-  house: { name: 'Haus', power: 0, energy: 0, color: 'white' },
+  evuIn: { name: 'Netz', power: 0, energy: 0, color: 'var(--color-evu)' },
+  pv: { name: 'PV', power: 0, energy: 0, color: 'var(--color-pv' },
+  batOut: { name: 'Bat >', power: 0, energy: 0, color: 'var(--color-battery)' },
+  evuOut: { name: 'Export', power: 0, energy: 0, color: 'var(--color-export)' },
+  charging: { name: 'Laden', power: 0, energy: 0, color: 'var(--color-charging)' },
+  devices: { name: 'Geräte', power: 0, energy: 0, color: 'var(--color-devices)' },
+  batIn: { name: '> Bat', power: 0, energy: 0, color: 'var(--color-battery)' },
+  house: { name: 'Haus', power: 0, energy: 0, color: 'var(--color-house)' },
 })
 export const sourceSummary: { [key: string]: PowerItem } = reactive({
   evuIn: { name: 'Netz', power: 0, energy: 0, color: 'white' },

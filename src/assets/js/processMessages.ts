@@ -31,30 +31,17 @@ export function msgInit() {
   initGraph()
 }
 function processMqttMessage(topic: string, message: string) {
-  if (topic.match(/^openwb\/counter\/[0-9]+\//i)) {
-    processCounterMessages(topic, message)
-  } else if (topic.match(/^openwb\/counter\//i)) {
-    processGlobalCounterMessages(topic, message)
-  } else if (topic.match(/^openwb\/bat\//i)) {
-    processBatteryMessages(topic, message)
-  } else if (topic.match(/^openwb\/pv\//i)) {
-    processPvMessages(topic, message)
-  } else if (topic.match(/^openwb\/chargepoint\//i)) {
-    processChargepointMessages(topic, message)
-  } else if (topic.match(/^openwb\/vehicle\/template\//i)) {
-    processVehicleTemplateMessages(topic, message)
-  } else if (topic.match(/^openwb\/vehicle\//i)) {
-    processVehicleMessages(topic, message)
-  } else if (
-    topic.match(/^openwb\/general\/chargemode_config\/pv_charging\//i)
-  ) {
-    processPvConfigMessages(topic, message)
-  } else if (topic.match(/^openwb\/graph\//i)) {
-    processLiveGraphMessages(topic, message)
-  } else if (topic.match(/^openwb\/log\/daily\//i)) {
-    processDayGraphMessages(topic, message)
-  } else if (topic.match(/^openwb\/optional\/et\//i)) {
-    processEtProviderMessages(topic, message)
+  if (topic.match(/^openwb\/counter\/[0-9]+\//i)) { processCounterMessages(topic, message)
+  } else if (topic.match(/^openwb\/counter\//i)) { processGlobalCounterMessages(topic, message)
+  } else if (topic.match(/^openwb\/bat\//i)) { processBatteryMessages(topic, message)
+  } else if (topic.match(/^openwb\/pv\//i)) { processPvMessages(topic, message)
+  } else if (topic.match(/^openwb\/chargepoint\//i)) { processChargepointMessages(topic, message)
+  } else if (topic.match(/^openwb\/vehicle\/template\//i)) { processVehicleTemplateMessages(topic, message)
+  } else if (topic.match(/^openwb\/vehicle\//i)) { processVehicleMessages(topic, message)
+  } else if ( topic.match(/^openwb\/general\/chargemode_config\/pv_charging\//i)) { processPvConfigMessages(topic, message)
+  } else if (topic.match(/^openwb\/graph\//i)) { processLiveGraphMessages(topic, message)
+  } else if (topic.match(/^openwb\/log\/daily\//i)) { processDayGraphMessages(topic, message)
+  } else if (topic.match(/^openwb\/optional\/et\//i)) { processEtProviderMessages(topic, message)
   }
   // else if ( mqttTopic.match( /^openwb\/global\//i) ) { processGlobalMessages(mqttTopic, message); }
   // else if ( mqttTopic.match( /^openwb\/system\//i) ) { processSystemMessages(mqttTopic, message); }

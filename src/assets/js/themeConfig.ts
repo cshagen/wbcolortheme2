@@ -9,7 +9,6 @@ import * as d3 from 'd3'
 import type { ChargeModeInfo } from './types'
 
 import { shDevices } from './model'
-
 export class Config {
   private _showRelativeArcs: boolean = false
   showTodayGraph: boolean = true
@@ -219,7 +218,7 @@ function readCookie() {
       prefs.hideSH.map((i) => (shDevices[i].showInGraph = false))
     }
     if (prefs.showLG !== undefined) {
-      globalConfig.setGraphPreference ( prefs.showLG ? 'live' : 'day')
+      globalConfig.setGraphPreference ( prefs.showLG ? 'live' : 'today')
       // console.log (prefs.showLG)
     }
     if (prefs.maxPow !== undefined) {

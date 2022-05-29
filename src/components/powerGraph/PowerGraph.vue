@@ -65,7 +65,7 @@ import PGSourceGraph from './PGSourceGraph.vue'
 import PGUsageGraph from './PGUsageGraph.vue'
 import PGXAxis from './PGXAxis.vue'
 import PGMenu from './PGMenu.vue'
-import { graphData, graphConfig, initGraph } from './model'
+import { graphData, graphConfig, initGraph, dayGraph, monthGraph } from './model'
 import { globalConfig } from '@/assets/js/themeConfig'
 import PgSoc from './PgSoc.vue'
 import PgSocAxis from './PgSocAxis.vue'
@@ -92,8 +92,12 @@ const heading = computed(() => {
         console.warn('Graph Data empty.')
       }
       break
-    case 'day':
+    case 'today':
       heading = heading + 'heute'
+      break
+    case 'day':
+      let d = dayGraph.date
+      heading = heading + (dayGraph.date.getDate()) + '.' + (dayGraph.date.getMonth()+1) 
   }
   return heading
 })
@@ -106,18 +110,23 @@ function changeStackOrder() {
 function shiftLeft() {
   switch (graphConfig.graphMode) {
     case 'live':
-      graphConfig.graphMode = 'day'
+      graphConfig.graphMode = 'today'
       globalConfig.graphPreference = 'day'
-      graphConfig.showTodayGraph = true
       showRightButton.value = true
       initGraph()
       break
+    case 'today':
+      graphConfig.graphMode = 'day'
+      dayGraph.date = new Date()
+      dayGraph.back()
+      initGraph()
+      break
     case 'day':
-      graphConfig.showTodayGraph = false
-      graphConfig.dayBack()
+      dayGraph.back()
+      initGraph()
       break
     case 'month':
-      graphConfig.monthBack()
+      monthGraph.back()
       break
     default:
       break
@@ -127,15 +136,24 @@ function shiftRight() {
   switch (graphConfig.graphMode) {
     case 'live':
       break
-    case 'day':
+    case 'today':
       graphConfig.graphMode = 'live'
       globalConfig.graphPreference = 'live'
-      graphConfig.showTodayGraph = false
       showRightButton.value = false
       initGraph()
       break
+    case 'day':
+      dayGraph.forward()
+      let now = new Date()
+      if (dayGraph.date.getDate() == now.getDate() 
+        && dayGraph.date.getMonth() == now.getMonth() 
+        && dayGraph.date.getFullYear() == now.getFullYear()) {
+          graphConfig.graphMode = 'today'
+      }
+      initGraph()
+      break
     case 'month':
-      // graphConfig.monthforward()
+      monthGraph.forward()
       break
     default:
       break

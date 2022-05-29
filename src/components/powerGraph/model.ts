@@ -26,23 +26,7 @@ export function setGraphData(d: GraphDataItem[]) {
 }
 
 export const graphConfig = reactive({
-  graphMode: globalConfig.graphPreference,
-  showTodayGraph: true,
-  graphDate: new Date(),
-  graphMonth: {
-    month: new Date().getMonth(),
-    year: new Date().getFullYear(),
-  },
-  dayBack() {
-    this.graphDate.setTime(this.graphDate.getTime() - 86400000)
-  },
-  monthBack() {
-    this.graphMonth.month = this.graphMonth.month - 1
-    if (this.graphMonth.month < 0) {
-      this.graphMonth.month = 11
-      this.graphMonth.year = this.graphMonth.year - 1
-    }
-  },
+  graphMode: globalConfig.graphPreference 
 })
 export const liveGraph = {
   refreshTopicPrefix : 'openWB/graph/' + 'alllivevaluesJson',
@@ -82,32 +66,65 @@ export const liveGraph = {
     mqttUnsubscribe(this.updateTopic)
   }
 }
-export const dayGraph = {
+export const dayGraph = reactive({
   topic: 'openWB/log/daily/#',
+  date: new Date(),
   activate() {
-    let today = new Date()
-    let todayString = today.getFullYear().toString() 
-      + (today.getMonth()+1).toString().padStart(2,'0') 
-      + today.getDate().toString().padStart(2,'0')
+    let dateString = this.date.getFullYear().toString() 
+      + (this.date.getMonth() + 1).toString().padStart(2,'0') 
+      + this.date.getDate().toString().padStart(2,'0')
     mqttSubscribe (this.topic)
     sendCommand({command: 'getDailyLog', 
-      data: {day: todayString}
+      data: {day: dateString}
     })
   },
   deactivate() {
     mqttUnsubscribe(this.topic)
+  },
+  back() {
+    this.date = new Date(this.date.setTime(this.date.getTime() - 86400000))
+  },
+  forward() {
+    this.date = new Date(this.date.setTime(this.date.getTime() + 86400000))
+  }
+})
+export const monthGraph = {
+  year: new Date().getFullYear(),
+  month: new Date().getMonth(),
+  activate() {},
+  deactivate() {},
+  back () {
+    this.month = this.month - 1
+    if (this.month < 0) {
+      this.month = 11
+      this.year = this.year - 1
+    }
+  },
+  forward () {
+    this.month = this.month + 1
+    if (this.month > 11) {
+      this.month = 0
+      this.year = this.year + 1
+    }
   }
 }
 export function initGraph() {
-  graphConfig.graphMode = globalConfig.graphPreference
-  graphData.data=[]
+  if (graphConfig.graphMode == '') {
+   graphConfig.graphMode = globalConfig.graphPreference
+  }
+  setGraphData([])
   switch (graphConfig.graphMode) {
     case 'live':
       dayGraph.deactivate()
       liveGraph.activate()
       break
+    case 'today':
+      liveGraph.deactivate()
+      dayGraph.activate()  
+      break
     case 'day':
       liveGraph.deactivate()
       dayGraph.activate()  
+      break
   }
 }
