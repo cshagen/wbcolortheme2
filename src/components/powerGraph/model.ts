@@ -25,9 +25,7 @@ export function setGraphData(d: GraphDataItem[]) {
   graphData.data = d
 }
 
-export const graphConfig = reactive({
-  graphMode: globalConfig.graphPreference 
-})
+
 export const liveGraph = {
   refreshTopicPrefix : 'openWB/graph/' + 'alllivevaluesJson',
   updateTopic : 'openWB/graph/lastlivevaluesJson',
@@ -109,11 +107,11 @@ export const monthGraph = {
   }
 }
 export function initGraph() {
-  if (graphConfig.graphMode == '') {
-   graphConfig.graphMode = globalConfig.graphPreference
+  if (globalConfig.graphMode == '') {
+   globalConfig.graphMode = globalConfig.graphPreference
   }
   setGraphData([])
-  switch (graphConfig.graphMode) {
+  switch (globalConfig.graphMode) {
     case 'live':
       dayGraph.deactivate()
       liveGraph.activate()

@@ -3,18 +3,30 @@
     <button class="btn btn-outline-secondary btn-sm" id="calendarButton">
       <span class="fa fa-calendar-alt px-0"></span>
     </button>
-    <button class="btn btn-outline-secondary btn-sm" id="energyLeftButton">
+    <button
+      class="btn btn-outline-secondary btn-sm"
+      id="energyLeftButton"
+      :class="{ disabled: !showLeftButton }"
+      @click="$emit('shiftLeft')"
+    >
       <span class="fa fa-chevron-circle-left px-0"></span>
     </button>
-    <button class="btn btn-outline-secondary btn-sm" id="energyRightButton">
+    <button
+      class="btn btn-outline-secondary btn-sm"
+      id="energyRightButton"
+      :class="{ disabled: !showRightButton }"
+      @click="$emit('shiftRight')"
+    >
       <span class="fa fa-chevron-circle-right px-0"></span>
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+const props = defineProps<{
+  showLeftButton: boolean
+  showRightButton: boolean
+}>()
 </script>
 
-<style>
-</style>
+<style></style>

@@ -7,8 +7,8 @@
 import { reactive } from 'vue'
 import * as d3 from 'd3'
 import type { ChargeModeInfo } from './types'
-
 import { shDevices } from './model'
+import { initGraph, dayGraph, monthGraph } from '@/components/powerGraph/model'
 export class Config {
   private _showRelativeArcs: boolean = false
   showTodayGraph: boolean = true
@@ -23,6 +23,9 @@ export class Config {
   maxPower: number = 4000
   isEtEnabled: boolean = false
   etPrice: number = 20.5
+  graphMode = ''
+  showRightButton = true
+  showLeftButton = true
   constructor() {}
   get showRelativeArcs() {
     return this._showRelativeArcs
@@ -242,5 +245,58 @@ function readCookie() {
     if (prefs.simpleCP !== undefined) {
       globalConfig.simpleCpList = prefs.simpleCP
     }
+  }
+}
+
+export function shiftLeft() {
+  switch (globalConfig.graphMode) {
+    case 'live':
+      globalConfig.graphMode = 'today'
+      globalConfig.graphPreference = 'day'
+      globalConfig.showRightButton = true
+      initGraph()
+      break
+    case 'today':
+      globalConfig.graphMode = 'day'
+      dayGraph.date = new Date()
+      dayGraph.back()
+      initGraph()
+      break
+    case 'day':
+      dayGraph.back()
+      initGraph()
+      break
+    case 'month':
+      monthGraph.back()
+      break
+    default:
+      break
+  }
+}
+export function shiftRight() {
+  switch (globalConfig.graphMode) {
+    case 'live':
+      break
+    case 'today':
+      globalConfig.graphMode = 'live'
+      globalConfig.graphPreference = 'live'
+      globalConfig.showRightButton = false
+      initGraph()
+      break
+    case 'day':
+      dayGraph.forward()
+      let now = new Date()
+      if (dayGraph.date.getDate() == now.getDate() 
+        && dayGraph.date.getMonth() == now.getMonth() 
+        && dayGraph.date.getFullYear() == now.getFullYear()) {
+          globalConfig.graphMode = 'today'
+      }
+      initGraph()
+      break
+    case 'month':
+      monthGraph.forward()
+      break
+    default:
+      break
   }
 }

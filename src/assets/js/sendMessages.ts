@@ -90,6 +90,6 @@ export function updateChargeTemplate (templateId: number) {
   }
 }
 export function sendCommand (event: Object) {
-  console.log ("SENDCOMMAND " + JSON.stringify(event))
+ // console.log ("SENDCOMMAND " + JSON.stringify(event))
     mqttPublish ('openWB/set/command/' + mqttClientId() + '/todo', JSON.stringify(event))
 }

@@ -160,7 +160,7 @@ function updateDimensions() {
   screensize.y = document.documentElement.clientHeight
 }
 const usageDetails = computed(() => {
-  return [usageSummary.evuOut, usageSummary.charging]
+  return [usageSummary.evuOut]
     .concat(Object.values(chargePoints).map(cp => cp.toPowerItem()))
     .concat(
       Object.values(shDevices).filter(

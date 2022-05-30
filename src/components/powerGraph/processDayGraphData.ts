@@ -1,77 +1,42 @@
 import * as d3 from 'd3'
+import { globalConfig } from '@/assets/js/themeConfig'
 import {
   type GraphDataItem,
   type RawDayGraphDataItem,
   setGraphData,
   initGraph,
   dayGraph,
-  graphConfig
   } from './model'
 import { historicSummary } from '@/assets/js/model'
+let startValues : GraphDataItem = {}
+let endValues : GraphDataItem = {}
+
 // methods:
 export function processDayGraphMessages(topic: string, message: string) {
   let rawValues: RawDayGraphDataItem[] = JSON.parse(message)
   setGraphData(calculateGraphDataList(rawValues))
-  updateEnergyValues (rawValues)
-  if (graphConfig.graphMode == 'today') {
+  updateEnergyValues (startValues, endValues)
+  if (globalConfig.graphMode == 'today') {
     setTimeout(() => initGraph(), 300000)
   }
 }
-function calculateGraphDataList(table: RawDayGraphDataItem[]) {
+function calculateGraphDataList(table: RawDayGraphDataItem[]) : GraphDataItem[] {
   let result: GraphDataItem[] = []
   let lastItem: GraphDataItem = {}
   let currentItem: GraphDataItem = {}
   for (let index = 0; index < table.length; index++) {
-    //currentItem = {}
-    //let currentRow = table[index]
-    currentItem = extractValues (table[index])
-    /* let d = d3.timeParse('%H:%M')(currentRow.date)
-    if (d) {
-      d.setMonth(dayGraph.date.getMonth())
-      d.setDate(dayGraph.date.getDate())
-      d.setFullYear(dayGraph.date.getFullYear())
-      currentItem.date = d.getTime()
-    }
-    Object.entries(currentRow.counter).forEach(([id, values]) => {
-      currentItem.gridPush = values.exported
-      currentItem.gridPull = values.imported
-    })
-    Object.entries(currentRow.pv).forEach(([id, values]) => {
-      if (id == 'all') {
-        currentItem.solarPower = values.imported
-      }
-    })
-    if (Object.entries(currentRow.bat).length > 0) {
-      Object.entries(currentRow.bat).forEach(([id, values]) => {
-        if (id == 'all') {
-          currentItem.batIn = values.imported
-          currentItem.batOut = values.exported
-        }
-      })
-    } else {
-      currentItem.batIn = 0
-      currentItem.batOut = 0
-    }
-    Object.entries(currentRow.cp).forEach(([id, values]) => {
-      if (id != 'all') {
-        currentItem[id] = values.imported
-        currentItem['soc' + id] = values.soc
-      }
-    })
-    Object.entries(currentRow.ev).forEach(([id, values]) => {
-      if (id != 'all') {
-        currentItem['soc-' + id] = values.soc
-      }
-    }) */
-
+    currentItem = extractCounters (table[index])
     if (index > 0) {
-      result.push(calculateValues(currentItem, lastItem))
+      result.push(calculatePowerValues(currentItem, lastItem))
+    } else {
+      startValues = currentItem
     }
     lastItem = currentItem
   }
+  endValues = currentItem
   return result
 }
-function extractValues (currentRow: RawDayGraphDataItem) : GraphDataItem {
+function extractCounters (currentRow: RawDayGraphDataItem) : GraphDataItem {
   let currentItem : GraphDataItem = {}
   let d = d3.timeParse('%H:%M')(currentRow.date)
     if (d) {
@@ -113,25 +78,26 @@ function extractValues (currentRow: RawDayGraphDataItem) : GraphDataItem {
     })
     return currentItem
 }
-function calculateValues(
+const cps = [
+  'cp0',
+  'cp1',
+  'cp2',
+  'cp3',
+  'cp4',
+  'cp5',
+  'cp6',
+  'cp7',
+  'cp8',
+  'cp9',
+]
+function calculatePowerValues(
   currentRow: GraphDataItem,
   previousRow: GraphDataItem,
 ): GraphDataItem {
   let result: GraphDataItem = {}
   result.date = currentRow.date
   const cats = ['gridPull', 'gridPush', 'solarPower', 'batIn', 'batOut']
-  const cps = [
-    'cp0',
-    'cp1',
-    'cp2',
-    'cp3',
-    'cp4',
-    'cp5',
-    'cp6',
-    'cp7',
-    'cp8',
-    'cp9',
-  ]
+  
   const evSocs = [
     'soc-ev0',
     'soc-ev1',
@@ -187,27 +153,21 @@ function calculatePower(
   }
 }
 
-function updateEnergyValues(rawData: RawDayGraphDataItem[]) {
-  const startValues = extractValues (rawData[0]);
-  const endValues = extractValues(rawData[rawData.length - 1]);
+function updateEnergyValues(startValues: GraphDataItem, endValues: GraphDataItem) {
+  //const startValues = extractCounters (rawData[0]);
+  //const endValues = extractCounters(rawData[rawData.length - 1]);
   historicSummary.pv.energy = (endValues.solarPower - startValues.solarPower) / 1000;
   historicSummary.evuIn.energy = (endValues.gridPull - startValues.gridPull) / 1000;
   historicSummary.batOut.energy = (endValues.batOut - startValues.batOut) / 1000;
   historicSummary.evuOut.energy = (endValues.gridPush - startValues.gridPush) / 1000;
-  //historicSummary.charging.energy = (endValues.charging - startValues.charging) / 1000;
-  //var deviceEnergy = 0;
-  /* for (var i = 0; i < 10; i++) {
-    if (wbdata.graphMode == 'day') {
-      deviceEnergy = deviceEnergy + (endValues[26 + i] - startValues[26 + i]) / 1000;
-    } else {
-      deviceEnergy = deviceEnergy + (endValues[19 + i] - startValues[19 + i]) / 1000;
-    }} 
-  deviceEnergy = deviceEnergy + (endValues[10] - startValues[10]) / 1000;
-  deviceEnergy = deviceEnergy + (endValues[12] - startValues[12]) / 1000;
-
-  wbdata.historicSummary.devices.energy = deviceEnergy;
-  */
   historicSummary.batIn.energy = (endValues.batIn - startValues.batIn) / 1000;
+  let chargedEnergy = 0
+  cps.forEach((category) => {
+    if (startValues[category] != undefined) {
+      chargedEnergy += (endValues[category]-startValues[category])/1000
+    }
+  })
+  historicSummary.charging.energy = chargedEnergy
   historicSummary.house.energy = historicSummary.evuIn.energy + historicSummary.pv.energy 
     + historicSummary.batOut.energy - historicSummary.evuOut.energy - historicSummary.batIn.energy 
     - historicSummary.charging.energy - historicSummary.devices.energy;
