@@ -21,12 +21,19 @@ const drawBargraph = computed(() => {
     .data(props.plotdata)
     .enter()
     .append('g')
-  bargroups
+  const rects = bargroups
     .append('rect')
     .attr('class', 'bar')
     .attr('x', (d) => props.xScale(d.name) as number)
-    .attr('y', (d) => props.yScale(d.energy))
+    .attr('y', (d) => props.yScale(0))
     .attr('width', props.xScale.bandwidth())
+    .attr('height',0)
+  rects
+  .transition()
+    .duration((d,i) => 300)
+    .delay((d,i) => i* 100)
+    .ease(d3.easeCubic)
+     .attr('fill', (d) => d.color)
     .attr(
       'height',
       (d) =>
@@ -35,7 +42,9 @@ const drawBargraph = computed(() => {
         props.margin.top -
         props.margin.bottom,
     )
-    .attr('fill', (d) => d.color)
+   .attr('y', (d) => props.yScale(d.energy))
+    
+    
   return 'emBargraph.vue'
 })
 </script>

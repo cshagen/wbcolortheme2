@@ -38,20 +38,31 @@ const draw = computed(() => {
   const stackedSeries = stackGen(graphData.data) as unknown
   const iScale = d3
     .scaleLinear()
-    .domain([0, graphData.data.length-1])
+    .domain([0, graphData.data.length - 1])
     .range([0, props.width])
+  const area0 = d3
+    .area()
+    .x((d, i) => iScale(i))
+    .y(yScale.value(0))
   const area = d3
     .area()
     .x((d, i) => iScale(i))
     .y0((d) => yScale.value(d[0]))
     .y1((d) => yScale.value(d[1]))
-  graph
+  const series = graph
     .selectAll('.sourceareas')
     .data(stackedSeries as [number, number][][])
     .enter()
     .append('path')
-    .attr('d', (series) => area(series))
+    .attr('d', (series) => area0(series))
     .attr('fill', (d, i) => colors[keys[i]])
+  series
+    .transition()
+    .duration(500)
+    .delay(100)
+    .ease(d3.easeCubic)
+    .attr('d', (series) => area(series))
+
   const yAxis = graph.append('g').attr('class', 'axis')
   yAxis.call(yAxisGenerator.value)
   yAxis.selectAll('.tick').attr('font-size', 12)
@@ -72,7 +83,7 @@ const extent = computed(() => {
   let result = d3.extent(graphData.data, (d) =>
     Math.max(d.solarPower + d.gridPull + d.batOut, d.selfUsage + d.gridPush),
   )
-  if ((result[0] != undefined)  && (result[1] != undefined)) {
+  if (result[0] != undefined && result[1] != undefined) {
     return result
   } else {
     return [0, 0]
@@ -97,7 +108,6 @@ const ticklineWidth = computed(() => {
 const ticklineColor = computed(() => {
   return globalConfig.showGrid ? 'var(--color-grid)' : 'var(--color-bg)'
 })
-
 </script>
 
 <style></style>

@@ -88,18 +88,28 @@ const draw = computed(() => {
     .scaleLinear()
     .domain([0, graphData.data.length-1])
     .range([0, props.width])
+   const area0 = d3
+    .area()
+    .x((d, i) => iScale(i))
+    .y(yScale.value(0))  
   const area = d3
     .area()
     .x((d, i) => iScale(i))
     .y0((d) => yScale.value(d[0]))
     .y1((d) => yScale.value(d[1]))
-  graph
+  const series = graph
     .selectAll('.usageareas')
     .data(stackedSeries as [number, number][][])
     .enter()
     .append('path')
-    .attr('d', (series) => area(series))
+    .attr('d', (series) => area0(series))
     .attr('fill', (d, i: number) => colors[keys[props.stackOrder][i]])
+  series.transition()
+    .duration(500)
+    .delay(100)
+    .ease(d3.easeCubic)
+  .attr('d', (series) => area(series))
+      
   const yAxis = graph.append('g').attr('class', 'axis')
   yAxis.call(yAxisGenerator.value)
   yAxis

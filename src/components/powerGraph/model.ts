@@ -110,7 +110,7 @@ export function initGraph() {
   if (globalConfig.graphMode == '') {
    globalConfig.graphMode = globalConfig.graphPreference
   }
-  setGraphData([])
+  // setGraphData([])
   switch (globalConfig.graphMode) {
     case 'live':
       dayGraph.deactivate()
