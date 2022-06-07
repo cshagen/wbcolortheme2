@@ -1,15 +1,23 @@
 <template>
   <WBWidget>
     <template v-slot:title>
-      <span :style="cpNameStyle" @click="toggleConfig">{{
-        props.chargepoint.name
-      }}</span>
+      <span
+        :style="cpNameStyle"
+        data-bs-toggle="modal"
+        :data-bs-target="'#cpconfig-' + chargepoint.id"
+        >{{ props.chargepoint.name }}</span
+      >
     </template>
 
     <template v-slot:buttons>
-      <span class="ms-2 pt-1" :style="modePillStyle" @click="toggleConfig">
+      <span
+        class="ms-2 pt-1"
+        :style="modePillStyle"
+        data-bs-toggle="modal"
+        :data-bs-target="'#cpconfig-' + chargepoint.id"
+      >
         <i class="fa me-1" :class="modeIcon"> </i> {{ modeString }}
-        <span class="fa-solid fa-lg ps-1 buttonIcon" :class="buttonIcon"></span>
+        <span class="fa-solid fa-sm ps-1 fa-edit"></span>
       </span>
     </template>
     <!-- First row -->
@@ -19,7 +27,8 @@
         <p
           class="tablecell carinfo p-0 m-0"
           :style="{ color: chargepoint.color }"
-          @click="toggleConfig"
+          data-bs-toggle="modal"
+          :data-bs-target="'#cpconfig-' + chargepoint.id"
         >
           <i class="fa-solid fa-sm fa-car"> </i>
           <span class="ps-2 pe-1 vehicleName">{{
@@ -61,7 +70,11 @@
       </div>
     </div>
     <!-- Second row -->
-    <div class="row m-1 mt-2 p-0" @click="toggleConfig">
+    <div
+      class="row m-1 mt-2 p-0"
+      data-bs-toggle="modal"
+      :data-bs-target="'#cpconfig-' + chargepoint.id"
+    >
       <div class="col tablecell m-0 mb-1 p-0 d-flex justify-content-between">
         <!-- Status information -->
         <span class="d-flex align-items-baseline">
@@ -91,17 +104,19 @@
         </span>
       </div>
     </div>
-    <CPChargeConfigPanel
-      :chargepoint="chargepoint"
-      v-if="showConfig"
-      v-on:closeConfig="toggleConfig"
-    >
-    </CPChargeConfigPanel>
+    <ModalComponent :modal-id="'cpconfig-' + chargepoint.id">
+      <template v-slot:title>Konfiguration: {{ chargepoint.name }} </template>
+      <CPChargeConfigPanel
+        :chargepoint="chargepoint"
+        v-if="chargepoint != undefined"
+      ></CPChargeConfigPanel>
+    </ModalComponent>
   </WBWidget>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import * as d3 from 'd3'
 import type { ChargePoint } from './model'
 import { chargemodes } from '@/assets/js/themeConfig'
 import WBWidget from '@/components/shared/WBWidget.vue'
@@ -109,13 +124,15 @@ import CPChargeConfigPanel from './cpConfig/CPChargeConfigPanel.vue'
 import BatterySymbol from '@/components/shared/BatterySymbol.vue'
 import FormatWatt from '@/components/shared/FormatWatt.vue'
 import FormatWattH from '../shared/FormatWattH.vue'
+import ModalComponent from '../shared/ModalComponent.vue'
+import { Modal } from 'bootstrap'
 
 const props = defineProps<{
   chargepoint: ChargePoint
 }>()
 // state
 let showConfig = ref(false)
-
+var $: any
 // computed
 const chargeAmpereString = computed(() => {
   return props.chargepoint.current + ' A'
@@ -187,9 +204,6 @@ const modeString = computed(() => {
 const modeIcon = computed(() => {
   return chargemodes[props.chargepoint.chargeMode].icon
 })
-const buttonIcon = computed(() => {
-  return showConfig.value ? 'fa-caret-square-up' : 'fa-caret-square-down'
-})
 const soc = computed(() => {
   return props.chargepoint.soc
 })
@@ -197,9 +211,6 @@ const cpNameStyle = computed(() => {
   return { color: props.chargepoint.color }
 })
 // methods
-function toggleConfig() {
-  showConfig.value = !showConfig.value
-}
 </script>
 
 <style scoped>
@@ -226,6 +237,10 @@ function toggleConfig() {
 .fa-clock {
   color: var(--color-battery);
 }
+.fa-edit {
+  color: var(--color-menu);
+}
+
 .energylabel {
   color: var(--color-menu);
 }

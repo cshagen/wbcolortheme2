@@ -1,8 +1,5 @@
-/*
- * BbChargeButton.vue
- * colors theme for openwb 2.0
- * Copyright (c) 2022 Claus Hagen
- */
+/* * BbChargeButton.vue * colors theme for openwb 2.0 * Copyright (c) 2022 Claus
+Hagen */
 
 <template>
   <div class="col-lg-4 p-0 m-0 mt-1">
@@ -40,7 +37,10 @@
                 {{ modeString }}
                 <!-- PV priority -->
                 <span
-                  v-if="chargepoint.chargeMode == ChargeMode.pv_charging && globalData.isBatteryConfigured"
+                  v-if="
+                    chargepoint.chargeMode == ChargeMode.pv_charging &&
+                    globalData.isBatteryConfigured
+                  "
                   class="ps-1"
                 >
                   (
@@ -53,7 +53,7 @@
       </button>
     </div>
     <ModalComponent :modalId="modalId">
-    <template v-slot:title>Lademodus für {{ chargepoint.name }}</template>
+      <template v-slot:title>Lademodus für {{ chargepoint.name }}</template>
       <BBSelect :cpId="chargepoint.id"></BBSelect>
     </ModalComponent>
   </div>

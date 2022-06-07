@@ -5,7 +5,7 @@ import {
   type RawDayGraphDataItem,
   setGraphData,
   initGraph,
-  dayGraph,
+  dayGraph
   } from './model'
 import { historicSummary } from '@/assets/js/model'
 let startValues : GraphDataItem = {}

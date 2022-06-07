@@ -33,21 +33,21 @@
         />
         <g :transform="'translate(' + margin.left + ',' + margin.top + ')'">
         <PgSoc
-          v-if="globalConfig.graphMode=='day' || globalConfig.graphMode == 'today'"
+          v-if="graphData.graphMode=='day' || graphData.graphMode == 'today'"
           :width="width - margin.left - 2 * margin.right"
           :height="(height - margin.top - margin.bottom) / 2"
           :margin="margin"
           :cp-id="1"
         ></PgSoc>
         <PgSoc
-          v-if="globalConfig.graphMode=='day' || globalConfig.graphMode == 'today'"
+          v-if="graphData.graphMode=='day' || graphData.graphMode == 'today'"
           :width="width - margin.left - 2 * margin.right"
           :height="(height - margin.top - margin.bottom) / 2"
           :margin="margin"
           :cp-id="2"
         ></PgSoc>
         <PgSocAxis 
-          v-if="globalConfig.graphMode=='day' || globalConfig.graphMode == 'today'"
+          v-if="graphData.graphMode=='day' || graphData.graphMode == 'today'"
           :width="width - margin.left - margin.right"
           :height="(height - margin.top - margin.bottom) / 2"
           :margin="margin"
@@ -65,7 +65,7 @@ import PGSourceGraph from './PGSourceGraph.vue'
 import PGUsageGraph from './PGUsageGraph.vue'
 import PGXAxis from './PGXAxis.vue'
 import PGMenu from './PGMenu.vue'
-import { graphData, initGraph, dayGraph, monthGraph } from './model'
+import { graphData, initGraph, dayGraph, monthGraph, setInitializeUsageGraph } from './model'
 import { globalConfig, shiftLeft, shiftRight } from '@/assets/js/themeConfig'
 import PgSoc from './PgSoc.vue'
 import PgSocAxis from './PgSocAxis.vue'
@@ -80,7 +80,8 @@ const stackOrder = ref(0)
 // computed
 const heading = computed(() => {
   let heading = 'Leistung / Ladestand '
-  switch (globalConfig.graphMode) {
+  console.log("heading / graphmode "+ graphData.graphMode)
+  switch (graphData.graphMode) {
     case 'live':
       if (graphData.data.length) {
         const startTime = graphData.data[0].date
@@ -105,6 +106,7 @@ function changeStackOrder() {
   if (stackOrder.value > stackOrderMax) {
     stackOrder.value = 0
   }
+  setInitializeUsageGraph(true)
 }
 
 </script>

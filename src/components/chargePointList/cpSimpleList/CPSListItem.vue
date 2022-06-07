@@ -42,7 +42,10 @@
       </div>
     </td>
     <!-- Column 3: Mode, Power -->
-    <td class="tablecell left" @click="toggleConfig">
+    <td class="tablecell left" 
+    data-bs-toggle="modal"
+        :data-bs-target="'#cpsconfig-' + chargepoint.id"
+        >
       <div class="d-flex flex-column">
         <span class="d-flex align-items-center flex-wrap">
           <span>{{ chargePowerString }}</span>
@@ -62,8 +65,10 @@
       </div>
     </td>
     <!-- Column 4: Energy, Range -->
-    <td class="tablecell left" @click="toggleConfig">
-      <div class="d-flex flex-column">
+    <td class="tablecell left" 
+    data-bs-toggle="modal"
+        :data-bs-target="'#cpsconfig-' + chargepoint.id">
+        <div class="d-flex flex-column">
         <span class="me-2">{{ chargeEnergyString }}</span>
         <span >{{
           chargedRangeString
@@ -74,7 +79,8 @@
     <td class="buttoncell right">
       <span
         class="fa-solid fa-lg fa-edit ps-1 tableicon"
-        @click="toggleConfig"
+        data-bs-toggle="modal"
+        :data-bs-target="'#cpsconfig-' + chargepoint.id"
       ></span>
     </td>
   </tr>

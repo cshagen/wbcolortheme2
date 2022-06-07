@@ -10,7 +10,11 @@
 import { computed } from 'vue'
 import * as d3 from 'd3'
 import { globalConfig } from '@/assets/js/themeConfig'
-import { graphData } from './model'
+import {
+  graphData,
+  initializeUsageGraph,
+  usageGraphIsInitialized,
+} from './model'
 
 const props = defineProps<{
   width: number
@@ -21,7 +25,21 @@ const props = defineProps<{
 
 //state
 const keys = [
-  ['cp0', 'cp1', 'cp2','cp3','cp4','cp5','cp6','cp7','cp8','cp9', 'housePower', 'batIn', 'inverter'],
+  [
+    'cp0',
+    'cp1',
+    'cp2',
+    'cp3',
+    'cp4',
+    'cp5',
+    'cp6',
+    'cp7',
+    'cp8',
+    'cp9',
+    'housePower',
+    'batIn',
+    'inverter',
+  ],
   [
     'housePower',
     'cp0',
@@ -78,54 +96,78 @@ const colors: { [key: string]: string } = {
   cp2: 'var(--color-cp2)',
   cp3: 'var(--color-cp3)',
 }
+var paths: d3.Selection<SVGPathElement, [number, number][], d3.BaseType, any>
 // computed:
 const draw = computed(() => {
-  const graph = d3.select('g#pgUsageGraph')
-  graph.selectAll('*').remove()
-  const stackGen = d3.stack().keys(keys[props.stackOrder])
-  const stackedSeries = stackGen(graphData.data) as unknown
-  const iScale = d3
-    .scaleLinear()
-    .domain([0, graphData.data.length-1])
-    .range([0, props.width])
-   const area0 = d3
-    .area()
-    .x((d, i) => iScale(i))
-    .y(yScale.value(0))  
-  const area = d3
-    .area()
-    .x((d, i) => iScale(i))
-    .y0((d) => yScale.value(d[0]))
-    .y1((d) => yScale.value(d[1]))
-  const series = graph
-    .selectAll('.usageareas')
-    .data(stackedSeries as [number, number][][])
-    .enter()
-    .append('path')
-    .attr('d', (series) => area0(series))
-    .attr('fill', (d, i: number) => colors[keys[props.stackOrder][i]])
-  series.transition()
-    .duration(500)
-    .delay(100)
-    .ease(d3.easeCubic)
-  .attr('d', (series) => area(series))
-      
-  const yAxis = graph.append('g').attr('class', 'axis')
-  yAxis.call(yAxisGenerator.value)
-  yAxis
-    .selectAll('.tick')
-    .attr('font-size', 12)
-    .attr('color', 'var(--color-axis)')
-  if (globalConfig.showGrid) {
+  if (graphData.data.length > 0) {
+    const graph = d3.select('g#pgUsageGraph')
+    const stackGen = d3.stack().keys(keys[props.stackOrder])
+    const stackedSeries = stackGen(graphData.data) as unknown
+    const iScale = d3
+      .scaleLinear()
+      .domain([0, graphData.data.length - 1])
+      .range([0, props.width])
+    const area0 = d3
+      .area()
+      .x((d, i) => iScale(i))
+      .y(yScale.value(0))
+    const area = d3
+      .area()
+      .x((d, i) => iScale(i))
+      .y0((d) => yScale.value(d[0]))
+      .y1((d) => yScale.value(d[1]))
+    if (globalConfig.showAnimations) {
+      if (initializeUsageGraph) {
+        graph.selectAll('*').remove()
+        paths = graph
+          .selectAll('.usageareas')
+          .data(stackedSeries as [number, number][][])
+          .enter()
+          .append('path')
+          .attr('d', (series) => area0(series))
+          .attr('fill', (d, i: number) => colors[keys[props.stackOrder][i]])
+        paths
+          .transition()
+          .duration(300)
+          .delay(100)
+          .ease(d3.easeLinear)
+          .attr('d', (series) => area(series))
+        usageGraphIsInitialized()
+      } else {
+        paths
+          .data(stackedSeries as [number, number][][])
+          .transition()
+          .duration(100)
+          .ease(d3.easeLinear)
+          .attr('d', (series) => area(series))
+      }
+    } else {
+      graph.selectAll('*').remove()
+      graph
+        .selectAll('.usageareas')
+        .data(stackedSeries as [number, number][][])
+        .enter()
+        .append('path')
+        .attr('d', (series) => area(series))
+        .attr('fill', (d, i: number) => colors[keys[props.stackOrder][i]])
+    }
+    const yAxis = graph.append('g').attr('class', 'axis')
+    yAxis.call(yAxisGenerator.value)
     yAxis
-      .selectAll('.tick line')
-      .attr('stroke', 'var(--color-grid)')
-      .attr('stroke-width', '0.5')
-  } else {
-    yAxis.selectAll('.tick line').attr('stroke', 'var(--color-bg)')
+      .selectAll('.tick')
+      .attr('font-size', 12)
+      .attr('color', 'var(--color-axis)')
+    if (globalConfig.showGrid) {
+      yAxis
+        .selectAll('.tick line')
+        .attr('stroke', 'var(--color-grid)')
+        .attr('stroke-width', '0.5')
+    } else {
+      yAxis.selectAll('.tick line').attr('stroke', 'var(--color-bg)')
+    }
+    yAxis.select('.domain').attr('stroke', 'var(--color-bg)')
+    return 'pgUsageGraph.vue'
   }
-  yAxis.select('.domain').attr('stroke', 'var(--color-bg)')
-  return 'pgUsageGraph.vue'
 })
 const yScale = computed(() => {
   return d3
@@ -138,7 +180,7 @@ const extent = computed(() => {
     graphData.data,
     (d) => d.housePower + d.cp1 + d.cp2 + d.cp3 + d.batIn + d.inverter,
   )
-  if ((result[0] != undefined) && (result[1] != undefined)) {
+  if (result[0] != undefined && result[1] != undefined) {
     return result
   } else {
     return [0, 0]
@@ -153,7 +195,6 @@ const yAxisGenerator = computed(() => {
       (d == 0 ? '' : Math.round(d * 10) / 10).toLocaleString(undefined),
     )
 })
-
 </script>
 
 <style></style>

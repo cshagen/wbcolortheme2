@@ -10,7 +10,11 @@
 import { computed } from 'vue'
 import * as d3 from 'd3'
 import { globalConfig } from '@/assets/js/themeConfig'
-import { graphData } from './model'
+import {
+  graphData,
+  initializeSourceGraph,
+  sourceGraphIsInitialized,
+} from './model'
 
 const props = defineProps<{
   width: number
@@ -29,49 +33,73 @@ const colors: { [key: string]: string } = {
   gridPush: 'var(--color-export)',
   gridPull: 'var(--color-evu)',
 }
-
+var paths: d3.Selection<SVGPathElement, [number, number][], d3.BaseType, any>
 // computed:
 const draw = computed(() => {
-  const graph = d3.select('g#pgSourceGraph')
-  graph.selectAll('*').remove()
-  const stackGen = d3.stack().keys(keys)
-  const stackedSeries = stackGen(graphData.data) as unknown
-  const iScale = d3
-    .scaleLinear()
-    .domain([0, graphData.data.length - 1])
-    .range([0, props.width])
-  const area0 = d3
-    .area()
-    .x((d, i) => iScale(i))
-    .y(yScale.value(0))
-  const area = d3
-    .area()
-    .x((d, i) => iScale(i))
-    .y0((d) => yScale.value(d[0]))
-    .y1((d) => yScale.value(d[1]))
-  const series = graph
-    .selectAll('.sourceareas')
-    .data(stackedSeries as [number, number][][])
-    .enter()
-    .append('path')
-    .attr('d', (series) => area0(series))
-    .attr('fill', (d, i) => colors[keys[i]])
-  series
-    .transition()
-    .duration(500)
-    .delay(100)
-    .ease(d3.easeCubic)
-    .attr('d', (series) => area(series))
-
-  const yAxis = graph.append('g').attr('class', 'axis')
-  yAxis.call(yAxisGenerator.value)
-  yAxis.selectAll('.tick').attr('font-size', 12)
-  yAxis
-    .selectAll('.tick line')
-    .attr('stroke', ticklineColor.value)
-    .attr('stroke-width', ticklineWidth.value)
-  yAxis.select('.domain').attr('stroke', 'var(--color-bg)')
-  return 'pgSourceGraph.vue'
+  if (graphData.data.length > 0) {
+    const graph = d3.select('g#pgSourceGraph')
+    // graph.selectAll('*').remove()
+    const stackGen = d3.stack().keys(keys)
+    const stackedSeries = stackGen(graphData.data) as unknown
+    const iScale = d3
+      .scaleLinear()
+      .domain([0, graphData.data.length - 1])
+      .range([0, props.width])
+    const area0 = d3
+      .area()
+      .x((d, i) => iScale(i))
+      .y(yScale.value(0))
+    const area = d3
+      .area()
+      .x((d, i) => iScale(i))
+      .y0((d) => yScale.value(d[0]))
+      .y1((d) => yScale.value(d[1]))
+    if (globalConfig.showAnimations) {
+      if (initializeSourceGraph) {
+        graph.selectAll('*').remove()
+        paths = graph
+          .selectAll('.sourceareas')
+          .data(stackedSeries as [number, number][][])
+          .enter()
+          .append('path')
+          .attr('fill', (d, i) => colors[keys[i]])
+          .attr('d', (series) => area0(series))
+        paths
+          .transition()
+          .duration(300)
+          .delay(100)
+          .ease(d3.easeLinear)
+          .attr('d', (series) => area(series))
+        sourceGraphIsInitialized()
+      } else {
+        paths
+          .data(stackedSeries as [number, number][][])
+          .transition()
+          .duration(100)
+          .ease(d3.easeLinear)
+          .attr('d', (series) => area(series))
+      }
+    } else {
+      graph.selectAll('*').remove()
+      graph
+        .selectAll('.sourceareas')
+        .data(stackedSeries as [number, number][][])
+        .enter()
+        .append('path')
+        .attr('fill', (d, i) => colors[keys[i]])
+        .attr('d', (series) => area(series))
+      sourceGraphIsInitialized()
+    }
+    const yAxis = graph.append('g').attr('class', 'axis')
+    yAxis.call(yAxisGenerator.value)
+    yAxis.selectAll('.tick').attr('font-size', 12)
+    yAxis
+      .selectAll('.tick line')
+      .attr('stroke', ticklineColor.value)
+      .attr('stroke-width', ticklineWidth.value)
+    yAxis.select('.domain').attr('stroke', 'var(--color-bg)')
+    return 'pgSourceGraph.vue'
+  }
 })
 const yScale = computed(() => {
   return d3

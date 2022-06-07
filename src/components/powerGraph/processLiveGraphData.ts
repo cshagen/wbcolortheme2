@@ -11,7 +11,6 @@ import {
 
 // methods:
 export function processLiveGraphMessages(topic: string, message: string) {
-  console.log('Live Graph Message: ' + topic)
   if (topic == 'openWB/graph/boolDisplayLiveGraph') {
     globalData.displayLiveGraph = +message == 1
   } else if (topic.match(/^openwb\/graph\/alllivevaluesJson[1-9][0-9]*$/i)) {
@@ -47,7 +46,6 @@ export function reloadLiveGraph(topic: string, rawMessage: string) {
   }
   if (liveGraph.initCounter == 16) {
     // Initialization complete
-    console.log(liveGraph.rawDataPacks)
     let newGraphData: GraphDataItem[] = []
     liveGraph.unsubscribeRefresh()
     liveGraph.initialized = true
@@ -66,7 +64,7 @@ export function updateLiveGraph(topic: string, rawString: string) {
   let rawItem = JSON.parse(rawString) as RawGraphDataItem
   const values = extractValues(rawItem)
   liveGraph.graphRefreshCounter++
-  graphData.data.push(values)
+  setGraphData(graphData.data.concat(values))
   if (liveGraph.graphRefreshCounter > 60) {
     liveGraph.activate()
   }

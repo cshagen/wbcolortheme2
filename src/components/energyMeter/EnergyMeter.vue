@@ -60,8 +60,13 @@ import EMBarGraph from './EMBarGraph.vue'
 import EMYAxis from './EMYAxis.vue'
 import EMLabels from './EMLabels.vue'
 import WBWidget from '../shared/WBWidget.vue'
-import { globalConfig, shiftLeft, shiftRight } from '@/assets/js/themeConfig'
-import { dayGraph } from '@/components/powerGraph/model'
+import {
+  globalConfig,
+  shiftLeft,
+  shiftRight,
+  setInitializeEnergyGraph,
+} from '@/assets/js/themeConfig'
+import { dayGraph, graphData } from '@/components/powerGraph/model'
 
 // props
 const props = defineProps<{
@@ -79,8 +84,19 @@ const margin = {
 const axisFontsize = 12
 // computed
 const plotdata = computed(() => {
+  let sources = Object.values(sourceSummary)
+  let usage = props.usageDetails
+  let historic = Object.values(historicSummary)
+  setInitializeEnergyGraph(true)
+  return calcPlotData(sources, usage, historic)
+})
+function calcPlotData(
+  sources: PowerItem[],
+  usage: PowerItem[],
+  history: PowerItem[],
+) {
   let result: PowerItem[] = []
-  switch (globalConfig.graphMode) {
+  switch (graphData.graphMode) {
     default:
     case 'live':
       result = Object.values(sourceSummary)
@@ -102,7 +118,7 @@ const plotdata = computed(() => {
     // break;
   }
   return result
-})
+}
 const xScale = computed(() => {
   return d3
     .scaleBand()
@@ -118,7 +134,7 @@ const yScale = computed(() => {
 })
 const heading = computed(() => {
   let result = 'Energie '
-  switch (globalConfig.graphMode) {
+  switch (graphData.graphMode) {
     case 'live':
     case 'today':
       result = result + ' heute'

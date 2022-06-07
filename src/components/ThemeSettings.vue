@@ -19,21 +19,35 @@
   >
     <SwitchInput v-model="globalConfig.showRelativeArcs"></SwitchInput>
   </ConfigItem>
-  <ConfigItem title="Bögen zurücksetzen" icon="fa-undo" infotext="Durch Click auf den Button wird die Maximallänge der Bögen auf den aktuellen Wert gesetzt." v-if="globalConfig.showRelativeArcs">
-  <button
-        v-if="globalConfig.showRelativeArcs"
-        class="btn btn-secondary"
-        @click="emit('resetArcs')"
-        >Reset</button
-      >
-    </ConfigItem>
-    <ConfigItem title="Anzahl Dezimalstellen" icon="fa-sliders-h" infotext="Alle kW- und kWh-Werte werden mit der gewählten Anzahl an Stellen angezeigt.">
+  <ConfigItem
+    title="Bögen zurücksetzen"
+    icon="fa-undo"
+    infotext="Durch Click auf den Button wird die Maximallänge der Bögen auf den aktuellen Wert gesetzt."
+    v-if="globalConfig.showRelativeArcs"
+  >
+    <button
+      v-if="globalConfig.showRelativeArcs"
+      class="btn btn-secondary"
+      @click="emit('resetArcs')"
+    >
+      Reset
+    </button>
+  </ConfigItem>
+  <ConfigItem
+    title="Anzahl Dezimalstellen"
+    icon="fa-sliders-h"
+    infotext="Alle kW- und kWh-Werte werden mit der gewählten Anzahl an Stellen angezeigt."
+  >
     <SelectInput
       :options="decimalDisplay"
       v-model="globalConfig.decimalPlaces"
     ></SelectInput>
   </ConfigItem>
-  <ConfigItem title="Farbschema Smart-Home-Geräte" icon="fa-palette" infotext="Für die Smart-Home-Geräte stehen mehrere Schemata zur Verfügung.">
+  <ConfigItem
+    title="Farbschema Smart-Home-Geräte"
+    icon="fa-palette"
+    infotext="Für die Smart-Home-Geräte stehen mehrere Schemata zur Verfügung."
+  >
     <RadioInput
       :options="shSchemes"
       v-model="globalConfig.smartHomeColors"
@@ -42,29 +56,28 @@
   <ConfigItem
     title="Kompakte Ladepunktliste"
     icon="fa-list"
-      infotext="Zeige eine einzelne Ladepunktliste statt separater Element pro Ladepunkt."
+    infotext="Zeige eine einzelne Ladepunktliste statt separater Element pro Ladepunkt."
   >
     <SwitchInput v-model="globalConfig.simpleCpList"></SwitchInput>
   </ConfigItem>
   <ConfigItem
     title="Filter-Buttons"
     icon="fa-filter"
-      infotext="Hauptseite mit Buttons zur Auswahl der Kategorie."
+    infotext="Hauptseite mit Buttons zur Auswahl der Kategorie."
   >
     <SwitchInput v-model="globalConfig.showQuickAccess"></SwitchInput>
   </ConfigItem>
-   <button
-          class="btn btn-secondary float-end mt-3 ms-1"
-          data-bs-dismiss="modal"
-        >
-          Schließen
-        </button>
+  <ConfigItem
+    title="Animationen"
+    icon="fa-film"
+    infotext="Animationen anzeigen"
+  >
+    <SwitchInput v-model="globalConfig.showAnimations"></SwitchInput>
+  </ConfigItem>
 </template>
 
 <script setup lang="ts">
-import {
-  globalConfig,
-  } from '@/assets/js/themeConfig'
+import { globalConfig } from '@/assets/js/themeConfig'
 import SelectInput from '@/components/shared/SelectInput.vue'
 import ConfigItem from '@/components/shared/ConfigItem.vue'
 import SwitchInput from './shared/SwitchInput.vue'
@@ -75,12 +88,12 @@ const colorschemes: [string, string][] = [
   ['Hell', 'light'],
   ['Blau', 'blue'],
 ]
-const decimalDisplay: [string,string][] = [
+const decimalDisplay: [string, string][] = [
   ['3 kW', '0'],
   ['3,1 kW', '1'],
   ['3,14 kW', '2'],
   ['3,141 kW', '3'],
-  ['3141 W', '4']
+  ['3141 W', '4'],
 ]
 const shSchemes: [string, string][] = [
   ['Orange', 'normal'],

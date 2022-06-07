@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
 import { mqttSubscribe, mqttUnsubscribe } from '../../assets/js/mqttClient'
 import { sendCommand } from '@/assets/js/sendMessages'
-import { globalConfig } from '@/assets/js/themeConfig'
+import { globalConfig, setGraphMode } from '@/assets/js/themeConfig'
 
 export interface GraphDataItem {
   [key: string]: number
@@ -18,14 +18,25 @@ export interface RawDayGraphDataItem {
   cp: Object,
   ev: Object
 }
-export const graphData: { data: GraphDataItem[] } = reactive({
+export const graphData: { data: GraphDataItem[], graphMode: string } = reactive({
   data: [],
+  graphMode: 'today'
 })
+export var initializeSourceGraph = true
+export var initializeUsageGraph = true
+export function sourceGraphIsInitialized () {
+  initializeSourceGraph = false
+}
+export function usageGraphIsInitialized () {
+  initializeUsageGraph = false
+}
+export function setInitializeUsageGraph (val: boolean) {
+  initializeUsageGraph = val
+}
 export function setGraphData(d: GraphDataItem[]) {
   graphData.data = d
+  graphData.graphMode = globalConfig.graphMode 
 }
-
-
 export const liveGraph = {
   refreshTopicPrefix : 'openWB/graph/' + 'alllivevaluesJson',
   updateTopic : 'openWB/graph/lastlivevaluesJson',
@@ -108,9 +119,10 @@ export const monthGraph = {
 }
 export function initGraph() {
   if (globalConfig.graphMode == '') {
-   globalConfig.graphMode = globalConfig.graphPreference
+   setGraphMode (globalConfig.graphPreference)
   }
-  // setGraphData([])
+  initializeSourceGraph = true
+  initializeUsageGraph = true
   switch (globalConfig.graphMode) {
     case 'live':
       dayGraph.deactivate()

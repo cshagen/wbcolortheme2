@@ -63,7 +63,7 @@ export function mqttSubscribe(toTopic: string) {
       console.error("MQTT Subscription error: " + error);
       return;
     }
-    // console.info("MQTT Subscription successful: " + toTopic);
+     //console.info("MQTT Subscription successful: " + toTopic);
   })
 }
 export function mqttUnsubscribe(fromTopic: string) {
@@ -76,7 +76,7 @@ export function mqttUnsubscribe(fromTopic: string) {
       );
       return;
     }
-    // console.info ('MQTT unsubscribe successful: ' + topic)
+     //console.info ('MQTT unsubscribe successful: ' + topic)
   })
 }
 export function mqttPublish(topic: string, message: string) {

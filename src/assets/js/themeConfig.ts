@@ -12,7 +12,7 @@ import { initGraph, dayGraph, monthGraph } from '@/components/powerGraph/model'
 export class Config {
   private _showRelativeArcs: boolean = false
   showTodayGraph: boolean = true
-  private _graphPreference: string = ''
+  private _graphPreference: string = 'today'
   usageStackOrder: number = 0
   private _displayMode: string = 'dark'
   private _showGrid: boolean = false
@@ -20,12 +20,13 @@ export class Config {
   private _decimalPlaces: number = 1
   private _showQuickAccess  = true
   private _simpleCpList = false
+  private _showAnimations = true
   maxPower: number = 4000
   isEtEnabled: boolean = false
   etPrice: number = 20.5
-  graphMode = ''
   showRightButton = true
   showLeftButton = true
+  graphMode = ''
   constructor() {}
   get showRelativeArcs() {
     return this._showRelativeArcs
@@ -87,8 +88,14 @@ export class Config {
     this._simpleCpList = show
     savePrefs()
   }
+  get showAnimations() {
+    return this._showAnimations
+  }
+  set showAnimations (show: boolean) {
+    this._showAnimations = show
+  }
 }
-
+export const globalConfig = reactive(new Config())
 export function initConfig() {
   readCookie()
   // set the background
@@ -101,9 +108,17 @@ export function initConfig() {
   doc.classed('shcolors-advanced', globalConfig.smartHomeColors == 'advanced')
   doc.classed('shcolors-normal', globalConfig.smartHomeColors == 'normal')
 }
+export var initializeEnergyGraph = true
+export function energyGraphInitialized() {
+  initializeEnergyGraph = false
+}
+export function setInitializeEnergyGraph(val: boolean) {
+  initializeEnergyGraph = val
+}
 
-export const globalConfig = reactive(new Config())
-
+export function setGraphMode(mode:string) {
+  globalConfig.graphMode = mode
+}
 export const chargemodes: { [key: string]: ChargeModeInfo } = {
   instant_charging: {
     name: 'Sofort',
@@ -183,6 +198,7 @@ interface Preferences {
   maxPow?: number
   showQA?: boolean
   simpleCP? : boolean
+  animation? : boolean
 }
 
 function writeCookie() {
@@ -200,6 +216,7 @@ function writeCookie() {
   prefs.maxPow = globalConfig.maxPower
   prefs.showQA = globalConfig.showQuickAccess
   prefs.simpleCP = globalConfig.simpleCpList
+  prefs.animation = globalConfig.showAnimations
   document.cookie =
     'openWBColorTheme=' + JSON.stringify(prefs) + '; max-age=16000000'
 }
@@ -245,6 +262,9 @@ function readCookie() {
     if (prefs.simpleCP !== undefined) {
       globalConfig.simpleCpList = prefs.simpleCP
     }
+    if (prefs.animation != undefined) {
+      globalConfig.showAnimations = prefs.animation
+    }
   }
 }
 
@@ -255,16 +275,19 @@ export function shiftLeft() {
       globalConfig.graphPreference = 'day'
       globalConfig.showRightButton = true
       initGraph()
-      break
+    break
     case 'today':
       globalConfig.graphMode = 'day'
       dayGraph.date = new Date()
       dayGraph.back()
       initGraph()
+      console.log("reset energy graph")
+      initializeEnergyGraph = true
       break
     case 'day':
       dayGraph.back()
       initGraph()
+      initializeEnergyGraph = true
       break
     case 'month':
       monthGraph.back()
@@ -292,6 +315,7 @@ export function shiftRight() {
           globalConfig.graphMode = 'today'
       }
       initGraph()
+      initializeEnergyGraph = true
       break
     case 'month':
       monthGraph.forward()

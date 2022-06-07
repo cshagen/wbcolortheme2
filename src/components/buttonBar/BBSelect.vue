@@ -1,8 +1,5 @@
-/*
- * BBSelect.vue
- * colors theme for openwb 2.0
- * Copyright (c) 2022 Claus Hagen
- */
+/* * BBSelect.vue * colors theme for openwb 2.0 * Copyright (c) 2022 Claus Hagen
+*/
 
 <template>
   <div class="container-fluid p-0 m-0">
@@ -86,13 +83,6 @@
         </div>
       </div>
     </div>
-    <button
-      type="button"
-      class="btn btn-secondary buttonTextSize float-end m-1 mt-3"
-      data-bs-dismiss="modal"
-    >
-      Schließen
-    </button>
   </div>
 </template>
 

@@ -58,7 +58,7 @@ const line = computed(() => {
   const path = d3
     .line<GraphDataItem>()
     .x((d) => xScale.value(d.date))
-    .y((d) => yScale.value(d['soc' + props.cpId]))
+    .y((d) => (yScale.value(d['soc' + props.cpId]) != undefined) ? yScale.value(d['soc' + props.cpId]) : 0)
   let p = path(graphData.data)
   return p ? p : ''
 })

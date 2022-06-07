@@ -9,7 +9,6 @@
   </ConfigItem>
 
   <div class="m-0 mt-4 p-0">
-    <p class="heading ms-0">Konfiguration</p>
     <nav class="nav nav-tabs nav-justified mx-1 mt-1" role="tablist">
       <a
         class="nav-link active"
@@ -105,6 +104,7 @@
         <CPConfigScheduled
           :chargeTemplate="chargeTemplate"
           :chargeTemplateId="cp.chargeTemplate"
+          v-if="chargeTemplate != undefined"
         >
         </CPConfigScheduled>
       </div>
@@ -117,6 +117,7 @@
         <CPConfigTimed
           :chargeTemplate="chargeTemplate"
           :chargeTemplateId="cp.chargeTemplate"
+          v-if="chargeTemplate != undefined"
         ></CPConfigTimed>
       </div>
 
@@ -126,18 +127,9 @@
         role="tabpanel"
         aria-labelledby="car-tab"
       >
-        <CPConfigVehicle :vehicleId="cp.connectedVehicle"></CPConfigVehicle>
-      </div>
-    </div>
-    <div class="row mt-2 me-0">
-      <div class="col m-0 p-0">
-        <button
-          type="button"
-          class="btn btn-secondary float-end mt-2 me-0"
-          @click="toggleConfig"
-        >
-          Schließen
-        </button>
+        <CPConfigVehicle :vehicleId="cp.connectedVehicle"
+        v-if="vehicles[cp.connectedVehicle] != undefined"
+        ></CPConfigVehicle>
       </div>
     </div>
   </div>
@@ -168,7 +160,7 @@ const cpid = computed(() => {
   return cp.id
 })
 // methods
-function toggleConfig() {
+function closeConfig() {
   emit('closeConfig')
 }
 // lifecycle

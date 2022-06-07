@@ -16,6 +16,13 @@
         </div>
         <div class="modal-body" style="background-color: var(--color-bg)">
           <slot></slot>
+          <button
+          class="btn btn-secondary float-end mt-3 ms-1"
+          data-bs-dismiss="modal"
+        >
+          Schließen
+        </button>
+          
         </div>
       </div>
     </div>
