@@ -1,20 +1,23 @@
 <template>
-  <p class="settingsheader mt-2 ms-1">Profile für  {{ vehicles[vehicleId].name }}:</p>
+  <p class="settingsheader mt-2 ms-1">
+    Profile für {{ vehicles[vehicleId].name }}:
+  </p>
   <!-- Select the charge mode -->
-  <ConfigItem title="Ladeprofil">
+  <ConfigItem title="Ladeprofil" icon="fa-sliders">
     <RadioInput
-      :options="Object.keys(chargeTemplates).map((v) => [chargeTemplates[+v].name, v])"
+      :options="
+        Object.keys(chargeTemplates).map((v) => [chargeTemplates[+v].name, v])
+      "
       v-model.number="vehicles[vehicleId].chargeTemplateId"
-     ></RadioInput>
+    ></RadioInput>
   </ConfigItem>
   <!-- Select the Vehicle Template -->
-  <ConfigItem title="Fahrzeug-Vorlage" class="mb-2">
+  <ConfigItem title="Fahrzeug-Vorlage" icon="fa-sliders" class="mb-2">
     <RadioInput
       :options="Object.keys(evTemplates).map((v) => [evTemplates[+v].name, v])"
       v-model.number="vehicles[vehicleId].evTemplateId"
-      ></RadioInput>
+    ></RadioInput>
   </ConfigItem>
-  
 </template>
 
 <script setup lang="ts">

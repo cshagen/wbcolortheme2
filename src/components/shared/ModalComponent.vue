@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" :id="modalId">
+  <div class="modal fade" :id="modalId">
     <div class="modal-dialog modal-lg modal-fullscreen-lg-down">
       <div class="modal-content">
         <div class="modal-header">

@@ -16,7 +16,7 @@ const props = defineProps<{
   const yAxisGenerator = computed(() => {
       return d3.axisLeft<number>(props.yScale)
         .tickFormat ((d) => (d>0) ? d.toString() : "")
-        .ticks(8)
+        .ticks(6)
         .tickSizeInner(-props.width) 
     })
   const drawYAxis = computed(() => {
@@ -40,7 +40,6 @@ const props = defineProps<{
 		}
 		yAxis.select(".domain")
 			.attr("stroke", 'var(--color-bg)');
-
       return "emYAxis.vue"
     })
 

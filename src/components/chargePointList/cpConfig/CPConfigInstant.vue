@@ -31,6 +31,7 @@
     <ConfigItem
       v-if="cp.instantChargeLimitMode == 'soc'"
       title="Maximaler SoC"
+      icon="fa-sliders"
     >
       <RangeInput
         id="maxSoc"
@@ -46,6 +47,7 @@
     <ConfigItem
       v-if="cp.instantChargeLimitMode == 'amount'"
       title="Zu ladende Energie"
+      icon="fa-sliders"
     >
       <RangeInput
         id="maxEnergy"

@@ -17,7 +17,7 @@
         :data-bs-target="'#cpconfig-' + chargepoint.id"
       >
         <i class="fa me-1" :class="modeIcon"> </i> {{ modeString }}
-        <span class="fa-solid fa-sm ps-1 fa-edit"></span>
+        <span class="fa-solid fa-sm ps-1 fa-sliders"></span>
       </span>
     </template>
     <!-- First row -->
@@ -237,7 +237,7 @@ const cpNameStyle = computed(() => {
 .fa-clock {
   color: var(--color-battery);
 }
-.fa-edit {
+.fa-sliders {
   color: var(--color-menu);
 }
 
