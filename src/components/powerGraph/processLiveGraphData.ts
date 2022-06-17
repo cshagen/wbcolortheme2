@@ -82,12 +82,12 @@ function extractValues(data: RawGraphDataItem): GraphDataItem {
     values.gridPull = 0
     values.gridPush = 0
   }
-  if (+data['pv-all'] <= 0) {
-    values.solarPower = -data['pv-all']
+  if (+data['pv-all'] >= 0) {
+    values.solarPower = +data['pv-all']
     values.inverter = 0
   } else {
     values.solarPower = 0
-    values.inverter = +data['pv-all']
+    values.inverter = -data['pv-all']
   }
   values.housePower = +data['house-power']
   //battery
