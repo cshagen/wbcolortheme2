@@ -107,7 +107,7 @@ function calcPlotData(
       result = Object.values(sourceSummary)
         .concat(props.usageDetails)
         .filter((row) => row.energy > 0)
-      break
+        break
     case 'day':
       result = Object.values(historicSummary).filter((row) => row.energy > 0)
       break
