@@ -80,7 +80,6 @@ const stackOrder = ref(0)
 // computed
 const heading = computed(() => {
   let heading = 'Leistung / Ladestand '
-  console.log("heading / graphmode "+ graphData.graphMode)
   switch (graphData.graphMode) {
     case 'live':
       if (graphData.data.length) {

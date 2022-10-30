@@ -13,7 +13,7 @@ let endValues : GraphDataItem = {}
 
 // methods:
 export function processDayGraphMessages(topic: string, message: string) {
-  let rawValues: RawDayGraphDataItem[] = JSON.parse(message)
+  let rawValues: RawDayGraphDataItem[] = JSON.parse(message).entries
   setGraphData(calculateGraphDataList(rawValues))
   updateEnergyValues (startValues, endValues)
   if (globalConfig.graphMode == 'today') {
@@ -51,7 +51,7 @@ function extractCounters (currentRow: RawDayGraphDataItem) : GraphDataItem {
     })
     Object.entries(currentRow.pv).forEach(([id, values]) => {
       if (id == 'all') {
-        currentItem.solarPower = values.imported
+        currentItem.solarPower = values.exported
       }
     })
     if (Object.entries(currentRow.bat).length > 0) {
