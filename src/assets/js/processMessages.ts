@@ -132,10 +132,11 @@ function processPvMessages(topic: string, message: string) {
     case 'openWB/pv/get/power':
       sourceSummary.pv.power = -message
       break
-    case 'openWB/pv/get/daily_yield':
+    case 'openWB/pv/get/daily_exported':
       sourceSummary.pv.energy = +message / 1000
       break
     default:
+      console.warn('Ignored PV msg: [' + topic + '] ' + message)
   }
 }
 
@@ -151,8 +152,6 @@ function processPvConfigMessages(topic: string, message: string) {
     }
   }
 }
-
-
 
 function processEvuMessages(topic: string, message: string) {
   let elements = topic.split('/')
