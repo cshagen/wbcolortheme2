@@ -29,18 +29,17 @@ http://<address of openWB>:3000
 ``` 
 
 ## Docker-Installation (zusammen mit openwb2)
-(Eine Erweiterung der wunderbaren Lösung von yankee)
 
-Die zwei Dateien aus dem "docker-scripts"-Verzeichnis in einen Ordner kopieren.
+Die Dateien aus dem "docker-scripts"-Verzeichnis in einen Ordner kopieren.
 
 In diesem Ordner den Container bauen:
 ``` docker build -t openwb2 . ```
 
 In einer shell den Container starten:
-``` docker run --name openwb2 -p 7080:80 -p 1883:1883 -p 9001:9001 -p 3000:3000 -it openwb2 ```
+``` docker run --name openwb2 -p 7080:80 -p 1883:1883 -p 9001:9001 -p 3000:3000 -p 1886:1886 -it openwb2 ```
 
 In einer zweiten shell das colors-theme starten:
-``` docker exec -ti openwb2 sh -c "cd /home/pi/wbcolortheme2;npm run serve" ```
+``` docker exec -ti openwb2 sh -c "cd /home/openwb/wbcolortheme2;npm run serve" ```
 
 Im Browser kann nun das Standard-Theme und das colors-theme zugegriffen werden:
 
