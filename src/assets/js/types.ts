@@ -63,6 +63,9 @@ export interface PowerItem {
   name: string,
   power: number,
   energy: number,
+  energyPv: number,
+  energyBat: number,
+  pvPercentage: number,
   color: string
 }
 

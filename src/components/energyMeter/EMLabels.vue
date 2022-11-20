@@ -30,16 +30,22 @@ const drawLabels = computed(() => {
       'x',
       (d) => (props.xScale(d.name) as number) + props.xScale.bandwidth() / 2,
     )
-    .attr('y', (d) => props.yScale(d.energy) - 10)
+    .attr('y', (d) => (
+      (d.pvPercentage > 0) ? props.yScale(d.energy) - 25
+        : props.yScale(d.energy) - 10))
     .attr('font-size', labelfontsize.value)
     .attr('text-anchor', 'middle')
     .attr('fill', (d) => d.color)
     .text((d) => formatWattH(d.energy * 1000, globalConfig.decimalPlaces))
-
-  /* const categories = svg.selectAll(".category")
-			.data(this.plotdata)
-			.enter()
-			.append("g"); */
+  // add a PV percentage tag to the charging bar
+  labels.append("text")
+    .attr("x", (d) => (props.xScale(d.name) as number)+ props.xScale.bandwidth() / 2)
+    .attr("y", (d) => props.yScale(d.energy) - 10)
+    .attr("font-size", labelfontsize.value - 2)
+    .attr("text-anchor", "middle")
+    .attr("fill", (d) => 'var(--color-pv)')
+    .text((d) => pvString(d));
+  // Add category labels
   labels
     .append('text')
     .attr(
@@ -99,6 +105,16 @@ function truncateCategory(name: string) {
     return name
   }
 }
+function pvString (item: PowerItem) : string {
+  if (item.pvPercentage > 0) {
+			return ("(PV: " + item.pvPercentage.toLocaleString(undefined) + " %)");
+		} else {
+			return "";
+		}
+	}
+
 </script>
 
-<style></style>
+<style>
+
+</style>

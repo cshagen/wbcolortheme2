@@ -281,7 +281,6 @@ export function shiftLeft() {
       dayGraph.date = new Date()
       dayGraph.back()
       initGraph()
-      console.log("reset energy graph")
       initializeEnergyGraph = true
       break
     case 'day':

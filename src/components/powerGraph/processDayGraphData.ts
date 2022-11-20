@@ -10,6 +10,8 @@ import {
 import { historicSummary } from '@/assets/js/model'
 let startValues : GraphDataItem = {}
 let endValues : GraphDataItem = {}
+let pvChargeCounter = 0
+let batChargeCounter = 0
 
 // methods:
 export function processDayGraphMessages(topic: string, message: string) {
@@ -30,10 +32,17 @@ function calculateGraphDataList(table: RawDayGraphDataItem[]) : GraphDataItem[] 
       result.push(calculatePowerValues(currentItem, lastItem))
     } else {
       startValues = currentItem
+      startValues.chargingPv = 0
+      startValues.chargingBat = 0
+      pvChargeCounter = 0
+      batChargeCounter = 0
     }
     lastItem = currentItem
   }
   endValues = currentItem
+  endValues.chargingPv = pvChargeCounter
+  endValues.chargingBat = batChargeCounter
+  
   return result
 }
 function extractCounters (currentRow: RawDayGraphDataItem) : GraphDataItem {
@@ -69,6 +78,8 @@ function extractCounters (currentRow: RawDayGraphDataItem) : GraphDataItem {
       if (id != 'all') {
         currentItem[id] = values.imported
         currentItem['soc' + id] = values.soc
+      } else {
+        currentItem['charging'] = values.imported
       }
     })
     Object.entries(currentRow.ev).forEach(([id, values]) => {
@@ -76,6 +87,7 @@ function extractCounters (currentRow: RawDayGraphDataItem) : GraphDataItem {
         currentItem['soc-' + id] = values.soc
       }
     })
+    
     return currentItem
 }
 const cps = [
@@ -96,7 +108,7 @@ function calculatePowerValues(
 ): GraphDataItem {
   let result: GraphDataItem = {}
   result.date = currentRow.date
-  const cats = ['gridPull', 'gridPush', 'solarPower', 'batIn', 'batOut']
+  const cats = ['gridPull', 'gridPush', 'solarPower', 'batIn', 'batOut', 'charging']
   
   const evSocs = [
     'soc-ev0',
@@ -139,6 +151,12 @@ function calculatePowerValues(
     result.cp8 -
     result.cp9
   result.inverter = 0
+
+  let usedEnergy = (result.gridPull + result.batOut + result.solarPower)
+    if (usedEnergy > 0){
+      pvChargeCounter += (result.charging * result.solarPower / usedEnergy  / 12 * 1000)
+      batChargeCounter += (result.charging * result.batOut / usedEnergy  / 12 * 1000)
+    }
   return result
 }
 function calculatePower(
@@ -156,18 +174,16 @@ function calculatePower(
 function updateEnergyValues(startValues: GraphDataItem, endValues: GraphDataItem) {
   //const startValues = extractCounters (rawData[0]);
   //const endValues = extractCounters(rawData[rawData.length - 1]);
-  historicSummary.pv.energy = (endValues.solarPower - startValues.solarPower) / 1000;
-  historicSummary.evuIn.energy = (endValues.gridPull - startValues.gridPull) / 1000;
-  historicSummary.batOut.energy = (endValues.batOut - startValues.batOut) / 1000;
-  historicSummary.evuOut.energy = (endValues.gridPush - startValues.gridPush) / 1000;
-  historicSummary.batIn.energy = (endValues.batIn - startValues.batIn) / 1000;
-  let chargedEnergy = 0
-  cps.forEach((category) => {
-    if (startValues[category] != undefined) {
-      chargedEnergy += (endValues[category]-startValues[category])/1000
-    }
-  })
-  historicSummary.charging.energy = chargedEnergy
+  historicSummary.pv.energy = (endValues.solarPower - startValues.solarPower) / 1000
+  historicSummary.evuIn.energy = (endValues.gridPull - startValues.gridPull) / 1000
+  historicSummary.batOut.energy = (endValues.batOut - startValues.batOut) / 1000
+  historicSummary.evuOut.energy = (endValues.gridPush - startValues.gridPush) / 1000
+  historicSummary.batIn.energy = (endValues.batIn - startValues.batIn) / 1000
+  historicSummary.charging.energy = (endValues.charging - startValues.charging) / 1000
+  historicSummary.charging.energyPv = (endValues.chargingPv - startValues.chargingPv) / 1000
+  historicSummary.charging.energyBat = (endValues.chargingBat - startValues.chargingBat) / 1000
+  historicSummary.charging.pvPercentage = Math.round((historicSummary.charging.energyPv + historicSummary.charging.energyBat)/ historicSummary.charging.energy * 100)
+  
   historicSummary.house.energy = historicSummary.evuIn.energy + historicSummary.pv.energy 
     + historicSummary.batOut.energy - historicSummary.evuOut.energy - historicSummary.batIn.energy 
     - historicSummary.charging.energy - historicSummary.devices.energy;
