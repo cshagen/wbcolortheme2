@@ -6,17 +6,16 @@
 import { defineProps, computed, watchEffect } from 'vue'
 import { globalConfig } from '@/assets/js/themeConfig'
 import type { PowerItem, ItemList } from '@/assets/js/types'
-import { sourceSummary } from '@/assets/js/model'
+import { sourceSummary, masterData } from '@/assets/js/model'
 import * as d3 from 'd3'
 // props
 const props = defineProps<{
-  sourceSummary: ItemList
   radius: number
   cornerRadius: number
   circleGapSize: number
   emptyPower: number
 }>()
-//  computed: {
+//  computed: 
 const draw = computed(() => {
   // Draw the arc using d3
   const arcCount = Object.values(sourceSummary).length
@@ -24,9 +23,15 @@ const draw = computed(() => {
     name: '',
     power: props.emptyPower,
     energy: 0,
+    energyPv:0,
+    energyBat:0,
+    pvPercentage:0,
     color: 'var(--color-bg)',
+    icon: ''
   }
-  const plotdata = Object.values(sourceSummary).concat([emptyPowerItem])
+  let plotdata = sourceSummary
+  plotdata['zz-empty'] = emptyPowerItem
+  
   const pieGenerator = d3
     .pie<PowerItem>()
     .value((record: PowerItem) => record.power)
@@ -39,11 +44,11 @@ const draw = computed(() => {
     .outerRadius(props.radius)
     .cornerRadius(props.cornerRadius)
     .padAngle(0)
-  const graph = d3.select('g#pmSourceArc')
+    const graph = d3.select('g#pmSourceArc')
   graph.selectAll('*').remove()
   graph
     .selectAll('sources')
-    .data(pieGenerator(plotdata))
+    .data(pieGenerator(Object.values(plotdata)))
     .enter()
     .append('path')
     .attr('d', path)

@@ -9,6 +9,7 @@ import * as d3 from 'd3'
 import type { ChargeModeInfo } from './types'
 import { shDevices } from './model'
 import { initGraph, dayGraph, monthGraph } from '@/components/powerGraph/model'
+import { sendCommand } from './sendMessages'
 export class Config {
   private _showRelativeArcs: boolean = false
   showTodayGraph: boolean = true
@@ -322,4 +323,10 @@ export function shiftRight() {
     default:
       break
   }
+}
+export function toggleMonthlyView() {
+  console.info ("monthly view toggle")
+  globalConfig.graphMode = 'month'
+  initGraph()
+  // sendCommand({"command":"getMonthlyLog","data":{"month":"202211"}})
 }

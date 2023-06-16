@@ -4,6 +4,7 @@ import type { PowerItem } from '@/assets/js/types'
 export class ChargePoint {
   id: number
   name = 'Ladepunkt'
+  icon = 'Ladepunkt'
   type = ''
   ev = 0
   template = 0
@@ -27,6 +28,9 @@ export class ChargePoint {
   rangeUnit = ''
   counter = 0
   dailyYield = 0
+  energyPv = 0
+  energyBat = 0
+  pvPercentage = 0
   faultState = 0
   faultStr = ''
   phasesInUse = 0
@@ -197,7 +201,11 @@ export class ChargePoint {
       name: this.name,
       power: this.power,
       energy: this.dailyYield,
-      color: this.color
+      energyPv: this.energyPv,
+      energyBat: this.energyBat,
+      pvPercentage: this.pvPercentage,
+      color: this.color,
+      icon: this.icon
     }
   }
 }

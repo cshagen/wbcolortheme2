@@ -11,7 +11,6 @@
         <g :transform="'translate(' + width / 2 + ',' + height / 2 + ')'">
           <!-- Show the two arcs -->
           <PMSourceArc
-            :sourceSummary="sourceSummary"
             :radius="radius"
             :cornerRadius="cornerRadius"
             :circleGapSize="circleGapSize"
@@ -32,6 +31,7 @@
             :x="0"
             :y="((-height / 2) * 3) / 5"
             :data="sourceSummary.pv"
+            :props="masterData.pv"
             :anchor="'middle'"
             :config="globalConfig"
           />
@@ -39,6 +39,7 @@
             :x="0"
             :y="((-height / 2) * 2) / 5"
             :data="sourceSummary.evuIn"
+            :props="masterData.evuIn"
             :anchor="'middle'"
             :config="globalConfig"
           />
@@ -46,6 +47,7 @@
             :x="width / 2 - margin / 4"
             :y="height / 2 - margin + 15"
             :data="sourceSummary.batOut"
+            :props="masterData.batOut"
             :anchor="'end'"
             :config="globalConfig"
           />
@@ -53,6 +55,7 @@
             :x="0"
             :y="((-height / 2) * 2) / 5"
             :data="usageSummary.evuOut"
+            :props="masterData.evuOut"
             :anchor="'middle'"
             :config="globalConfig"
           />
@@ -60,6 +63,7 @@
             :x="0"
             :y="((height / 2) * 1) / 5"
             :data="usageSummary.charging"
+            :props="masterData.charging"
             :anchor="'middle'"
             :config="globalConfig"
           />
@@ -67,6 +71,7 @@
             :x="0"
             :y="((height / 2) * 3) / 5"
             :data="usageSummary.devices"
+            :props="masterData.devices"
             :anchor="'middle'"
             :config="globalConfig"
           />
@@ -74,6 +79,7 @@
             :x="width / 2 - margin / 4"
             :y="height / 2 - margin + 15"
             :data="usageSummary.batIn"
+            :props="masterData.batIn"
             :anchor="'end'"
             :config="globalConfig"
           />
@@ -81,6 +87,7 @@
             :x="0"
             :y="((height / 2) * 2) / 5"
             :data="usageSummary.house"
+            :props="masterData.house"
             :anchor="'middle'"
             :config="globalConfig"
           />
@@ -146,7 +153,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { globalConfig } from '@/assets/js/themeConfig'
-import { globalData, shDevices, sourceSummary, usageSummary } from '@/assets/js/model'
+import { globalData, shDevices, sourceSummary, usageSummary, masterData } from '@/assets/js/model'
 import { chargePoints } from '@/components/chargePointList/model'
 import PMSourceArc from './PMSourceArc.vue';
 import PMUsageArc from './PMUsageArc.vue'

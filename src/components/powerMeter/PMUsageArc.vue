@@ -22,7 +22,11 @@ const draw = computed(() => {
     name: '',
     power: props.emptyPower,
     energy: 0,
+    energyPv: 0,
+    energyBat: 0,
+    pvPercentage: 0,
     color: 'var(--color-bg)',
+    icon: ''
   }
   const plotdata = [usageSummary.evuOut, usageSummary.charging]
     .concat(

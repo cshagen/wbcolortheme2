@@ -97,26 +97,39 @@ export const dayGraph = reactive({
     this.date = new Date(this.date.setTime(this.date.getTime() + 86400000))
   }
 })
-export const monthGraph = {
+export const monthGraph = reactive({
+  topic: 'openWB/log/monthly/#',
+  month: new Date().getMonth() +1,
   year: new Date().getFullYear(),
-  month: new Date().getMonth(),
-  activate() {},
-  deactivate() {},
-  back () {
-    this.month = this.month - 1
-    if (this.month < 0) {
-      this.month = 11
-      this.year = this.year - 1
+  activate() {
+    console.log("activate month graph")
+    let dateString = this.year.toString() 
+      + this.month.toString().padStart(2,'0')
+    mqttSubscribe (this.topic)
+    sendCommand({command: 'getMonthlyLog', 
+      data: {month: dateString}
+    })
+  },
+  deactivate() {
+    mqttUnsubscribe(this.topic)
+  },
+  back() {
+    this.month -= 1
+    if (this.month < 1) {
+      this.month=12
+      this.year -= 1 
     }
   },
-  forward () {
-    this.month = this.month + 1
-    if (this.month > 11) {
-      this.month = 0
-      this.year = this.year + 1
+  forward() {
+    if ((this.month-1) < new Date().getMonth()) {
+      this.month = this.month + 1
+      if (this.month > 12) {
+        this.month = 1
+        this.year += 1
     }
   }
-}
+  }
+})
 export function initGraph() {
   if (globalConfig.graphMode == '') {
    setGraphMode (globalConfig.graphPreference)
@@ -135,6 +148,11 @@ export function initGraph() {
     case 'day':
       liveGraph.deactivate()
       dayGraph.activate()  
+      break
+    case 'month':
+      liveGraph.deactivate()
+      dayGraph.deactivate()
+      monthGraph.activate()
       break
   }
 }

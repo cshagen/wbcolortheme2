@@ -12,16 +12,18 @@ export class ShDevice {
   name = ''
   power = 0
   energy = 0
+  energyPv = 0
+  energyBat = 0
+  pvPercentage = 0
   configured = true
   showInGraph = true
   color = 'white'
+  icon = ''
   countAsHouse = false
   constructor(index: number) {
     this.id = index
   }
 }
-
-
 
 export class GlobalData {
   batterySoc= 0
@@ -52,12 +54,18 @@ export interface Hierarchy {
   type: string,
   children: [Hierarchy]
 } 
+
 export interface ChargeModeInfo {
   name:string,
   color:string,
   icon: string,
 }
 
+export interface ItemProps {
+  name: string,
+  color: string,
+  icon: string
+}
 
 export interface PowerItem {
   name: string,
@@ -66,7 +74,8 @@ export interface PowerItem {
   energyPv: number,
   energyBat: number,
   pvPercentage: number,
-  color: string
+  color: string,
+  icon: string
 }
 
 export interface ItemList {

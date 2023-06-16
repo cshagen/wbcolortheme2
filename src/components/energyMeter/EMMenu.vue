@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="btn btn-outline-secondary btn-sm" id="calendarButton">
+    <button class="btn btn-outline-secondary btn-sm" id="calendarButton" @click="$emit('toggleMonthlyView')">
       <span class="fa fa-calendar-alt px-0"></span>
     </button>
     <button

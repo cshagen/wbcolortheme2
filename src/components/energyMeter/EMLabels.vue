@@ -56,7 +56,8 @@ const drawLabels = computed(() => {
     .attr('font-size', labelfontsize.value)
     .attr('text-anchor', 'middle')
     .attr('fill', (d) => d.color)
-    .text((d) => truncateCategory(d.name))
+    .text((d) => truncateCategory(d.name,d.icon))
+    .classed("fas",(d) => d.icon.length <= 2);
 
   return 'emLabels.vue'
 })
@@ -98,7 +99,7 @@ const maxTextLength = computed(() => {
 })
 
 // methods
-function truncateCategory(name: string) {
+function truncateCategory(id:string, name: string) {
   if (name.length > maxTextLength.value) {
     return name.substring(0, maxTextLength.value) + '.'
   } else {

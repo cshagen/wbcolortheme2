@@ -5,11 +5,12 @@ import {
   type RawDayGraphDataItem,
   setGraphData,
   initGraph,
-  dayGraph
-  } from './model'
+  dayGraph,
+  graphData
+} from './model'
 import { historicSummary } from '@/assets/js/model'
-let startValues : GraphDataItem = {}
-let endValues : GraphDataItem = {}
+let startValues: GraphDataItem = {}
+let endValues: GraphDataItem = {}
 let pvChargeCounter = 0
 let batChargeCounter = 0
 
@@ -17,17 +18,17 @@ let batChargeCounter = 0
 export function processDayGraphMessages(topic: string, message: string) {
   let rawValues: RawDayGraphDataItem[] = JSON.parse(message).entries
   setGraphData(calculateGraphDataList(rawValues))
-  updateEnergyValues (startValues, endValues)
+  updateEnergyValues(startValues, endValues)
   if (globalConfig.graphMode == 'today') {
     setTimeout(() => initGraph(), 300000)
   }
 }
-function calculateGraphDataList(table: RawDayGraphDataItem[]) : GraphDataItem[] {
+function calculateGraphDataList(table: RawDayGraphDataItem[]): GraphDataItem[] {
   let result: GraphDataItem[] = []
   let lastItem: GraphDataItem = {}
   let currentItem: GraphDataItem = {}
   for (let index = 0; index < table.length; index++) {
-    currentItem = extractCounters (table[index])
+    currentItem = extractCounters(table[index])
     if (index > 0) {
       result.push(calculatePowerValues(currentItem, lastItem))
     } else {
@@ -42,53 +43,59 @@ function calculateGraphDataList(table: RawDayGraphDataItem[]) : GraphDataItem[] 
   endValues = currentItem
   endValues.chargingPv = pvChargeCounter
   endValues.chargingBat = batChargeCounter
-  
+
   return result
 }
-function extractCounters (currentRow: RawDayGraphDataItem) : GraphDataItem {
-  let currentItem : GraphDataItem = {}
-  let d = d3.timeParse('%H:%M')(currentRow.date)
+function extractCounters(currentRow: RawDayGraphDataItem): GraphDataItem {
+  let currentItem: GraphDataItem = {}
+  if (globalConfig.graphMode == 'day' || globalConfig.graphMode == 'today') {
+    let d = d3.timeParse('%H:%M')(currentRow.date)
     if (d) {
       d.setMonth(dayGraph.date.getMonth())
       d.setDate(dayGraph.date.getDate())
       d.setFullYear(dayGraph.date.getFullYear())
       currentItem.date = d.getTime()
     }
-    Object.entries(currentRow.counter).forEach(([id, values]) => {
-      currentItem.gridPush = values.exported
-      currentItem.gridPull = values.imported
-    })
-    Object.entries(currentRow.pv).forEach(([id, values]) => {
-      if (id == 'all') {
-        currentItem.solarPower = values.exported
-      }
-    })
-    if (Object.entries(currentRow.bat).length > 0) {
-      Object.entries(currentRow.bat).forEach(([id, values]) => {
-        if (id == 'all') {
-          currentItem.batIn = values.imported
-          currentItem.batOut = values.exported
-        }
-      })
-    } else {
-      currentItem.batIn = 0
-      currentItem.batOut = 0
+  } else {
+    let d = d3.timeParse('%Y%m%d')(currentRow.date)
+    if (d) {
+      currentItem.date = d.getDate()
     }
-    Object.entries(currentRow.cp).forEach(([id, values]) => {
-      if (id != 'all') {
-        currentItem[id] = values.imported
-        currentItem['soc' + id] = values.soc
-      } else {
-        currentItem['charging'] = values.imported
+  }
+  Object.entries(currentRow.counter).forEach(([id, values]) => {
+    currentItem.gridPush = values.exported
+    currentItem.gridPull = values.imported
+  })
+  Object.entries(currentRow.pv).forEach(([id, values]) => {
+    if (id == 'pv1') {
+      currentItem.solarPower = values.exported
+    }
+  })
+  if (Object.entries(currentRow.bat).length > 0) {
+    Object.entries(currentRow.bat).forEach(([id, values]) => {
+      if (id == 'all') {
+        currentItem.batIn = values.imported
+        currentItem.batOut = values.exported
       }
     })
-    Object.entries(currentRow.ev).forEach(([id, values]) => {
-      if (id != 'all') {
-        currentItem['soc-' + id] = values.soc
-      }
-    })
-    
-    return currentItem
+  } else {
+    currentItem.batIn = 0
+    currentItem.batOut = 0
+  }
+  Object.entries(currentRow.cp).forEach(([id, values]) => {
+    if (id != 'all') {
+      currentItem[id] = values.imported
+      currentItem['soc' + id] = values.soc
+    } else {
+      currentItem['charging'] = values.imported
+    }
+  })
+  Object.entries(currentRow.ev).forEach(([id, values]) => {
+    if (id != 'all') {
+      currentItem['soc-' + id] = values.soc
+    }
+  })
+  return currentItem
 }
 const cps = [
   'cp0',
@@ -109,7 +116,7 @@ function calculatePowerValues(
   let result: GraphDataItem = {}
   result.date = currentRow.date
   const cats = ['gridPull', 'gridPush', 'solarPower', 'batIn', 'batOut', 'charging']
-  
+
   const evSocs = [
     'soc-ev0',
     'soc-ev1',
@@ -153,10 +160,10 @@ function calculatePowerValues(
   result.inverter = 0
 
   let usedEnergy = (result.gridPull + result.batOut + result.solarPower)
-    if (usedEnergy > 0){
-      pvChargeCounter += (result.charging * result.solarPower / usedEnergy  / 12 * 1000)
-      batChargeCounter += (result.charging * result.batOut / usedEnergy  / 12 * 1000)
-    }
+  if (usedEnergy > 0) {
+    pvChargeCounter += (result.charging * result.solarPower / usedEnergy / 12 * 1000)
+    batChargeCounter += (result.charging * result.batOut / usedEnergy / 12 * 1000)
+  }
   return result
 }
 function calculatePower(
@@ -182,9 +189,9 @@ function updateEnergyValues(startValues: GraphDataItem, endValues: GraphDataItem
   historicSummary.charging.energy = (endValues.charging - startValues.charging) / 1000
   historicSummary.charging.energyPv = (endValues.chargingPv - startValues.chargingPv) / 1000
   historicSummary.charging.energyBat = (endValues.chargingBat - startValues.chargingBat) / 1000
-  historicSummary.charging.pvPercentage = Math.round((historicSummary.charging.energyPv + historicSummary.charging.energyBat)/ historicSummary.charging.energy * 100)
-  
-  historicSummary.house.energy = historicSummary.evuIn.energy + historicSummary.pv.energy 
-    + historicSummary.batOut.energy - historicSummary.evuOut.energy - historicSummary.batIn.energy 
+  historicSummary.charging.pvPercentage = Math.round((historicSummary.charging.energyPv + historicSummary.charging.energyBat) / historicSummary.charging.energy * 100)
+
+  historicSummary.house.energy = historicSummary.evuIn.energy + historicSummary.pv.energy
+    + historicSummary.batOut.energy - historicSummary.evuOut.energy - historicSummary.batIn.energy
     - historicSummary.charging.energy - historicSummary.devices.energy;
 }

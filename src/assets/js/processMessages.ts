@@ -3,6 +3,7 @@ import type { Hierarchy } from './types'
 import { globalData, sourceSummary, usageSummary } from './model'
 import { processLiveGraphMessages } from '../../components/powerGraph/processLiveGraphData'
 import { processDayGraphMessages } from '../../components/powerGraph/processDayGraphData'
+import { processMonthGraphMessages } from '../../components/powerGraph/processMonthGraphData'
 import { initGraph } from '@/components/powerGraph/model'
 import { processBatteryMessages } from '@/components/batteryList/processMessages'
 import { processEtProviderMessages } from '@/components/priceChart/processMessages'
@@ -41,6 +42,7 @@ function processMqttMessage(topic: string, message: string) {
   } else if ( topic.match(/^openwb\/general\/chargemode_config\/pv_charging\//i)) { processPvConfigMessages(topic, message)
   } else if (topic.match(/^openwb\/graph\//i)) { processLiveGraphMessages(topic, message)
   } else if (topic.match(/^openwb\/log\/daily\//i)) { processDayGraphMessages(topic, message)
+  } else if (topic.match(/^openwb\/log\/monthly\//i)) { processDayGraphMessages(topic, message)
   } else if (topic.match(/^openwb\/optional\/et\//i)) { processEtProviderMessages(topic, message)
   }
   // else if ( mqttTopic.match( /^openwb\/global\//i) ) { processGlobalMessages(mqttTopic, message); }

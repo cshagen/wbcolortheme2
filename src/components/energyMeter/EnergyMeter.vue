@@ -5,6 +5,7 @@
       <EMMenu
         @shiftLeft="shiftLeft"
         @shiftRight="shiftRight"
+        @toggleMonthlyView="toggleMonthlyView"
         :show-left-button="globalConfig.showLeftButton"
         :show-right-button="globalConfig.showRightButton"
       ></EMMenu>
@@ -64,6 +65,7 @@ import {
   globalConfig,
   shiftLeft,
   shiftRight,
+  toggleMonthlyView,
   setInitializeEnergyGraph,
 } from '@/assets/js/themeConfig'
 import { dayGraph, graphData } from '@/components/powerGraph/model'
