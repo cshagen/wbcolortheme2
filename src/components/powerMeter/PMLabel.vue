@@ -7,11 +7,11 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed } from 'vue'
 import type { PowerItem, ItemProps } from '@/assets/js/types'
 import { formatWatt } from '@/assets/js/helpers'
 import { globalConfig } from '@/assets/js/themeConfig'
 import FormatWatt from '../shared/FormatWatt.vue'
+import { computed } from 'vue';
   
   //props 
   const props = defineProps<{
@@ -21,6 +21,7 @@ import FormatWatt from '../shared/FormatWatt.vue'
       props?: ItemProps
       anchor: string
       labeltext?: string 
+      labelicon?: string
       labelcolor?: string 
   }>()
 
@@ -32,7 +33,7 @@ import FormatWatt from '../shared/FormatWatt.vue'
         return (props.data) ? formatWatt (props.data.power, globalConfig.decimalPlaces) : 0
       })
       const text = computed (() => {
-        return (props.labeltext) ? props.labeltext : ((props.props) ? (props.props.icon + " ") : '')      
+        return (props.labeltext) ? props.labeltext : ((props.props) ? (props.props.icon + " ") : props.labelicon ? (props.labelicon + " ") : '')      
         })
       const color  = computed(() => {
         return (props.labelcolor) ? props.labelcolor : ((props.props) ? props.props.color : '')      

@@ -3,10 +3,11 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed } from 'vue'
 import type { PowerItem, ItemList } from '@/assets/js/types'
-import { usageSummary, shDevices } from '@/assets/js/model'
+import { usageSummary } from '@/assets/js/model'
+import { shDevices } from '../smartHome/model';
 import * as d3 from 'd3'
+import { computed } from 'vue';
 // props
 const props = defineProps<{
   usageSummary: ItemList
@@ -34,7 +35,7 @@ const draw = computed(() => {
         .filter((row) => row.configured && !row.countAsHouse)
         .sort((a, b) => {
           return b.power - a.power
-        }),
+        }) as PowerItem[]
     )
     .concat([usageSummary.batIn, usageSummary.house])
     .concat(emptyPowerItem)

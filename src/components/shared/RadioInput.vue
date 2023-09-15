@@ -2,7 +2,7 @@
   <div>
     <button
       v-for="(element, index) in options"
-      class="btn btn-outline-secondary radiobutton me-2 mb-2 px-2"
+      class="btn btn-outline-secondary radiobutton me-2 mb-0 px-2"
       :id="'radio-' + element[1]"
       :value="element[1]"
       :style="getColor(index)"
@@ -97,6 +97,7 @@ function setValue(event: Event) {
 .radiobutton {
   border: 0.5px solid var(--color-input);
   opacity: 0.5;
+  font-size: var(--font-settings);
 }
 .btn-outline-secondary.active {
   background-color: var(--color-bg);

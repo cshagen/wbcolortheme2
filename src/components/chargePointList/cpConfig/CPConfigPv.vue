@@ -5,7 +5,7 @@
     </p>
 
     <!-- Maximum SoC -->
-    <ConfigItem title="Maximaler Ladestand" icon="fa-battery-three-quarters">
+    <ConfigItem title="Maximaler Ladestand" icon="fa-battery-three-quarters" :fullwidth="true">
       <RangeInput
         id="maxSoc"
         :min="0"
@@ -15,7 +15,7 @@
         v-model="cp.pvMaxSoc"
       ></RangeInput>
     </ConfigItem>
-    <ConfigItem title="Einspeisegrenze beachten" icon="fa-hand">
+    <ConfigItem title="Einspeisegrenze beachten" icon="fa-hand" :fullwidth="true">
       <div class="form-check form-switch">
         <input
           class="form-check-input"
@@ -28,12 +28,12 @@
     </ConfigItem>
     <hr/>
     <!-- Min-PV-Laden -->
-    <ConfigItem title="Min-SoC-Laden" icon="fa-battery-half" :infotext="infotext['minsoc']">
+    <ConfigItem title="Min-SoC-Laden" icon="fa-battery-half" :infotext="infotext['minsoc']" :fullwidth="true">
       <SwitchInput v-model="useMinSoc"></SwitchInput> 
     </ConfigItem>
     
     <!-- Minimum SoC -->
-    <ConfigItem title="...bis SoC" v-if="useMinSoc">
+    <ConfigItem title="...bis SoC" v-if="useMinSoc" :fullwidth="true">
       <template v-slot:info>{{ infotext['minsoc'] }}</template>
         <RangeInput
         id="minSoc"
@@ -45,7 +45,7 @@
       ></RangeInput>
     </ConfigItem>
     <!-- Minimum Soc Current -->
-    <ConfigItem title="...mit Ladestrom" v-if="useMinSoc">
+    <ConfigItem title="...mit Ladestrom" v-if="useMinSoc" :fullwidth="true">
       <RangeInput
         id="minSocCurrent"
         :min="6"
@@ -58,11 +58,11 @@
     <hr v-if="useMinPv || useMinSoc"/>
     
     <!-- Min+PV-Laden -->
-    <ConfigItem title="Min+PV-Laden" icon="fa-bolt" :infotext="infotext['minpv']">
+    <ConfigItem title="Min+PV-Laden" icon="fa-bolt" :infotext="infotext['minpv']" :fullwidth="true">
       <SwitchInput v-model="useMinPv"></SwitchInput> 
     </ConfigItem>
      <!-- Minimum Current -->
-    <ConfigItem title="...bei Ladestrom (minimal)" v-if="useMinPv">
+    <ConfigItem title="...bei Ladestrom (minimal)" v-if="useMinPv" :fullwidth="true">
       <RangeInput
         id="minCurrent"
         :min="6"

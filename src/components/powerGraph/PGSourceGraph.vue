@@ -1,5 +1,9 @@
 <template>
-  <g id="pgSourceGraph" :origin="draw" :transform="'translate(' + margin.left + ',' + margin.top + ')'"></g>
+  <g
+    id="pgSourceGraph"
+    :origin="draw"
+    :transform="'translate(' + margin.left + ',' + margin.top + ')'"
+  ></g>
 </template>
 
 <script setup lang="ts">
@@ -9,9 +13,10 @@ import { globalConfig } from '@/assets/js/themeConfig'
 import {
   graphData,
   initializeSourceGraph,
+  sourceGraphIsNotInitialized,
   sourceGraphIsInitialized,
 } from './model'
-
+import EnergyMeter from '../energyMeter/EnergyMeter.vue'
 const props = defineProps<{
   width: number
   height: number
@@ -20,7 +25,7 @@ const props = defineProps<{
 
 //state
 const colors: { [key: string]: string } = {
-  housePower: 'var(--color-house)',
+  house: 'var(--color-house)',
   batIn: 'var(--color-battery)',
   inverter: 'var(--color-pv)',
   batOut: 'var(--color-battery)',
@@ -29,6 +34,12 @@ const colors: { [key: string]: string } = {
   gridPull: 'var(--color-evu)',
 }
 var paths: d3.Selection<SVGPathElement, [number, number][], d3.BaseType, any>
+var rects: d3.Selection<SVGRectElement, [number, number], d3.BaseType, any>
+const duration = globalConfig.showAnimations
+  ? globalConfig.animationDuration
+  : 0
+const delay = globalConfig.showAnimations ? globalConfig.animationDelay : 0
+
 // computed:
 const draw = computed(() => {
   if (graphData.data.length > 0) {
@@ -41,7 +52,8 @@ const draw = computed(() => {
     const yAxis = graph.append('g').attr('class', 'axis')
     yAxis.call(yAxisGenerator.value)
     yAxis.selectAll('.tick').attr('font-size', 12)
-    yAxis.selectAll('.tick line')
+    yAxis
+      .selectAll('.tick line')
       .attr('stroke', ticklineColor.value)
       .attr('stroke-width', ticklineWidth.value)
     yAxis.select('.domain').attr('stroke', 'var(--color-bg)')
@@ -49,29 +61,24 @@ const draw = computed(() => {
   }
 })
 const keys = computed(() => {
-  return (graphData.graphMode == 'month') ?
-    ['gridPull', 'batOut', 'selfUsage', 'gridPush'] :
-    ['selfUsage', 'gridPush', 'batOut', 'gridPull']
+  return graphData.graphMode == 'month'
+    ? ['gridPull', 'batOut', 'selfUsage', 'gridPush']
+    : ['selfUsage', 'gridPush', 'batOut', 'gridPull']
 })
 const iScale = computed(() => {
-  return d3.scaleLinear()
+  return d3
+    .scaleLinear()
     .domain([0, graphData.data.length - 1])
     .range([0, props.width])
 })
 
-const iScaleMonth = computed(() => {
-  let dayRange = d3.extent(graphData.data, d => d.date)
-  if (dayRange[0] == undefined || dayRange[1] == undefined) {
-    dayRange = [0, 0]
-  }
-  
-  console.log (dayRange)
-  const iMin = dayRange[0]
-  return d3.scaleBand<number>()
-    .domain(Array.from({ length: (dayRange[1] - dayRange[0] + 1) }, (v, k) => k + iMin))
-    .range([0, props.width - props.margin.right])
-    .paddingInner(0.4);
-})
+const iScaleMonth = computed(() =>
+  d3
+    .scaleBand<number>()
+    .domain(Array.from({ length: graphData.data.length }, (v, k) => k))
+    .range([0, props.width + props.margin.right])
+    .paddingInner(0.4),
+)
 const stackGen = computed(() => d3.stack().keys(keys.value))
 const stackedSeries = computed(() => stackGen.value(graphData.data))
 const yScale = computed(() => {
@@ -110,16 +117,18 @@ const ticklineColor = computed(() => {
   return globalConfig.showGrid ? 'var(--color-grid)' : 'var(--color-bg)'
 })
 
-function drawGraph(graph: d3.Selection<d3.BaseType, unknown, HTMLElement, any>) {
-  const area0 = d3.area()
+function drawGraph(
+  graph: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
+) {
+  const area0 = d3
+    .area()
     .x((d, i) => iScale.value(i))
     .y(yScale.value(0))
-  const area = d3.area()
+  const area = d3
+    .area()
     .x((d, i) => iScale.value(i))
     .y0((d) => yScale.value(d[0]))
     .y1((d) => yScale.value(d[1]))
-  const duration = globalConfig.showAnimations ? 300 : 0
-  const delay = globalConfig.showAnimations ? 100 : 0
   if (initializeSourceGraph) {
     graph.selectAll('*').remove()
     paths = graph
@@ -145,53 +154,55 @@ function drawGraph(graph: d3.Selection<d3.BaseType, unknown, HTMLElement, any>) 
       .attr('d', (series) => area(series))
   }
 }
-function drawMonthGraph(graph: d3.Selection<d3.BaseType, unknown, HTMLElement, any>) {
-console.info("draw month graph")
-const area0 = d3.area()
-    .x((d, i) => iScale.value(i))
-    .y(yScale.value(0))
-  const area = d3.area()
-    .x((d, i) => iScale.value(i))
-    .y0((d) => yScale.value(d[0]))
-    .y1((d) => yScale.value(d[1]))
-  const duration = globalConfig.showAnimations ? 300 : 0
-  const delay = globalConfig.showAnimations ? 100 : 0
+function drawMonthGraph(
+  graph: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
+) {
   if (initializeSourceGraph) {
     graph.selectAll('*').remove()
-    console.log (stackedSeries.value)
-    console.info (iScaleMonth.value.bandwidth())
-    var rects = graph.selectAll(".sourcebar")
-				.data(stackedSeries.value).enter()
-				.append("g")
-				.attr("fill", (d, i) => colors[keys.value[i]])
-				.selectAll("rect")
-				.data((d) => d ).enter()
-				.append("rect")
-				.attr('x', (d, i) => {
-          //console.info (d.data)
-         return (iScaleMonth.value(d.data.date) ??  0)}) 
-				.attr("y", d => yScale.value(d[1]))
-				.attr("height", d => yScale.value(d[0]) - yScale.value(d[1]))
-				.attr("width", iScaleMonth.value.bandwidth())
-		//	rects.append("svg:title").text((d) => formatWattH(d[1] - d[0]));
-    paths
+    rects = graph
+      .selectAll('.sourcebar')
+      .data(stackedSeries.value as [number, number][][])
+      .enter()
+      .append('g')
+      .attr('fill', (d, i) => colors[keys.value[i]])
+      .selectAll('rect')
+      .data((d) => d)
+      .enter()
+      .append('rect')
+      .attr('x', (d, i) => {
+        return iScaleMonth.value(i) ?? 0
+      })
+      .attr('y', (d) => yScale.value(0))
+      .attr('height', 0)
+      .attr('width', iScaleMonth.value.bandwidth())
+    rects
       .transition()
       .duration(duration)
       .delay(delay)
       .ease(d3.easeLinear)
-      .attr('d', (series) => area(series))
-    sourceGraphIsInitialized()
+      .attr('height', (d) => yScale.value(d[0]) - yScale.value(d[1]))
+      .attr('y', (d) => yScale.value(d[1])),
+      sourceGraphIsInitialized()
   } else {
-    paths
+    graph.selectAll('*').remove()
+    rects = graph
+      .selectAll('.sourcebar')
       .data(stackedSeries.value as [number, number][][])
-      .transition()
-      .duration(0)
-      .ease(d3.easeLinear)
-      .attr('d', (series) => area(series))
+      .enter()
+      .append('g')
+      .attr('fill', (d, i) => colors[keys.value[i]])
+      .selectAll('rect')
+      .data((d) => d)
+      .enter()
+      .append('rect')
+      .attr('x', (d, i) => {
+        return iScaleMonth.value(i) ?? 0
+      })
+      .attr('y', (d) => yScale.value(d[1]))
+      .attr('width', iScaleMonth.value.bandwidth())
+      .attr('height', (d) => yScale.value(d[0]) - yScale.value(d[1]))
   }
-} 
+}
 </script>
 
-<style>
-
-</style>
+<style></style>

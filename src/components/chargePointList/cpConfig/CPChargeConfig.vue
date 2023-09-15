@@ -1,31 +1,29 @@
 <template>
   <p class="settingsheader mt-2 ms-1">Ladepunkt:</p>
   <!-- Select the charge mode -->
-  <ConfigItem title="Lademodus" icon="fa-charging-station" :infotext="infotext['chargemode']">
+  <ConfigItem title="Lademodus" icon="fa-charging-station" :infotext="infotext['chargemode']" :fullwidth="true">
     <RadioInput
       :options="Object.keys(chargemodes).map((v) => [chargemodes[v].name, v, chargemodes[v].color, chargemodes[v].icon])"
       v-model="cp.chargeMode"
     ></RadioInput>
     
   </ConfigItem>
-  <hr class="my-0" />
-  <!-- Select the vehicle -->
-  <ConfigItem title="Fahrzeug" icon = "fa-car" :infotext="infotext['vehicle']">
+   <!-- Select the vehicle -->
+  <ConfigItem title="Fahrzeug" icon = "fa-car" :infotext="infotext['vehicle']" :fullwidth="true">
     <RadioInput
       :options="Object.values(vehicles).map((v) => [v.name, v.id])"
       v-model.number="cp.connectedVehicle"
     ></RadioInput>
      </ConfigItem>
- <hr class="my-0 py-0" />
-  <ConfigItem title="Sperren" icon = "fa-lock" :infotext="infotext['locked']">
+  <ConfigItem title="Sperren" icon = "fa-lock" :infotext="infotext['locked']" :fullwidth="true">
     <SwitchInput v-model="cp.isLocked"></SwitchInput> 
   </ConfigItem>
   <!-- Priority -->
-  <ConfigItem title="Priorität" icon = "fa-star" :infotext="infotext['priority']">
+  <ConfigItem title="Priorität" icon = "fa-star" :infotext="infotext['priority']" :fullwidth="true">
     <SwitchInput v-model="cp.hasPriority"></SwitchInput> 
   </ConfigItem>
   <!-- Scheduled Charging -->
-  <ConfigItem title="Zeitplan" icon = "fa-clock" :infotext="infotext['timeplan']">
+  <ConfigItem title="Zeitplan" icon = "fa-clock" :infotext="infotext['timeplan']" :fullwidth="true">
     <SwitchInput v-model="cp.scheduledCharging"></SwitchInput> 
   </ConfigItem>
 </template>
@@ -38,6 +36,7 @@ import SelectInput from '@/components/shared/SelectInput.vue'
 import { infotext } from '@/assets/js/themeConfig'
 import SwitchInput from '../../shared/SwitchInput.vue'
 import RadioInput from '@/components/shared/RadioInput.vue'
+import WbSubwidget from '@/components/shared/WbSubwidget.vue'
 
 const props = defineProps<{
   chargepoint: ChargePoint
@@ -86,6 +85,8 @@ function toggleConfig() {
 
 .settingsheader {
   color: var(--color-charging);
+  font-size: 16px;
+  font-weight: bold;
 }
 hr {
   color: var(--color-menu);

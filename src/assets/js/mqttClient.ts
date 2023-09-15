@@ -5,9 +5,10 @@
  */
 
 // functions to interact with MQTT
-import mqtt from "mqtt"
+import { MqttClient, connect, type OnMessageCallback} from 'mqtt'
+import { type QoS } from 'mqtt-packet'
 
-const defaultQoS: mqtt.QoS = 0
+const defaultQoS: QoS = 0
 const mqttConnection = {
   host: location.hostname,
   port: 9001,
@@ -26,13 +27,13 @@ const subscription = {
   topic: "",
   qos:  defaultQoS,
 }
-let client: mqtt.MqttClient
+let client: MqttClient
 
-//export function MqttConnect(callback: (t: string, m: string) => void, topiclist: string[]) {
+// export function MqttConnect(callback: (t: string, m: string) => void, topiclist: string[]) {
   const { host, port, endpoint, ...options } = mqttConnection;
   const connectUrl = `ws://${host}:${port}${endpoint}`;
   try {
-    client = mqtt.connect(connectUrl, options);
+    client = connect(connectUrl, options);
     client.on('connect', () => {
       console.info('MQTT connection successful');
       // topiclist.forEach((topic) => {
@@ -48,7 +49,7 @@ let client: mqtt.MqttClient
   
   
 //}
-export function mqttRegister(callback:(t: string, m: string) => void) {
+export function mqttRegister(callback:OnMessageCallback) {
   if (client) {
     client.on("message", callback);
   } else {
@@ -69,7 +70,7 @@ export function mqttSubscribe(toTopic: string) {
 export function mqttUnsubscribe(fromTopic: string) {
   subscription.topic = fromTopic;
   const { topic } = subscription;
-  client.unsubscribe(topic, (error: Error) => {
+  client.unsubscribe(topic, (error: Error | undefined) => {
     if (error) {
       console.error(
         "MQTT Unsubscribe from " + fromTopic + " failed: " + error
@@ -80,7 +81,7 @@ export function mqttUnsubscribe(fromTopic: string) {
   })
 }
 export function mqttPublish(topic: string, message: string) {
-  const qos: mqtt.QoS = 0;
+  const qos: QoS = 0;
   client.publish(topic, message, { qos }, (error) => {
     if (error) {
       console.warn("MQTT publish error: ", error);

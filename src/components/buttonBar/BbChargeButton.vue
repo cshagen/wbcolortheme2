@@ -6,15 +6,16 @@ Hagen */
     <div class="d-grid gap-2">
       <button
         type="button"
-        class="btn mx-1 mb-0 p-1 largeTextSize chargeButton shadow"
+        class="btn mx-1 mb-0 p-1 regularTextSize chargeButton shadow"
         :style="buttonStyle"
         data-bs-toggle="modal"
         :data-bs-target="'#' + modalId"
       >
-        <div class="container-fluid m-0 p-0">
-          <div class="row m-0 p-0">
+        <div class="m-0 p-0">
+          <div class="m-0 p-0 d-flex justify-content-between">
+            
             <!-- Status indicator -->
-            <div class="col-3 m-0 p-0" style="text-align: left">
+            <div class="m-0 p-0 d-flex flex-column left ">
               <span
                 v-if="chargepoint.isPluggedIn"
                 class="mx-1 badge rounded-pill smallTextSize plugIndicator"
@@ -24,11 +25,20 @@ Hagen */
                   {{ formatWatt(chargepoint.power) }}
                 </span>
               </span>
+              <span
+                v-if="!chargepoint.isPluggedIn"
+                class="mx-1 badge rounded-pill smallTextSize plugIndicator"
+              >
+                <i :class="plugPillClass"></i>
+                <span v-if="chargepoint.isCharging" class="ms-2">
+                  {{ formatWatt(chargepoint.power) }}
+                </span>
+              </span>
             </div>
             <!-- Chargepoint name -->
-            <div class="col-6 m-0 p-0">{{ chargepoint.name }}</div>
+            <div class="m-0 p-0 d-flex flex-column center" >{{ chargepoint.name }}</div>
             <!-- Mode indicator -->
-            <div class="col-3 m-0 p-0" style="text-align: right">
+            <div class="m-0 p-0 d-flex flex-column right">
               <span
                 class="mx-2 badge rounded-pill smallTextSize modeIndicator"
                 :style="modePillStyle"
@@ -49,7 +59,8 @@ Hagen */
               </span>
             </div>
           </div>
-        </div>
+          </div>
+        
       </button>
     </div>
     <ModalComponent :modalId="modalId">
@@ -140,14 +151,15 @@ const priorityIcon = computed(() => {
   }
 })
 const plugPillClass = computed(() => {
-  let icon = ''
+  let icon = 'fa-ellipsis'
   if (props.chargepoint.isLocked) {
     icon = 'fa-lock'
   } else if (props.chargepoint.isCharging) {
     icon = ' fa-bolt'
   } else if (props.chargepoint.isPluggedIn) {
     icon = 'fa-plug'
-  }
+  } 
+  
   return 'fa ' + icon
 })
 
@@ -164,10 +176,22 @@ function swapcolors(style: buttonStyle): buttonStyle {
 .plugIndicator {
   color: white;
   border: 1px solid white;
-  text-align: left;
+  
 }
 
 .chargeButton {
   color: white;
+}
+.left {
+  float: left;
+  
+}
+.right {
+  float:right;
+  
+
+}
+.center {
+  margin:auto;
 }
 </style>

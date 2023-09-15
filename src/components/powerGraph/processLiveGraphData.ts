@@ -89,7 +89,7 @@ function extractValues(data: RawGraphDataItem): GraphDataItem {
     values.solarPower = 0
     values.inverter = -data['pv-all']
   }
-  values.housePower = +data['house-power']
+  values.house = +data['house-power']
   //battery
   if (+data['bat-all-power'] > 0) {
     values.batOut = 0

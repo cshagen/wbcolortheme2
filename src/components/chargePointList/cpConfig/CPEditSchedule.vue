@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid p-0 m-0">
-    <ConfigItem title="Ladestand">
+    <ConfigItem title="Ladestand" :fullwidth="true">
        <RangeInput
         id="soc"
         :min="0"
@@ -11,13 +11,13 @@
       ></RangeInput>
       
     </ConfigItem>
-    <ConfigItem title="Zielzeit beachten">
+    <ConfigItem title="Zielzeit beachten" :fullwidth="true">
       <SwitchInput v-model="plan.timed"></SwitchInput>
     </ConfigItem>
-    <ConfigItem title="Uhrzeit">
+    <ConfigItem title="Uhrzeit" :fullwidth="true">
       <TimeInput v-model="plan.time"> </TimeInput>
     </ConfigItem>
-    <ConfigItem title="Wiederholungen">
+    <ConfigItem title="Wiederholungen" :fullwidth="true">
       <SelectInput
         :options="frequencies"
         v-model="plan.frequency.selected"
@@ -25,19 +25,19 @@
     </ConfigItem>
     <ConfigItem
       v-if="plan.frequency.selected == 'once'"
-      title="Gültig ab"
+      title="Gültig ab" :fullwidth="true"
     >
       <DateInput v-model="plan.frequency.once[0]"> </DateInput>
     </ConfigItem>
     <ConfigItem
       v-if="plan.frequency.selected == 'once'"
-      title="Gültig bis"
+      title="Gültig bis" :fullwidth="true"
     >
       <DateInput v-model="plan.frequency.once[1]"> </DateInput>
     </ConfigItem>
     <ConfigItem
       v-if="plan.frequency.selected == 'weekly'"
-      title="Wochentage"
+      title="Wochentage" :fullwidth="true"
     >
       <CheckBoxInput
         :options="days"

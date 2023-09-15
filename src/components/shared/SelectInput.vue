@@ -28,5 +28,6 @@ const v = computed({
   background-color: var(--color-input);
   color: black;
   border: 1px solid var(--color-bg);
+  font-size: var(--font-settings);
 }
 </style>

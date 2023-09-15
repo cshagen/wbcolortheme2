@@ -1,14 +1,16 @@
 <template>
-  <div class="m-0 mt-0">
-    <ConfigItem title="Status" icon="fa-info-circle">
+    
+
+    <ConfigItem title="Status" icon="fa-info-circle" :fullwidth="true">
       <span class="status-string">{{ cp.stateStr }}</span>
     </ConfigItem>
-  </div>
-  <ConfigItem v-if="cp.faultState != 0" title="Fehler">
+  
+  <ConfigItem title="Fehler" v-if="cp.faultState != 0">
     <span style="color: red"> {{ cp.faultStr }} </span>
   </ConfigItem>
 
   <div class="m-0 mt-4 p-0">
+    
     <nav class="nav nav-tabs nav-justified mx-1 mt-1" role="tablist">
       <a
         class="nav-link active"
@@ -58,8 +60,9 @@
         <i class="fa-solid fa-rectangle-list"></i>
       </a>
     </nav>
+  
     <!-- Tab panes -->
-    <div class="shadow tab-content mx-1 p-1 pb-3" id="settingsPanes">
+    <div class="tab-content mx-1 p-1 pb-3" id="settingsPanes">
       <div
         class="tab-pane active"
         :id="'chargeSettings' + cpid"
@@ -67,6 +70,7 @@
         aria-labelledby="instant-tab"
       >
         <CPChargeConfig :chargepoint="chargepoint"></CPChargeConfig>
+      
       </div>
       <div
         class="tab-pane"
@@ -133,6 +137,7 @@
       </div>
     </div>
   </div>
+
 </template>
 
 <script setup lang="ts">
@@ -145,6 +150,8 @@ import CPConfigScheduled from './CPConfigScheduled.vue'
 import CPConfigTimed from './CPConfigTimed.vue'
 import CPConfigVehicle from './CPConfigVehicle.vue'
 import CPChargeConfig from './CPChargeConfig.vue'
+import WbWidgetFlex from '@/components/shared/WbWidgetFlex.vue'
+import WbSubwidget from '@/components/shared/WbSubwidget.vue'
 const props = defineProps<{
   chargepoint: ChargePoint
 }>()
@@ -169,7 +176,7 @@ onMounted(() => {})
 
 <style scoped>
 .status-string {
-  font-size: var(--font-normal);
+  font-size: var(--font-settings);
   font-style: italic;
   color: var(--color-battery);
 }

@@ -5,7 +5,7 @@
  */
 
 import { usageSummary, sourceSummary, globalData } from '@/assets/js/model'
-import { batteries } from './model'
+import { batteries, batterySummary, BatterySummary } from './model'
 export function processBatteryMessages(topic: string, message: string) {
   let index = getIndex(topic)
   if (index && !(index in batteries)) {
@@ -24,9 +24,9 @@ export function processBatteryMessages(topic: string, message: string) {
     }
   } else if (topic == 'openWB/bat/get/soc') {
     globalData.batterySoc = +message
-  } else if (topic == 'openWB/bat/get/daily_yield_export') {
+  } else if (topic == 'openWB/bat/get/daily_exported') {
     sourceSummary.batOut.energy = +message / 1000
-  } else if (topic == 'openWB/bat/get/daily_yield_import') {
+  } else if (topic == 'openWB/bat/get/daily_imported') {
     usageSummary.batIn.energy = +message / 1000
   } else if (index) {
     if (topic.match(/^openwb\/bat\/[0-9]+\/get\/daily_yield_export$/i)) {
@@ -46,10 +46,10 @@ export function processBatteryMessages(topic: string, message: string) {
     } else if (topic.match(/^openwb\/bat\/[0-9]+\/get\/soc$/i)) {
       batteries[index].soc = +message
     } else {
-      console.warn('Ignored battery message: ' + topic)
+      // console.warn('Ignored battery message: ' + topic)
     }
   } else {
-    console.warn('Ignored battery message: ' + topic)
+    // console.warn('Ignored battery message: ' + topic)
   }
 }
 

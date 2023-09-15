@@ -6,8 +6,9 @@
 
 // Type definitions for all components
 import { updateServer } from '@/assets/js/sendMessages'
+import { ChargeMode } from '@/components/chargePointList/model'
 
-export class ShDevice {
+export class ShDevice implements PowerItem {
   id : number
   name = ''
   power = 0
@@ -56,6 +57,7 @@ export interface Hierarchy {
 } 
 
 export interface ChargeModeInfo {
+  mode:ChargeMode,
   name:string,
   color:string,
   icon: string,

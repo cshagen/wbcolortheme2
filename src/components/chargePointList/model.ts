@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { updateServer } from '@/assets/js/sendMessages'
 import type { PowerItem } from '@/assets/js/types'
 export class ChargePoint {
@@ -350,7 +350,7 @@ export interface EvTemplate {
   request_interval_not_charging: number
   request_only_plugged: boolean
 }
-export const chargePoints: { [key: number]: ChargePoint } = reactive({})
+export const chargePoints : { [key: number]: ChargePoint } = reactive({})
 export const vehicles: { [key: number]: Vehicle } = reactive({}) // the list of vehicles, key is the vehicle ID
 export const chargeTemplates: { [key: number]: ChargeTemplate } = reactive({})
 export const evTemplates: { [key: number]: EvTemplate } = reactive({})

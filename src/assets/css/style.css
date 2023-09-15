@@ -16,50 +16,11 @@ body {
 body > .container {
   padding: 55px 15px 0 15px;
 }
-h3 {
-  color: var(--color-title);
-}
-
-h4 {
-  color: var(--color-axis);
-}
-
-body > .container-fluid {
-  padding: 55px 15px 0 15px;
-}
 
 /* Extra small devices (portrait phones, less than 576px) */
 /* No media query since this is the default in Bootstrap */
 html {
   font-size: 12px;
-}
-
-h3 {
-  font-size: var(--font-large);
-}
-
-.verySmallTextSize {
-  font-size: var(--font-verysmall);
-}
-.smallTextSize {
-  font-size: var(--font-small);
-}
-.regularTextSize {
-  font-size: var(--font-normal);
-}
-
-.largeTextSize {
-  font-size: var(--font-large);
-}
-
-.buttonTextSize {
-  font-size: var(--font-large);
-}
-.tablecell {
-  font-size: var(--font-normal);
-  line-height: 1rem;
-  vertical-align: middle;
-  padding: 0;
 }
 @media screen and (min-width: 400px) {
   html {
@@ -85,17 +46,54 @@ h3 {
   }
 }
 /* Extra extra large devices (very large desktops, 1400px and up) */
-@media (min-width: 1400px) {
+@media screen and (min-width: 1400px) {
   html {
     font-size: 16px;
   }
 }
-
 /* Extra extra extra large devices (very large desktops, 2000px and up) */
-@media (min-width: 2000px) {
+@media screen and (min-width: 2000px) {
   html {
     font-size: 24px;
   }
+}
+.verySmallTextSize {
+  font-size: var(--font-verysmall);
+}
+.smallTextSize {
+  font-size: var(--font-small);
+}
+.regularTextSize {
+  font-size: var(--font-normal);
+}
+.largeTextSize {
+  font-size: var(--font-large);
+}
+.buttonTextSize {
+  font-size: var(--font-large);
+}
+
+
+h3 {
+  font-size: var(--font-extralarge);
+  color: var(--color-title);
+  font-weight: bold;
+}
+h4 {
+  color: var(--color-axis);
+}
+
+body > .container-fluid {
+  padding: 55px 15px 0 15px;
+}
+
+
+.tablecell {
+  font-size: var(--font-normal);
+  line-height: 1rem;
+  vertical-align: middle;
+  padding: 0;
+  background-color: var(--color-bg);
 }
 
 .maxPrice {
@@ -126,10 +124,12 @@ h3 {
   --color-export: #b2df8a;
   --color-battery: goldenrod;
   --color-input: lightgrey;
-  --font-normal: 1rem;
-  --font-large: 1.2rem;
-  --font-small: 0.8rem;
+  --font-normal: 1.4rem;
+  --font-large: 1.6rem;
+  --font-small: 1.2rem;
   --font-verysmall: 0.7rem;
+  --font-extralarge: 1.6rem;
+  --font-settings: 16px;
 }
 
 /* Theme color sets */
@@ -229,6 +229,7 @@ h3 {
 .wb-widget {
   background-color: var(--color-bg);
   border: 0.5px solid var(--color-frame);
+  align-self: stretch;
 }
 
 .wb-subwidget {
@@ -262,3 +263,15 @@ th {
   
 }
 
+
+.swiper-slide-active {
+display:flex;
+
+}
+.swiper-slide {
+  display:flex;
+}
+
+swiper-slide {
+  display:flex;
+}

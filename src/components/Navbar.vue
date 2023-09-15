@@ -1,45 +1,83 @@
 <template>
-  <!-- Fixed navbar -->
-	<nav class="navbar navbar-expand-sm bg-dark navbar-dark px-3">
-		<a class="navbar-brand" href="/">
-			<span>openWB</span>
-		</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-			<span class="navbar-toggler-icon"></span>
+	<!-- Fixed navbar -->
+	<nav class="navbar navbar-expand-lg  px-3 mb-0">
+		<a href="/" class="navbar-brand"><span>openWB</span></a>
+		<button class="navbar-toggler togglebutton ps-5" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+			aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="fa fa-ellipsis-vertical"></span>
 		</button>
-		<div class="collapse navbar-collapse" id="collapsibleNavbar">
-			<ul class="navbar-nav">
+		<div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+			<div class="nav navbar-nav">
+				<a class="nav-link  " id="navStatus" href="../../settings/#/Status" target="_parent">Status</a>
+				<div class="nav-item dropdown">
 
-				<!-- <li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbardropLogging" data-toggle="dropdown">
-						Logging
-					</a>
-					<div class="dropdown-menu">
-						<a class="dropdown-item" id="navLadelog" href="logging/chargelog/ladelog.php">Lade-Log</a>
-						<a class="dropdown-item" id="navChartlog" href="logging/index.php">Graph</a>
+					<a class="nav-link" href="#" id="loggingDropdown" role="button" data-bs-toggle="dropdown"
+						aria-expanded="false">Auswertungen <i class="fa-solid fa-caret-down"></i></a>
+					<div class="dropdown-menu" aria-labelledby="loggingDropdown">
+						<a href="../../settings/#/Logging/ChargeLog" class="dropdown-item" target="_parent">Ladeprotokoll</a>
+						<a href="../../settings/#/Logging/DailyChart" class="dropdown-item" target="_parent">Tagesauswertung</a>
+						<a href="../../settings/#/Logging/MonthlyChart" class="dropdown-item" target="_parent">Monatsauswertung</a>
 					</div>
-				</li> -->
-
-				<li class="nav-item">
-					<a class="nav-link" id="navStatus" href="#">Status</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#">Hilfe</a>
-				</li>
-
-				<li class="nav-item">
-					<a class="nav-link" id="navSettings" href="/settings/index.html">Einstellungen</a>
-				</li>
-
-			</ul>
+				</div>
+				<div class="nav-item dropdown">
+					<a class="nav-link" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown"
+						aria-expanded="false">Einstellungen <i class="fa-solid fa-caret-down"></i></a>
+					<div class="dropdown-menu" aria-labelledby="settingsDropdown">
+						<a class="nav-link" id="navSettings" href="../../settings/index.html" target="_parent">Wallbox</a>
+						<a class="nav-link" data-bs-toggle="collapse" data-bs-target="#themesettings" aria-expanded="false"
+							aria-controls="themeSettings">
+							<span>Theme <span class="fa-solid fa-caret-down"></span></span>
+						</a>
+					</div>
+				</div>
+			</div>
 		</div>
 	</nav>
+	<hr class="m-0 p-0 mb-2">
 </template>
 
 <script setup lang="ts">
 
 </script>
 
-<style>
+<style scoped>
+.navbar {
+	background-color: var(--color-bg);
+	color: var(--color-fg);
+	font-size: var(--font-normal);
+}
 
+.dropdown-menu {
+	background-color: var(--color-bg);
+	color: var(--color-fg);
+}
+
+.dropdown-item {
+	background-color: var(--color-bg);
+	color: var(--color-fg);
+	font-size: var(--font-normal);
+}
+
+.btn {
+	font-size: var(--font-small);
+	background-color: var(--color-bg);
+	color: var(--color-fg)
+}
+
+.navbar-brand {
+	font-weight: bold;
+	color: var(--color-fg);
+}
+
+.nav-link {
+	color: var(--color-fg);
+	border-color: red;
+	font-size: var(--font-normal);
+}
+
+
+.navbar-toggler {
+	color: var(--color-fg);
+	border-color: var(--color-bg)
+}
 </style>

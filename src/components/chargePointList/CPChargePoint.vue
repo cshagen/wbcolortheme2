@@ -1,11 +1,13 @@
 <template>
-  <WBWidget>
+
+  <WBWidget :variableWidth="true" :full-width="props.fullWidth" v-if="!configmode">
     <template v-slot:title>
       <span
         :style="cpNameStyle"
-        data-bs-toggle="modal"
-        :data-bs-target="'#cpconfig-' + chargepoint.id"
-        >{{ props.chargepoint.name }}</span
+       @click="configmode=!configmode"
+      >
+        <span class="fas fa-charging-station">&nbsp;</span>
+        {{ props.chargepoint.name }}</span
       >
     </template>
 
@@ -13,105 +15,154 @@
       <span
         class="ms-2 pt-1"
         :style="modePillStyle"
-        data-bs-toggle="modal"
-        :data-bs-target="'#cpconfig-' + chargepoint.id"
+        @click="configmode = !configmode"
       >
-        <i class="fa me-1" :class="modeIcon"> </i> {{ modeString }}
-        <span class="fa-solid fa-sm ps-1 fa-sliders"></span>
+        <span class="fa-solid fa-lg ps-1 fa-ellipsis-vertical"></span>
       </span>
     </template>
-    <!-- First row -->
-    <div class="row m-0 p-1 mt-1">
-      <div class="col m-0 p-0 d-flex justify-content-between">
-        <!-- Car info -->
-        <p
-          class="tablecell carinfo p-0 m-0"
-          :style="{ color: chargepoint.color }"
-          data-bs-toggle="modal"
-          :data-bs-target="'#cpconfig-' + chargepoint.id"
-        >
-          <i class="fa-solid fa-sm fa-car"> </i>
-          <span class="ps-2 pe-1 vehicleName">{{
-            chargepoint.vehicleName
-          }}</span>
 
-          <span
-            v-if="chargepoint.hasPriority"
-            class="fa-solid fa-xs fa-star ps-1"
-          >
-          </span>
-          <span
-            v-if="chargepoint.scheduledCharging"
-            class="fa-solid fa-xs fa-clock ps-1"
-          >
-          </span>
-        </p>
-        <!-- SoC Info -->
-        <p
-          class="tablecell p-0 m-0"
-          style="text-align: right; vertical-align: middle"
+    <!-- Chargepoint info -->
+    <div v-if="!configmode">
+      <div
+        class="row m-1 mt-0 p-0"
+        @click="configmode = !configmode"
         >
-          <BatterySymbol
-            v-if="chargepoint.isSocConfigured"
-            :soc="soc"
-            class="me-1"
-          ></BatterySymbol>
-          <i
-            v-if="chargepoint.isSocManual"
-            class="fa-solid fa-sm fas fa-edit"
-            :style="{ color: 'var(--color-menu)' }"
-          ></i>
-          <i
-            v-if="!chargepoint.isSocManual"
-            class="fa-solid fa-sm fa-sync"
-            :style="{ color: 'var(--color-menu)' }"
-          ></i>
-        </p>
-      </div>
-    </div>
-    <!-- Second row -->
-    <div
-      class="row m-1 mt-2 p-0"
-      data-bs-toggle="modal"
-      :data-bs-target="'#cpconfig-' + chargepoint.id"
-    >
-      <div class="col tablecell m-0 mb-1 p-0 d-flex justify-content-between">
-        <!-- Status information -->
-        <span class="d-flex align-items-baseline">
-          <span class="me-2" :style="{ color: statusColor }">
-            <i :class="statusIcon"></i>
-            {{ statusString }}
-          </span>
-          <span
-            v-if="chargepoint.isCharging && !chargepoint.isLocked"
-            class="mx-1"
-          >
-            <span class="d-flex align-items-center">
-              <FormatWatt :watt="chargepoint.power"></FormatWatt>
-              <span class="badge phasesInUse rounded-pill">
-                {{ chargePhasesString }}</span
-              >
-              {{ chargeAmpereString }}
+        <div class="col m-0 mb-1 p-0 d-flex justify-content-between">
+          <!-- Status information -->
+          <InfoItem heading="Status:">
+            <span :style="{ color: statusColor }">
+              <i :class="statusIcon"></i>
+              {{ statusString }}
             </span>
-          </span>
-        </span>
-        <span>
-          <span class="energylabel me-2">Geladen:</span>
-          <span>
+          </InfoItem>
+
+          <!-- Ladung -->
+          <InfoItem heading="Geladen:">
             <FormatWattH :wattH="chargepoint.dailyYield * 1000"></FormatWattH>
+          </InfoItem>
+          <InfoItem heading="Distanz:">
             {{ chargedRangeString }}
-          </span>
-        </span>
+          </InfoItem>
+        </div>
+      </div>
+      <div class="row m-1 p-0" v-if="props.chargepoint.power > 0"
+        @click="configmode=!configmode">
+        <div class="col m-0 p-0 d-flex justify-content-between">
+          <InfoItem heading="Leistung:">
+            <FormatWatt :watt="props.chargepoint.power"></FormatWatt>
+          </InfoItem>
+          <InfoItem heading="Stromstärke:">
+            {{ chargeAmpereString }}
+          </InfoItem>
+          <InfoItem heading="Phasen:">
+            {{ props.chargepoint.phasesInUse }}
+          </InfoItem>
+        </div>
+      </div>
+      <!-- Chargemode buttons -->
+      <div class="row m-0 p-1 mt-3 mb-0">
+        <div class="col d-flex justify-content-center">
+          <RadioBarInput
+            :options="
+              Object.keys(chargemodes).map((v) => [
+                
+                chargemodes[v].name,
+                v,
+                chargemodes[v].color,
+                chargemodes[v].icon,
+                (chargemodes[v].mode == chargepoint.chargeMode)
+              ])
+            "
+            v-model="chargepoint.chargeMode"
+          ></RadioBarInput>
+        </div>
       </div>
     </div>
-    <ModalComponent :modal-id="'cpconfig-' + chargepoint.id">
-      <template v-slot:title>Konfiguration: {{ chargepoint.name }} </template>
-      <CPChargeConfigPanel
-        :chargepoint="chargepoint"
-        v-if="chargepoint != undefined"
-      ></CPChargeConfigPanel>
-    </ModalComponent>
+    <div v-if="configmode" class="row m-0 mt-0 p-0">
+      <div class="col m-0 p-0">
+        <CPChargeConfigPanel
+          :chargepoint="chargepoint"
+          v-if="chargepoint != undefined"
+        ></CPChargeConfigPanel>
+      </div>
+    </div>
+    <!-- Car information-->
+    <template v-slot:footer>
+      <div v-if="!configmode">
+      <div class="row" @click="configmode=!configmode">
+        <div class="col">
+          <h3>
+            <i class="fa-solid fa-sm fa-car me-2"> </i>
+            {{ chargepoint.vehicleName }}
+          </h3>
+        </div>
+      </div>
+      <div class="row m-0 p-1 pt-2 mb-3">
+        <!-- Car info -->
+
+        <div class="m-0 p-0 d-flex justify-content-between">
+          <InfoItem heading="Ladestand:">
+            <BatterySymbol
+              v-if="chargepoint.isSocConfigured"
+              :soc="soc"
+              class="me-2"
+            ></BatterySymbol>
+            <i
+              v-if="chargepoint.isSocManual"
+              class="fa-solid fa-sm fas fa-edit"
+              :style="{ color: 'var(--color-menu)' }"
+            ></i>
+            <i
+              v-if="!chargepoint.isSocManual"
+              class="fa-solid fa-sm fa-sync"
+              :style="{ color: 'var(--color-menu)' }"
+            ></i>
+          </InfoItem>
+          <InfoItem heading="Priorität:">
+            <span
+              v-if="chargepoint.hasPriority"
+              class="me-1 fa-solid fa-xs fa-star ps-1"
+            ></span>
+            {{ props.chargepoint.hasPriority ? 'Ja' : 'Nein' }}
+          </InfoItem>
+          <InfoItem heading="Zeitplan:">
+            <span
+              v-if="chargepoint.scheduledCharging"
+              class="me-1 fa-solid fa-xs fa-clock ps-1"
+            ></span>
+            {{ props.chargepoint.scheduledCharging ? 'Ja' : 'Nein' }}
+          </InfoItem>
+        </div>
+      </div>
+    </div>
+    </template>
   </WBWidget>
+  <WbWidgetFlex v-if="configmode" :full-width="props.fullWidth">
+    <template v-slot:title>
+      <span
+        :style="cpNameStyle"
+        @click="configmode=!configmode"
+      >
+        <span class="fas fa-gear">&nbsp;</span>
+        Einstellungen {{ props.chargepoint.name }}</span
+      >
+    </template>
+
+    <template v-slot:buttons>
+     
+      <span
+        class="ms-2 pt-1"
+        :style="modePillStyle"
+        @click="configmode = !configmode"
+      >
+        <span class="fa-solid fa-lg ps-1 fa-circle-check"></span>
+      </span>
+    </template>
+    <CPChargeConfigPanel
+          :chargepoint="chargepoint"
+          v-if="chargepoint != undefined"
+        ></CPChargeConfigPanel>
+  </WbWidgetFlex>
 </template>
 
 <script setup lang="ts">
@@ -120,6 +171,7 @@ import * as d3 from 'd3'
 import type { ChargePoint } from './model'
 import { chargemodes } from '@/assets/js/themeConfig'
 import WBWidget from '@/components/shared/WBWidget.vue'
+import InfoItem from '@/components/shared/InfoItem.vue'
 import CPChargeConfigPanel from './cpConfig/CPChargeConfigPanel.vue'
 import BatterySymbol from '@/components/shared/BatterySymbol.vue'
 import FormatWatt from '@/components/shared/FormatWatt.vue'
@@ -127,8 +179,12 @@ import FormatWattH from '../shared/FormatWattH.vue'
 import ModalComponent from '../shared/ModalComponent.vue'
 import { Modal } from 'bootstrap'
 
+import RadioBarInput from '@/components/shared/RadioBarInput.vue'
+import WbWidgetFlex from '../shared/WbWidgetFlex.vue'
+
 const props = defineProps<{
   chargepoint: ChargePoint
+  fullWidth? : boolean 
 }>()
 // state
 let showConfig = ref(false)
@@ -143,13 +199,11 @@ const chargePhasesString = computed(() => {
 const chargedRangeString = computed(() => {
   if (props.chargepoint.dailyYield > 0) {
     return props.chargepoint.averageConsumption
-      ? ' / ' +
-          (Math.round(
-            (props.chargepoint.dailyYield /
-              props.chargepoint.averageConsumption) *
-              100,
-          ) +
-            ' km')
+      ? Math.round(
+          (props.chargepoint.dailyYield /
+            props.chargepoint.averageConsumption) *
+            100,
+        ) + ' km'
       : ''
   } else {
     return ''
@@ -209,7 +263,10 @@ const soc = computed(() => {
 })
 const cpNameStyle = computed(() => {
   return { color: props.chargepoint.color }
+  // return { color: 'var(--color-fg)' }
 })
+const configmode = ref(false)
+
 // methods
 </script>
 
@@ -247,5 +304,26 @@ const cpNameStyle = computed(() => {
 .vehicleName {
   color: var(--color-fg);
 }
+.longline {
+  color: var(--color-menu);
+  padding: 3;
+  margin-left: 5;
+}
+.fa-car {
+  color: var(--color-menu);
+}
+.fa-ellipsis-vertical {
+  color: var(--color-menu);
+}
+.fa-circle-check {
+  color: var(--color-menu);
+}
+.heading {
+  color: var(--color-menu);
+  font-size: var(--font-small);
+}
+.content {
+  font-size: var(--font-normal);
+  font-weight: bold;
+}
 </style>
->

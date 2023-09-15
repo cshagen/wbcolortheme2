@@ -28,6 +28,7 @@ const v = computed({
     return props.modelValue
   },
   set(value: boolean[]) {
+    console.log ("SET CHECKBOX")
     emit('update:modelValue', value)
   },
 })

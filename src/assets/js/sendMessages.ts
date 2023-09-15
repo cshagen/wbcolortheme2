@@ -38,7 +38,11 @@ const topics: { [topic: string]: string } = {
     'openWB/set/vehicle/template/charge_template/%/chargemode/pv_charging/min_soc_current',
   etMaxPrice: 'openWB/set/optional/et/max_price',
   vhChargeTemplateId: 'openWB/set/vehicle/%/charge_template',
-  vhEvTemplateId: 'openWB/set/vehicle/%/ev_template'
+  vhEvTemplateId: 'openWB/set/vehicle/%/ev_template',
+  // SmartHome
+  // shSetManual: 'openWB/config/set/SmartHome/Devices/%/mode',
+  shSetManual: 'openWB/set/LegacySmartHome/config/set/Devices/%/mode',
+  shSwitchOn: 'openWB/set/LegacySmartHome/config/set/Devices/%/device_manual_control',
 }
 export function updateServer(
   item: string,

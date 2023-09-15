@@ -194,6 +194,7 @@ function toggleConfig() {
 }
 .tablecell {
   color: var(--color-fg);
+  background-color: var(--color-bg);
   text-align: center;
   padding-top: 2px;
   padding-left: 2px;
@@ -202,6 +203,7 @@ function toggleConfig() {
   line-height: 1.4rem;
 }
 .buttoncell {
+  background-color: var(--color-bg);
   padding: 0;
   margin: 0;
 }

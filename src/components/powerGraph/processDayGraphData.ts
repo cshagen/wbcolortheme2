@@ -1,4 +1,4 @@
-import * as d3 from 'd3'
+import { timeParse } from 'd3'
 import { globalConfig } from '@/assets/js/themeConfig'
 import {
   type GraphDataItem,
@@ -6,50 +6,75 @@ import {
   setGraphData,
   initGraph,
   dayGraph,
-  graphData
 } from './model'
-import { historicSummary } from '@/assets/js/model'
+import { historicSummary, usageSummary } from '@/assets/js/model'
 let startValues: GraphDataItem = {}
 let endValues: GraphDataItem = {}
 let pvChargeCounter = 0
 let batChargeCounter = 0
+let consumerCategories = ['charging', 'house', 'batIn']
 
 // methods:
+
 export function processDayGraphMessages(topic: string, message: string) {
-  let rawValues: RawDayGraphDataItem[] = JSON.parse(message).entries
-  setGraphData(calculateGraphDataList(rawValues))
+  const inputTable: RawDayGraphDataItem[] = JSON.parse(message).entries
+  consumerCategories.map((cat) => {
+    historicSummary[cat].energyPv = 0
+    historicSummary[cat].energyBat = 0
+  })
+
+  const transformedTable = transformDatatable(inputTable)
+  setGraphData(transformedTable)
+  consumerCategories.map((cat) => {
+    historicSummary[cat].energyPv =
+      Math.round(historicSummary[cat].energyPv * 100) / 100
+    historicSummary[cat].energyBat =
+      Math.round(historicSummary[cat].energyBat * 100) / 100
+  })
   updateEnergyValues(startValues, endValues)
   if (globalConfig.graphMode == 'today') {
     setTimeout(() => initGraph(), 300000)
   }
 }
-function calculateGraphDataList(table: RawDayGraphDataItem[]): GraphDataItem[] {
-  let result: GraphDataItem[] = []
-  let lastItem: GraphDataItem = {}
-  let currentItem: GraphDataItem = {}
-  for (let index = 0; index < table.length; index++) {
-    currentItem = extractCounters(table[index])
-    if (index > 0) {
-      result.push(calculatePowerValues(currentItem, lastItem))
-    } else {
-      startValues = currentItem
+
+// analyse the incoming data table and create a data table ready for display
+function transformDatatable(
+  inputTable: RawDayGraphDataItem[],
+): GraphDataItem[] {
+  let outputTable: GraphDataItem[] = []
+  let previousRow: GraphDataItem = {}
+  let transformedRow: GraphDataItem = {}
+
+  inputTable.map((inputRow, index) => {
+    //for (let index = 0; index < inputTable.length; index++) {
+    transformedRow = transformRow(inputRow)
+    if (index == 0) {
+      startValues = transformedRow
       startValues.chargingPv = 0
       startValues.chargingBat = 0
-      pvChargeCounter = 0
-      batChargeCounter = 0
+      // pvChargeCounter = 0
+      // batChargeCounter = 0
+    } else {
+      const values = calculatePowerValues(transformedRow, previousRow)
+      outputTable.push(values)
+      consumerCategories.map((cat) => {
+        historicSummary[cat].energyPv += values[cat + 'Pv'] / 12
+        historicSummary[cat].energyBat += values[cat + 'Bat'] / 12
+      })
     }
-    lastItem = currentItem
-  }
-  endValues = currentItem
-  endValues.chargingPv = pvChargeCounter
-  endValues.chargingBat = batChargeCounter
-
-  return result
+    previousRow = transformedRow
+  })
+  endValues = transformedRow
+  //endValues.chargingPv = pvChargeCounter
+  //endValues.chargingBat = batChargeCounter
+  return outputTable
 }
-function extractCounters(currentRow: RawDayGraphDataItem): GraphDataItem {
+
+// transform one row of the incoming graph data table
+function transformRow(currentRow: RawDayGraphDataItem): GraphDataItem {
   let currentItem: GraphDataItem = {}
   if (globalConfig.graphMode == 'day' || globalConfig.graphMode == 'today') {
-    let d = d3.timeParse('%H:%M')(currentRow.date)
+    let d = timeParse('%H:%M')(currentRow.date)
     if (d) {
       d.setMonth(dayGraph.date.getMonth())
       d.setDate(dayGraph.date.getDate())
@@ -57,7 +82,8 @@ function extractCounters(currentRow: RawDayGraphDataItem): GraphDataItem {
       currentItem.date = d.getTime()
     }
   } else {
-    let d = d3.timeParse('%Y%m%d')(currentRow.date)
+    let d = timeParse('%Y%m%d')(currentRow.date)
+
     if (d) {
       currentItem.date = d.getDate()
     }
@@ -95,8 +121,18 @@ function extractCounters(currentRow: RawDayGraphDataItem): GraphDataItem {
       currentItem['soc-' + id] = values.soc
     }
   })
+  Object.entries(currentRow.sh).forEach(([id, values]) => {
+    if (id != 'all') {
+      currentItem[id] = values.imported
+    } else {
+      currentItem['devices'] = values.imported
+    }
+  })
+  currentItem['devices']=0
   return currentItem
 }
+
+// list of chargepoints we have
 const cps = [
   'cp0',
   'cp1',
@@ -109,13 +145,24 @@ const cps = [
   'cp8',
   'cp9',
 ]
+
+const shs = ['sh0', 'sh1', 'sh2', 'sh3', 'sh4']
+// calculate the graph values for one row based on the delta between two input rows
 function calculatePowerValues(
   currentRow: GraphDataItem,
   previousRow: GraphDataItem,
 ): GraphDataItem {
   let result: GraphDataItem = {}
   result.date = currentRow.date
-  const cats = ['gridPull', 'gridPush', 'solarPower', 'batIn', 'batOut', 'charging']
+  const cats = [
+    'gridPull',
+    'gridPush',
+    'solarPower',
+    'batIn',
+    'batOut',
+    'charging',
+    'devices'
+  ]
 
   const evSocs = [
     'soc-ev0',
@@ -131,7 +178,13 @@ function calculatePowerValues(
   ]
   cats.concat(cps).forEach((category) => {
     result[category] = calculatePower(currentRow, previousRow, category)
+    if (category == 'cp6') {
+    }
   })
+  cats.concat(shs).forEach((category) => {
+    result[category] = calculatePower(currentRow, previousRow, category)
+  })
+
   let socs: number[] = []
   evSocs.forEach((label) => {
     if (currentRow[label] != undefined) {
@@ -141,7 +194,7 @@ function calculatePowerValues(
   result.soc1 = socs[0]
   result.soc2 = socs[1]
   result.selfUsage = result.solarPower - result.gridPush
-  result.housePower =
+  result.house =
     result.solarPower +
     result.gridPull +
     result.batOut -
@@ -159,39 +212,84 @@ function calculatePowerValues(
     result.cp9
   result.inverter = 0
 
-  let usedEnergy = (result.gridPull + result.batOut + result.solarPower)
+  let usedEnergy = result.gridPull + result.batOut + result.solarPower
   if (usedEnergy > 0) {
-    pvChargeCounter += (result.charging * result.solarPower / usedEnergy / 12 * 1000)
-    batChargeCounter += (result.charging * result.batOut / usedEnergy / 12 * 1000)
+    consumerCategories.map((cat) => calculateAutarchy(cat, result))
+    // pvChargeCounter += (result.charging * result.solarPower / usedEnergy / 12 * 1000)
+    // batChargeCounter += (result.charging * result.batOut / usedEnergy / 12 * 1000)
+  } else {
+    consumerCategories.map((cat) => {
+      result[cat + 'Pv'] = 0
+      result[cat + 'Bat'] = 0
+    })
   }
   return result
 }
+
 function calculatePower(
   currentRow: { [key: string]: number },
   previousRow: { [key: string]: number },
   category: string,
 ) {
-  if (currentRow[category] !== undefined) {
+  if (
+    currentRow[category] !== undefined &&
+    previousRow[category] !== undefined
+  ) {
     return (12 * (currentRow[category] - previousRow[category])) / 1000
   } else {
     return 0
   }
 }
-
-function updateEnergyValues(startValues: GraphDataItem, endValues: GraphDataItem) {
+function calculateAutarchy(cat: string, values: GraphDataItem) {
+  values[cat + 'Pv'] =
+    (values[cat] * (values.solarPower - values.gridPush)) /
+    (values.solarPower - values.gridPush + values.gridPull + values.batOut)
+  values[cat + 'Bat'] =
+    (values[cat] * values.batOut) /
+    (values.solarPower - values.gridPush + values.gridPull + values.batOut)
+}
+function updateEnergyValues(
+  startValues: GraphDataItem,
+  endValues: GraphDataItem,
+) {
   //const startValues = extractCounters (rawData[0]);
   //const endValues = extractCounters(rawData[rawData.length - 1]);
-  historicSummary.pv.energy = (endValues.solarPower - startValues.solarPower) / 1000
-  historicSummary.evuIn.energy = (endValues.gridPull - startValues.gridPull) / 1000
+  historicSummary.pv.energy =
+    (endValues.solarPower - startValues.solarPower) / 1000
+  historicSummary.evuIn.energy =
+    (endValues.gridPull - startValues.gridPull) / 1000
   historicSummary.batOut.energy = (endValues.batOut - startValues.batOut) / 1000
-  historicSummary.evuOut.energy = (endValues.gridPush - startValues.gridPush) / 1000
+  historicSummary.evuOut.energy =
+    (endValues.gridPush - startValues.gridPush) / 1000
   historicSummary.batIn.energy = (endValues.batIn - startValues.batIn) / 1000
-  historicSummary.charging.energy = (endValues.charging - startValues.charging) / 1000
-  historicSummary.charging.energyPv = (endValues.chargingPv - startValues.chargingPv) / 1000
-  historicSummary.charging.energyBat = (endValues.chargingBat - startValues.chargingBat) / 1000
-  historicSummary.charging.pvPercentage = Math.round((historicSummary.charging.energyPv + historicSummary.charging.energyBat) / historicSummary.charging.energy * 100)
+  historicSummary.charging.energy =
+    (endValues.charging - startValues.charging) / 1000
 
-  historicSummary.house.energy = historicSummary.evuIn.energy + historicSummary.pv.energy
-    + historicSummary.batOut.energy - historicSummary.evuOut.energy - historicSummary.batIn.energy
-    - historicSummary.charging.energy - historicSummary.devices.energy;
+  // historicSummary.charging.energyPv = (endValues.chargingPv - startValues.chargingPv) / 1000
+  // historicSummary.charging.energyBat = (endValues.chargingBat - startValues.chargingBat) / 1000
+  historicSummary.charging.pvPercentage = Math.round(
+    ((historicSummary.charging.energyPv + historicSummary.charging.energyBat) /
+      historicSummary.charging.energy) *
+      100,
+  )
+
+  historicSummary.house.energy =
+    historicSummary.evuIn.energy +
+    historicSummary.pv.energy +
+    historicSummary.batOut.energy -
+    historicSummary.evuOut.energy -
+    historicSummary.batIn.energy -
+    historicSummary.charging.energy -
+    historicSummary.devices.energy
+
+  consumerCategories.map((cat) => {
+    usageSummary[cat].energyPv = historicSummary[cat].energyPv
+    usageSummary[cat].energyBat = historicSummary[cat].energyBat
+    historicSummary[cat].pvPercentage = Math.round(
+      ((historicSummary[cat].energyPv + historicSummary[cat].energyBat) /
+        historicSummary[cat].energy) *
+        100,
+    )
+    usageSummary[cat].pvPercentage = historicSummary[cat].pvPercentage
+  })
 }

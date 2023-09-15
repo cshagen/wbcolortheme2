@@ -3,7 +3,7 @@
     Profile für {{ vehicles[vehicleId].name }}:
   </p>
   <!-- Select the charge mode -->
-  <ConfigItem title="Ladeprofil" icon="fa-sliders">
+  <ConfigItem title="Ladeprofil" icon="fa-sliders" :fullwidth="true">
     <RadioInput
       :options="
         Object.keys(chargeTemplates).map((v) => [chargeTemplates[+v].name, v])
@@ -12,7 +12,7 @@
     ></RadioInput>
   </ConfigItem>
   <!-- Select the Vehicle Template -->
-  <ConfigItem title="Fahrzeug-Vorlage" icon="fa-sliders" class="mb-2">
+  <ConfigItem title="Fahrzeug-Vorlage" icon="fa-sliders" :fullwidth="true">
     <RadioInput
       :options="Object.keys(evTemplates).map((v) => [evTemplates[+v].name, v])"
       v-model.number="vehicles[vehicleId].evTemplateId"

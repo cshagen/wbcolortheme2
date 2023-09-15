@@ -20,11 +20,11 @@ export function formatWatt(watt: number, decimalPlaces = 1) {
 			case 3:
 				wattResult = (Math.round(watt) / 1000)
 				break
-      default: 
+			default:
 				wattResult = Math.round(watt / 100) / 10;
 				break;
 		}
-		return (wattResult?.toLocaleString(undefined, {minimumFractionDigits: decimalPlaces}) + " kW");
+		return (wattResult?.toLocaleString(undefined, { minimumFractionDigits: decimalPlaces }) + " kW");
 	} else {
 		return (Math.round(watt).toLocaleString(undefined) + " W");
 	}
@@ -46,16 +46,16 @@ export function formatWattH(wattH: number, decimalPlaces = 1) {
 			case 3:
 				wattResult = (Math.round(wattH) / 1000).toFixed(3);
 				break;
-			default: 
+			default:
 				wattResult = Math.round(wattH / 100) / 10;
 				break;
 		}
-		return (wattResult.toLocaleString(undefined, {minimumFractionDigits: decimalPlaces}) + " kWh");
+		return (wattResult.toLocaleString(undefined, { minimumFractionDigits: decimalPlaces }) + " kWh");
 	} else {
 		return (Math.round(wattH).toLocaleString(undefined) + " Wh");
 	}
 }
-function formatTime(seconds: number) {
+export function formatTime(seconds: number) {
 	const hours = Math.floor(seconds / 3600);
 	const minutes = ((seconds % 3600) / 60).toFixed(0);
 	if (hours > 0) {
@@ -65,9 +65,13 @@ function formatTime(seconds: number) {
 	}
 }
 
-export function formatMonth (month: number, year: number) {
+export function formatMonth(month: number, year: number) {
 	const months = ['Jan', 'Feb', 'März', 'April', 'Mai', 'Juni', 'Juli', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
-	return (months[month] + " "+ year);
+	return (months[month] + " " + year);
+}
+
+export function formatTemp(t: number) {
+	return ((Math.round(t * 10) / 10).toLocaleString(undefined, { minimumFractionDigits: 1 }) + "°")
 }
 
 /* function shiftLeft() {
@@ -75,17 +79,17 @@ export function formatMonth (month: number, year: number) {
 		case 'live':
 			wbdata.graphMode = 'day';
 			wbdata.graphPreference = 'day';
-    	wbdata.showTodayGraph = true;
-    	powerGraph.deactivateLive();
-    	powerGraph.activateDay();
-    	wbdata.prefs.showLG = false;
-    	wbdata.persistGraphPreferences();
-    	d3.select("button#graphRightButton").classed("disabled", false)
+			wbdata.showTodayGraph = true;
+			powerGraph.deactivateLive();
+			powerGraph.activateDay();
+			wbdata.prefs.showLG = false;
+			wbdata.persistGraphPreferences();
+			d3.select("button#graphRightButton").classed("disabled", false)
 			break;
 		case 'day':
 			wbdata.showTodayGraph = false;
 			wbdata.graphDate.setTime(wbdata.graphDate.getTime() - 86400000);
-    	powerGraph.activateDay();
+			powerGraph.activateDay();
 			break;
 		case 'month':
 			wbdata.graphMonth.month = wbdata.graphMonth.month - 1;
@@ -100,8 +104,8 @@ export function formatMonth (month: number, year: number) {
 }
  */
 /* function shiftRight() {
-  today = new Date();
-  const d = wbdata.graphDate;
+	today = new Date();
+	const d = wbdata.graphDate;
 	switch (wbdata.graphMode) {
 		case 'live':
 			break;
@@ -206,15 +210,15 @@ export function formatMonth (month: number, year: number) {
 	yieldMeter.update();
 }
  */
-export default {
-    formatWatt,
-    formatWattH,
-    formatTime,
-    formatMonth,
-    /* shiftLeft,
-    shiftRight,
-    toggleGrid,
-    switcDecimalPlaces,
-    switchSmartHomeColors,
-    toggleMonthView */
-}
+/*export default {
+	formatWatt,
+	formatWattH,
+	formatTime,
+	formatMonth,
+	 shiftLeft,
+	shiftRight,
+	toggleGrid,
+	switcDecimalPlaces,
+	switchSmartHomeColors,
+	toggleMonthView 
+}*/

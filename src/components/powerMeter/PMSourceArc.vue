@@ -3,11 +3,11 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed, watchEffect } from 'vue'
 import { globalConfig } from '@/assets/js/themeConfig'
 import type { PowerItem, ItemList } from '@/assets/js/types'
 import { sourceSummary, masterData } from '@/assets/js/model'
 import * as d3 from 'd3'
+import { computed, watchEffect } from 'vue';
 // props
 const props = defineProps<{
   radius: number
@@ -23,15 +23,15 @@ const draw = computed(() => {
     name: '',
     power: props.emptyPower,
     energy: 0,
-    energyPv:0,
-    energyBat:0,
-    pvPercentage:0,
+    energyPv: 0,
+    energyBat: 0,
+    pvPercentage: 0,
     color: 'var(--color-bg)',
     icon: ''
   }
   let plotdata = sourceSummary
   plotdata['zz-empty'] = emptyPowerItem
-  
+
   const pieGenerator = d3
     .pie<PowerItem>()
     .value((record: PowerItem) => record.power)
@@ -44,7 +44,7 @@ const draw = computed(() => {
     .outerRadius(props.radius)
     .cornerRadius(props.cornerRadius)
     .padAngle(0)
-    const graph = d3.select('g#pmSourceArc')
+  const graph = d3.select('g#pmSourceArc')
   graph.selectAll('*').remove()
   graph
     .selectAll('sources')

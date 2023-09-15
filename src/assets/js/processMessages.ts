@@ -14,6 +14,7 @@ import {
   processVehicleMessages,
   processVehicleTemplateMessages,
 } from '@/components/chargePointList/processMessages'
+import { processSmarthomeMessages } from '@/components/smartHome/processMessages' 
 
 const topicsToSubscribe = [
   'openWB/counter/#',
@@ -23,6 +24,7 @@ const topicsToSubscribe = [
   'openWB/vehicle/#',
   'openWB/general/chargemode_config/pv_charging/#',
   'openWB/optional/et/#',
+  'openWB/LegacySmartHome/#'
 ]
 export function msgInit() {
   mqttRegister(processMqttMessage)
@@ -31,7 +33,8 @@ export function msgInit() {
   })
   initGraph()
 }
-function processMqttMessage(topic: string, message: string) {
+function processMqttMessage(topic: string, payload: Buffer) {
+  const message = payload.toString()
   if (topic.match(/^openwb\/counter\/[0-9]+\//i)) { processCounterMessages(topic, message)
   } else if (topic.match(/^openwb\/counter\//i)) { processGlobalCounterMessages(topic, message)
   } else if (topic.match(/^openwb\/bat\//i)) { processBatteryMessages(topic, message)
@@ -42,7 +45,7 @@ function processMqttMessage(topic: string, message: string) {
   } else if ( topic.match(/^openwb\/general\/chargemode_config\/pv_charging\//i)) { processPvConfigMessages(topic, message)
   } else if (topic.match(/^openwb\/graph\//i)) { processLiveGraphMessages(topic, message)
   } else if (topic.match(/^openwb\/log\/daily\//i)) { processDayGraphMessages(topic, message)
-  } else if (topic.match(/^openwb\/log\/monthly\//i)) { processDayGraphMessages(topic, message)
+  } else if (topic.match(/^openwb\/log\/monthly\//i)) { processMonthGraphMessages(topic, message)
   } else if (topic.match(/^openwb\/optional\/et\//i)) { processEtProviderMessages(topic, message)
   }
   // else if ( mqttTopic.match( /^openwb\/global\//i) ) { processGlobalMessages(mqttTopic, message); }
@@ -50,21 +53,16 @@ function processMqttMessage(topic: string, message: string) {
   // else if ( mqttTopic.match( /^openwb\/verbraucher\//i) ) { processVerbraucherMessages(mqttTopic, message); }
   // else if ( mqttTopic.match( /^openwb\/hook\//i) ) { processHookMessages(mqttTopic, message); }
   // else if ( mqttTopic.match( /^openwb\/SmartHome\/Devices\//i) ) { processSmartHomeDevicesMessages(mqttTopic, message); }
-  // else if ( mqttTopic.match( /^openwb\/config\/get\/SmartHome\/Devices\//i) ) { processSmartHomeDevicesConfigMessages(mqttTopic, message); }
+  else if ( topic.match( /^openwb\/LegacySmartHome\//i) ) { processSmarthomeMessages (topic, message); }
   // else if ( mqttTopic.match( /^openwb\/config\/get\/sofort\/lp\//i) ) { processSofortConfigMessages(mqttTopic, message); }
-  else {
-    console.error('UNCAUGHT MESSAGE [' + topic + '] ' + message)
-  }
+  
 }
 function processCounterMessages(topic: string, message: string) {
   let elements = topic.split('/')
   if (+elements[2] == globalData.evuId) {
-    // console.debug("evu counter message received");
     processEvuMessages(topic, message)
   } else if (elements[3] == 'config') {
-    // console.debug("config for counter " + elements[2]);
   } else {
-    //let index = elements[2]
     switch (elements[4]) {
       case 'power':
       case 'config':
@@ -78,7 +76,7 @@ function processCounterMessages(topic: string, message: string) {
       case 'daily_yield_export':
         break
       default:
-        console.warn('Ignored COUNTER message: ' + topic)
+        // console.warn('Ignored COUNTER message: ' + topic)
     }
   }
 }
@@ -104,7 +102,7 @@ function processGlobalCounterMessages(topic: string, message: string) {
   ) {
     usageSummary.house.energy = +message / 1000
   } else {
-    console.warn('Ignored GLOBAL COUNTER message: ' + topic)
+    // console.warn('Ignored GLOBAL COUNTER message: ' + topic)
   }
 }
 function processHierarchy(hierarchy: Hierarchy) {
@@ -138,7 +136,7 @@ function processPvMessages(topic: string, message: string) {
       sourceSummary.pv.energy = +message / 1000
       break
     default:
-      console.warn('Ignored PV msg: [' + topic + '] ' + message)
+      // console.warn('Ignored PV msg: [' + topic + '] ' + message)
   }
 }
 
@@ -150,7 +148,7 @@ function processPvConfigMessages(topic: string, message: string) {
         globalData.updatePvBatteryPriority (message == 'true')
         break
       default:
-        console.warn('Ignored PV CONFIG msg: [' + topic + '] ' + message)
+       // console.warn('Ignored PV CONFIG msg: [' + topic + '] ' + message)
     }
   }
 }

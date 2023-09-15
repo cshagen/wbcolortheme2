@@ -6,7 +6,7 @@
 
     <!-- Ampere -->
     <ConfigItem title="Stromstärke"
-    icon="fa-bolt">
+    icon="fa-bolt" :fullwidth="true">
       <RangeInput
         id="targetCurrent"
         :min="6"

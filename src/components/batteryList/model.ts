@@ -19,8 +19,16 @@ export class Battery {
     this.id = index
   }
 }
-
+export class BatterySummary {
+  dailyExport = 0
+  dailyImport = 0
+  exported = 0
+  imported = 0
+  power = 0
+  soc = 0
+}
 export const batteries: { [key: number]: Battery } = reactive({})
+export const batterySummary = reactive ( new BatterySummary())
 
 export function addBattery(index: number) {
     if (!(index in batteries)) {

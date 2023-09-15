@@ -68,6 +68,9 @@ const cpName = computed(() => {
     : ''
 })
 const cpColor = computed(() => {
+  console.log (chargepoints.value[props.cpId - 1]
+    ? chargepoints.value[props.cpId - 1].color
+    : '')
   return chargepoints.value[props.cpId - 1]
     ? chargepoints.value[props.cpId - 1].color
     : ''

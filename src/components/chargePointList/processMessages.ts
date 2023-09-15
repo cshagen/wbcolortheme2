@@ -33,6 +33,8 @@ export function processChargepointMessages(topic: string, message: string) {
       if (chargePoints[index]) {
         var configMessage = JSON.parse(message)
         chargePoints[index].name = configMessage.name
+        chargePoints[index].icon = configMessage.name
+        
       } else {
         console.warn('invalid chargepoint index: ' + index)
       }
@@ -77,7 +79,7 @@ export function processChargepointMessages(topic: string, message: string) {
     } else if (
       topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/connected_vehicle\/soc$/i)
     ) {
-      console.warn('Ignored Connected Vehicle SOC ' + topic + ' : ' + message)
+      // console.warn('Ignored Connected Vehicle SOC ' + topic + ' : ' + message)
     } else if (
       topic.match(
         /^openwb\/chargepoint\/[0-9]+\/get\/connected_vehicle\/soc_config$/i,
@@ -118,10 +120,10 @@ export function processChargepointMessages(topic: string, message: string) {
       chargePoints[index].chargeTemplate = config.charge_template
       chargePoints[index].averageConsumption = config.average_consumption
     } else {
-      console.warn('Ignored chargepoint message: ' + topic)
+      // console.warn('Ignored chargepoint message: ' + topic)
     }
   } else {
-    console.warn('Ignored chargepoint message: ' + topic)
+    // console.warn('Ignored chargepoint message: ' + topic)
   }
 }
 export function processVehicleMessages(topic: string, message: string) {
@@ -152,7 +154,7 @@ export function processVehicleMessages(topic: string, message: string) {
     } else if (topic.match(/^openwb\/vehicle\/[0-9]+\/ev_template$/i)) {
       vehicles[index].updateEvTemplateId(+message)
     } else {
-      console.warn('Ignored vehicle message [' + topic + ']=' + message)
+      // console.warn('Ignored vehicle message [' + topic + ']=' + message)
     }
   }
 }
@@ -193,7 +195,7 @@ export function processVehicleTemplateMessages(topic: string, message: string) {
       // updateCpFromChargeTemplate(index, template)
     }
   } else {
-    console.warn('Ignored VEHICLE TEMPLATE message [' + topic + ']=' + message)
+    // console.warn('Ignored VEHICLE TEMPLATE message [' + topic + ']=' + message)
   }
 }
 function updateCpFromChargeTemplate(index: number, template: ChargeTemplate) {

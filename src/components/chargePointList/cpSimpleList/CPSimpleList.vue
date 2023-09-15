@@ -45,6 +45,8 @@ const chargepointsToDisplay = computed(() => {
 .tableheader {
   margin: 0;
   padding-left: 0;
+  background-color: var(--color-bg);
+  color: var(--color-menu);
 }
 .alignleft {
   text-align: left;
@@ -57,5 +59,6 @@ const chargepointsToDisplay = computed(() => {
 }
 .table {
   border-spacing: 1rem;
+  background-color: var(--color-bg);
 }
 </style>

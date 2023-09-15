@@ -16,7 +16,8 @@ export interface RawDayGraphDataItem {
   pv: Object,
   bat: Object,
   cp: Object,
-  ev: Object
+  ev: Object,
+  sh: Object
 }
 export const graphData: { data: GraphDataItem[], graphMode: string } = reactive({
   data: [],
@@ -27,11 +28,21 @@ export var initializeUsageGraph = true
 export function sourceGraphIsInitialized () {
   initializeSourceGraph = false
 }
+export function sourceGraphIsNotInitialized () {
+  initializeSourceGraph = true
+}
+
 export function usageGraphIsInitialized () {
   initializeUsageGraph = false
 }
+export function usageGraphIsNotInitialized () {
+  initializeUsageGraph = true
+}
 export function setInitializeUsageGraph (val: boolean) {
   initializeUsageGraph = val
+}
+export function setInitializeSourceGraph (val: boolean) {
+  initializeSourceGraph = val
 }
 export function setGraphData(d: GraphDataItem[]) {
   graphData.data = d
@@ -102,7 +113,6 @@ export const monthGraph = reactive({
   month: new Date().getMonth() +1,
   year: new Date().getFullYear(),
   activate() {
-    console.log("activate month graph")
     let dateString = this.year.toString() 
       + this.month.toString().padStart(2,'0')
     mqttSubscribe (this.topic)
@@ -119,6 +129,7 @@ export const monthGraph = reactive({
       this.month=12
       this.year -= 1 
     }
+    this.activate()
   },
   forward() {
     if ((this.month-1) < new Date().getMonth()) {
@@ -127,6 +138,7 @@ export const monthGraph = reactive({
         this.month = 1
         this.year += 1
     }
+    this.activate()
   }
   }
 })
@@ -143,10 +155,12 @@ export function initGraph() {
       break
     case 'today':
       liveGraph.deactivate()
+      monthGraph.deactivate()
       dayGraph.activate()  
       break
     case 'day':
       liveGraph.deactivate()
+      monthGraph.deactivate()
       dayGraph.activate()  
       break
     case 'month':
@@ -155,4 +169,13 @@ export function initGraph() {
       monthGraph.activate()
       break
   }
+}
+
+export function calculateAutarchy(cat: string, values: GraphDataItem) {
+  values[cat + 'Pv'] =
+    (values[cat] * (values.solarPower - values.gridPush)) /
+    (values.solarPower - values.gridPush + values.gridPull + values.batOut)
+  values[cat + 'Bat'] =
+    (values[cat] * values.batOut) /
+    (values.solarPower - values.gridPush + values.gridPull + values.batOut)
 }

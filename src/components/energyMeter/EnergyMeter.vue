@@ -1,49 +1,24 @@
 <template>
-  <WBWidget>
+  <WBWidget :full-width="true">
     <template v-slot:title>{{ heading }}</template>
     <template v-slot:buttons>
-      <EMMenu
-        @shiftLeft="shiftLeft"
-        @shiftRight="shiftRight"
-        @toggleMonthlyView="toggleMonthlyView"
-        :show-left-button="globalConfig.showLeftButton"
-        :show-right-button="globalConfig.showRightButton"
-      ></EMMenu>
+      <EMMenu @shiftLeft="shiftLeft" @shiftRight="shiftRight" @toggleMonthlyView="toggleMonthlyView"
+        :show-left-button="globalConfig.showLeftButton" :show-right-button="globalConfig.showRightButton"></EMMenu>
     </template>
     <figure id="energymeter" class="p-0 m-0">
       <svg viewBox="0 0 500 500">
         <g :transform="'translate(' + margin.left + ',' + margin.top + ')'">
           <!--  Bar Graph -->
-          <EMBarGraph
-            :plotdata="plotdata"
-            :xScale="xScale"
-            :yScale="yScale"
-            :height="height"
-            :margin="margin"
-          ></EMBarGraph>
+          <EMBarGraph :plotdata="plotdata" :xScale="xScale" :yScale="yScale" :height="height" :margin="margin">
+          </EMBarGraph>
           <!-- Y Axis -->
-          <EMYAxis
-            :yScale="yScale"
-            :width="width"
-            :fontsize="axisFontsize"
-            :config="globalConfig"
-          ></EMYAxis>
-          <text
-            :x="-margin.left"
-            y="-15"
-            fill="var(--color-axis)"
-            :font-size="axisFontsize"
-          >
+          <EMYAxis :yScale="yScale" :width="width" :fontsize="axisFontsize" :config="globalConfig"></EMYAxis>
+          <text :x="-margin.left" y="-15" fill="var(--color-axis)" :font-size="axisFontsize">
             kWh
           </text>
-          <EMLabels
-            :plotdata="plotdata"
-            :xScale="xScale"
-            :yScale="yScale"
-            :height="height"
-            :margin="margin"
-            :config="globalConfig"
-          ></EMLabels>
+          <EMLabels :plotdata="plotdata" :xScale="xScale" :yScale="yScale" :height="height" :margin="margin"
+            :config="globalConfig"></EMLabels>
+
         </g>
       </svg>
     </figure>
@@ -51,7 +26,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed } from 'vue'
 import * as d3 from 'd3'
 import type { ItemList, PowerItem } from '@/assets/js/types'
 import { sourceSummary, historicSummary } from '@/assets/js/model'
@@ -69,6 +43,7 @@ import {
   setInitializeEnergyGraph,
 } from '@/assets/js/themeConfig'
 import { dayGraph, graphData } from '@/components/powerGraph/model'
+import { computed } from 'vue'
 
 // props
 const props = defineProps<{
@@ -109,15 +84,14 @@ function calcPlotData(
       result = Object.values(sourceSummary)
         .concat(props.usageDetails)
         .filter((row) => row.energy > 0)
-        break
+      break
     case 'day':
       result = Object.values(historicSummary).filter((row) => row.energy > 0)
       break
     case 'month':
-    //result = Object.values(this.historicSummary).filter(
-    //  (row) => row.energy > 0
-    // );
-    // break;
+      result = Object.values(historicSummary).filter(
+      (row) => row.energy > 0)
+     break
   }
   return result
 }
@@ -131,7 +105,7 @@ const xScale = computed(() => {
 const yScale = computed(() => {
   return d3
     .scaleLinear()
-    .range([height - margin.bottom - margin.top, 0])
+    .range([height - margin.bottom - margin.top, 15])
     .domain([0, d3.max(plotdata.value, (d: PowerItem) => d.energy) as number])
 })
 const heading = computed(() => {

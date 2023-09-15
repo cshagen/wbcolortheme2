@@ -4,12 +4,18 @@
  * Copyright (c) 2022 Claus Hagen
  */
 
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import * as d3 from 'd3'
 import type { ChargeModeInfo } from './types'
-import { shDevices } from './model'
-import { initGraph, dayGraph, monthGraph } from '@/components/powerGraph/model'
+import { addShDevice, shDevices } from '@/components/smartHome/model'
+import {
+  initGraph,
+  dayGraph,
+  monthGraph,
+  setInitializeSourceGraph,
+} from '@/components/powerGraph/model'
 import { sendCommand } from './sendMessages'
+import { ChargeMode } from '@/components/chargePointList/model'
 export class Config {
   private _showRelativeArcs: boolean = false
   showTodayGraph: boolean = true
@@ -19,15 +25,18 @@ export class Config {
   private _showGrid: boolean = false
   private _smartHomeColors: string = 'normal'
   private _decimalPlaces: number = 1
-  private _showQuickAccess  = true
+  private _showQuickAccess = true
   private _simpleCpList = false
   private _showAnimations = true
+  private _preferWideBoxes = false
   maxPower: number = 4000
   isEtEnabled: boolean = false
   etPrice: number = 20.5
   showRightButton = true
   showLeftButton = true
   graphMode = ''
+  animationDuration = 300
+  animationDelay = 100
   constructor() {}
   get showRelativeArcs() {
     return this._showRelativeArcs
@@ -43,7 +52,7 @@ export class Config {
     this._graphPreference = mode
     savePrefs()
   }
-  setGraphPreference (mode: string) {
+  setGraphPreference(mode: string) {
     this._graphPreference = mode
   }
   get displayMode() {
@@ -60,7 +69,7 @@ export class Config {
     this._showGrid = setting
     savePrefs()
   }
-  
+
   get decimalPlaces() {
     return this._decimalPlaces
   }
@@ -74,26 +83,35 @@ export class Config {
   set smartHomeColors(setting: string) {
     this._smartHomeColors = setting
     switchSmarthomeColors(setting)
+    savePrefs()
   }
   get showQuickAccess() {
     return this._showQuickAccess
   }
-  set showQuickAccess (show: boolean) {
+  set showQuickAccess(show: boolean) {
     this._showQuickAccess = show
     savePrefs()
   }
   get simpleCpList() {
     return this._simpleCpList
   }
-  set simpleCpList (show: boolean) {
+  set simpleCpList(show: boolean) {
     this._simpleCpList = show
     savePrefs()
   }
   get showAnimations() {
     return this._showAnimations
   }
-  set showAnimations (show: boolean) {
+  set showAnimations(show: boolean) {
     this._showAnimations = show
+    savePrefs()
+  }
+  get preferWideBoxes() {
+    return this._preferWideBoxes
+  }
+  set preferWideBoxes(yes: boolean) {
+    this._preferWideBoxes = yes
+    savePrefs()
   }
 }
 export const globalConfig = reactive(new Config())
@@ -108,6 +126,7 @@ export function initConfig() {
   doc.classed('shcolors-standard', globalConfig.smartHomeColors == 'standard')
   doc.classed('shcolors-advanced', globalConfig.smartHomeColors == 'advanced')
   doc.classed('shcolors-normal', globalConfig.smartHomeColors == 'normal')
+  setInitializeSourceGraph
 }
 export var initializeEnergyGraph = true
 export function energyGraphInitialized() {
@@ -116,24 +135,59 @@ export function energyGraphInitialized() {
 export function setInitializeEnergyGraph(val: boolean) {
   initializeEnergyGraph = val
 }
+export var animateEnergyGraph = true
+export function setAnimateEnergyGraph(val: boolean) {
+  animateEnergyGraph = val
+}
 
-export function setGraphMode(mode:string) {
+export function setGraphMode(mode: string) {
   globalConfig.graphMode = mode
 }
+// Handle wide vs narrow screen layouts
+const breakpoint = 992
+export const screensize = reactive({
+  x: document.documentElement.clientWidth,
+  y: document.documentElement.clientHeight,
+})
+export function updateDimensions() {
+  screensize.x = document.documentElement.clientWidth
+  screensize.y = document.documentElement.clientHeight
+  initConfig()
+}
+export const widescreen = computed(() => {
+  return screensize.x >= breakpoint
+})
 export const chargemodes: { [key: string]: ChargeModeInfo } = {
-  instant_charging: {
-    name: 'Sofort',
-    color: 'var(--color-charging)',
-    icon: 'fa-bolt',
+  stop: {
+    mode: ChargeMode.stop,
+    name: 'Stop',
+    color: 'var(--color-fg)',
+    icon: 'fa-power-off',
   },
-  pv_charging: { name: 'PV', color: 'var(--color-pv', icon: 'fa-solar-panel' },
+  standby: {
+    mode: ChargeMode.standby,
+    name: 'Standby',
+    color: 'var(--color-axis',
+    icon: 'fa-pause',
+  },
+  pv_charging: {
+    mode: ChargeMode.pv_charging,
+    name: 'PV',
+    color: 'var(--color-pv',
+    icon: 'fa-solar-panel',
+  },
   scheduled_charging: {
+    mode: ChargeMode.scheduled_charging,
     name: 'Zielladen',
     color: 'var(--color-battery)',
     icon: 'fa-bullseye',
   },
-  standby: { name: 'Standby', color: 'var(--color-axis', icon: 'fa-pause' },
-  stop: { name: 'Stop', color: 'var(--color-fg)', icon: 'fa-power-off' },
+  instant_charging: {
+    mode: ChargeMode.instant_charging,
+    name: 'Sofort',
+    color: 'var(--color-charging)',
+    icon: 'fa-bolt',
+  },
 }
 // methods
 export function savePrefs() {
@@ -198,8 +252,9 @@ interface Preferences {
   relPM?: boolean
   maxPow?: number
   showQA?: boolean
-  simpleCP? : boolean
-  animation? : boolean
+  simpleCP?: boolean
+  animation?: boolean
+  wideB?: boolean
 }
 
 function writeCookie() {
@@ -218,6 +273,7 @@ function writeCookie() {
   prefs.showQA = globalConfig.showQuickAccess
   prefs.simpleCP = globalConfig.simpleCpList
   prefs.animation = globalConfig.showAnimations
+  prefs.wideB = globalConfig.preferWideBoxes
   document.cookie =
     'openWBColorTheme=' + JSON.stringify(prefs) + '; max-age=16000000'
 }
@@ -236,11 +292,15 @@ function readCookie() {
       globalConfig.smartHomeColors = prefs.smartHomeC
     }
     if (prefs.hideSH !== undefined) {
-      prefs.hideSH.map((i) => (shDevices[i].showInGraph = false))
+      prefs.hideSH.map((i) => {
+        if (shDevices[i] == undefined) {
+          addShDevice(i)
+        }
+        shDevices[i].showInGraph = false
+      })
     }
     if (prefs.showLG !== undefined) {
-      globalConfig.setGraphPreference ( prefs.showLG ? 'live' : 'today')
-      // console.log (prefs.showLG)
+      globalConfig.setGraphPreference(prefs.showLG ? 'live' : 'today')
     }
     if (prefs.maxPow !== undefined) {
       globalConfig.maxPower = +prefs.maxPow
@@ -266,6 +326,9 @@ function readCookie() {
     if (prefs.animation != undefined) {
       globalConfig.showAnimations = prefs.animation
     }
+    if (prefs.wideB != undefined) {
+      globalConfig.preferWideBoxes = prefs.wideB
+    }
   }
 }
 
@@ -276,7 +339,7 @@ export function shiftLeft() {
       globalConfig.graphPreference = 'day'
       globalConfig.showRightButton = true
       initGraph()
-    break
+      break
     case 'today':
       globalConfig.graphMode = 'day'
       dayGraph.date = new Date()
@@ -291,6 +354,7 @@ export function shiftLeft() {
       break
     case 'month':
       monthGraph.back()
+
       break
     default:
       break
@@ -309,10 +373,12 @@ export function shiftRight() {
     case 'day':
       dayGraph.forward()
       let now = new Date()
-      if (dayGraph.date.getDate() == now.getDate() 
-        && dayGraph.date.getMonth() == now.getMonth() 
-        && dayGraph.date.getFullYear() == now.getFullYear()) {
-          globalConfig.graphMode = 'today'
+      if (
+        dayGraph.date.getDate() == now.getDate() &&
+        dayGraph.date.getMonth() == now.getMonth() &&
+        dayGraph.date.getFullYear() == now.getFullYear()
+      ) {
+        globalConfig.graphMode = 'today'
       }
       initGraph()
       initializeEnergyGraph = true
@@ -325,8 +391,14 @@ export function shiftRight() {
   }
 }
 export function toggleMonthlyView() {
-  console.info ("monthly view toggle")
-  globalConfig.graphMode = 'month'
-  initGraph()
-  // sendCommand({"command":"getMonthlyLog","data":{"month":"202211"}})
+  switch (globalConfig.graphMode) {
+    case 'month':
+      globalConfig.graphMode = 'today'
+      initGraph()
+      break
+    default:
+      globalConfig.graphMode = 'month'
+      initGraph()
+      break
+  }
 }
