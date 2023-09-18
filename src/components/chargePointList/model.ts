@@ -24,7 +24,7 @@ export class ChargePoint {
   currentPlan = ''
   averageConsumption = 0
   vehicleName = ''
-  range = 0
+  rangeCharged = 0
   rangeUnit = ''
   counter = 0
   dailyYield = 0

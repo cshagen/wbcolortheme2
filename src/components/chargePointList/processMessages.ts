@@ -80,6 +80,9 @@ export function processChargepointMessages(topic: string, message: string) {
       topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/connected_vehicle\/soc$/i)
     ) {
       // console.warn('Ignored Connected Vehicle SOC ' + topic + ' : ' + message)
+        const obj = JSON.parse(message)  
+      chargePoints[index].rangeCharged=obj.range_charged
+      chargePoints[index].rangeUnit=obj.range_unit
     } else if (
       topic.match(
         /^openwb\/chargepoint\/[0-9]+\/get\/connected_vehicle\/soc_config$/i,

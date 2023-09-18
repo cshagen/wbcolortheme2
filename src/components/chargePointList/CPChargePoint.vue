@@ -40,7 +40,7 @@
           <InfoItem heading="Geladen:">
             <FormatWattH :wattH="chargepoint.dailyYield * 1000"></FormatWattH>
           </InfoItem>
-          <InfoItem heading="Distanz:">
+          <InfoItem heading="gel. Reichw.:">
             {{ chargedRangeString }}
           </InfoItem>
         </div>
@@ -167,7 +167,6 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import * as d3 from 'd3'
 import type { ChargePoint } from './model'
 import { chargemodes } from '@/assets/js/themeConfig'
 import WBWidget from '@/components/shared/WBWidget.vue'
@@ -176,9 +175,6 @@ import CPChargeConfigPanel from './cpConfig/CPChargeConfigPanel.vue'
 import BatterySymbol from '@/components/shared/BatterySymbol.vue'
 import FormatWatt from '@/components/shared/FormatWatt.vue'
 import FormatWattH from '../shared/FormatWattH.vue'
-import ModalComponent from '../shared/ModalComponent.vue'
-import { Modal } from 'bootstrap'
-
 import RadioBarInput from '@/components/shared/RadioBarInput.vue'
 import WbWidgetFlex from '../shared/WbWidgetFlex.vue'
 
@@ -187,28 +183,14 @@ const props = defineProps<{
   fullWidth? : boolean 
 }>()
 // state
-let showConfig = ref(false)
-var $: any
+
 // computed
 const chargeAmpereString = computed(() => {
-  return props.chargepoint.current + ' A'
-})
-const chargePhasesString = computed(() => {
-  return props.chargepoint.phasesInUse
+  return (Math.round(props.chargepoint.current * 10)/10).toLocaleString(undefined) + ' A'
 })
 const chargedRangeString = computed(() => {
-  if (props.chargepoint.dailyYield > 0) {
-    return props.chargepoint.averageConsumption
-      ? Math.round(
-          (props.chargepoint.dailyYield /
-            props.chargepoint.averageConsumption) *
-            100,
-        ) + ' km'
-      : ''
-  } else {
-    return ''
-  }
-})
+    return Math.round(props.chargepoint.rangeCharged).toString() + ' ' + props.chargepoint.rangeUnit
+  })
 const statusString = computed(() => {
   if (props.chargepoint.isLocked) {
     return 'Gesperrt'

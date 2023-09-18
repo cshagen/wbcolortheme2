@@ -15,10 +15,10 @@
     <div class="row m-1 mt-0 p-0">
       <div class="col m-0 mb-1 p-0 d-flex justify-content-between">
         <InfoItem heading="Leistung:">
-          {{ formatWatt(device.power) }}
+          <FormatWatt :watt="device.power"></FormatWatt>
         </InfoItem>
         <InfoItem heading="Energie:">
-          {{ formatWattH(device.energy) }}
+          <FormatWattH :wattH="device.energy"></FormatWattH>
         </InfoItem>
         <InfoItem heading="Laufzeit:">
           {{ formatTime(device.runningTime) }}
@@ -29,22 +29,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import type { ShDevice } from './model'
-import { globalConfig } from '@/assets/js/themeConfig'
-import { formatWatt, formatWattH, formatTime, formatTemp } from '@/assets/js/helpers'
+import { formatTime, formatTemp } from '@/assets/js/helpers'
 import WbSubwidget from '../shared/WbSubwidget.vue'
 import InfoItem from '../shared/InfoItem.vue'
-import type InfoItemVue from '../shared/InfoItem.vue'
+import FormatWatt from '../shared/FormatWatt.vue'
+import FormatWattH from '../shared/FormatWattH.vue'
 import { updateServer } from '@/assets/js/sendMessages'
 const props = defineProps<{
   device: ShDevice
 }>()
 
 
-function nameCellStyle() {
-  return { color: props.device.color }
-}
 const switchIcon = computed(() => {
   return (props.device.status == 'on') ? 'fa-toggle-on'
   : props.device.status == 'waiting' ? 'fa-spinner fa-spin'   
@@ -95,54 +92,8 @@ const deviceMode = computed(() => {
 </script>
 
 <style scoped>
-.tablerow {
-  margin: 14px;
-  background-color: var(--color-bg);
-  color: var(--color-fg);
-}
 
-.tablecell {
-  color: var(--color-fg);
-  background-color: var(--color-bg);
-  text-align: center;
-  padding-top: 2px;
-  padding-left: 2px;
-  padding-right: 2px;
-  vertical-align: baseline;
-  line-height: 1.4rem;
-}
 
-.buttoncell {
-  padding: 0;
-  margin: 0;
-}
-
-.left {
-  text-align: left;
-}
-
-.tablecell.right {
-  text-align: right;
-}
-
-.tablecolum1 {
-  color: var(--color-fg);
-  text-align: left;
-  margin: 0;
-  padding: 0;
-}
-
-.tableicon {
-  color: var(--color-menu);
-}
-
-.fa-star {
-  color: var(--color-evu);
-}
-
-.fa-clock {
-  color: var(--color-battery);
-}
 
 .statusbutton {
   font-size: var(--font-large);

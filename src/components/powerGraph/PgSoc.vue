@@ -29,17 +29,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import * as d3 from 'd3'
-import { chargePoints } from '../chargePointList/model'
+import { chargePoints, vehicles } from '../chargePointList/model'
 import { graphData, type GraphDataItem } from './model'
+
 const props = defineProps<{
   width: number
   height: number
   margin: { left: number; top: number; right: number; bottom: number }
-  cpId: number
+  order: number // 0 or 1
 }>()
-const chargepoints = computed(() => {
-  return Object.values(chargePoints)
-})
+const evs = computed (() => Object.values(vehicles))
 const xScale = computed(() => {
   let e = d3.extent(graphData.data, (d) => d.date)
   if (e[0] && e[1]) {
@@ -58,25 +57,20 @@ const line = computed(() => {
   const path = d3
     .line<GraphDataItem>()
     .x((d) => xScale.value(d.date))
-    .y((d) => (yScale.value(d['soc' + props.cpId]) != undefined) ? yScale.value(d['soc' + props.cpId]) : 0)
+    .y((d) => (yScale.value(d['soc' + props.order]) != undefined) ? yScale.value(d['soc' + props.order]) : yScale.value(0))
   let p = path(graphData.data)
   return p ? p : ''
 })
 const cpName = computed(() => {
-  return chargepoints.value[props.cpId - 1]
-    ? chargepoints.value[props.cpId - 1].name
-    : ''
+  return evs.value[props.order].name ?? ''
 })
 const cpColor = computed(() => {
-  console.log (chargepoints.value[props.cpId - 1]
-    ? chargepoints.value[props.cpId - 1].color
-    : '')
-  return chargepoints.value[props.cpId - 1]
-    ? chargepoints.value[props.cpId - 1].color
-    : ''
+  return props.order == 0 
+    ? 'var(--color-cp1)'
+    : 'var(--color-cp2)'
 })
 const nameX = computed(() => {
-  if (props.cpId == 1) {
+  if (props.order == 0) {
     return props.width - 3
   } else {
     return 3
@@ -84,19 +78,19 @@ const nameX = computed(() => {
 })
 const nameY = computed(() => {
   if (graphData.data.length > 0) {
-    if (props.cpId == 1) {
+    if (props.order == 0) {
       return yScale.value(
-        graphData.data[graphData.data.length - 1]['soc' + props.cpId] + 2,
-      )
+        graphData.data[graphData.data.length - 1].soc0 + 2)
+      
     } else {
-      return yScale.value(graphData.data[0]['soc' + props.cpId] + 2)
+      return yScale.value(graphData.data[0].soc1 + 2) 
     }
   } else {
     return 0
   }
 })
 const textPosition = computed(() => {
-  if (props.cpId == 1) {
+  if (props.order == 0) {
     return 'end'
   } else {
     return 'start'

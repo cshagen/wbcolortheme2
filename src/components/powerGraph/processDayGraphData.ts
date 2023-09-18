@@ -8,16 +8,19 @@ import {
   dayGraph,
 } from './model'
 import { historicSummary, usageSummary } from '@/assets/js/model'
+import { chargePoints, vehicles } from '../chargePointList/model'
 let startValues: GraphDataItem = {}
 let endValues: GraphDataItem = {}
 let pvChargeCounter = 0
 let batChargeCounter = 0
 let consumerCategories = ['charging', 'house', 'batIn']
-
+let evSocs : string[] = []
 // methods:
 
 export function processDayGraphMessages(topic: string, message: string) {
   const inputTable: RawDayGraphDataItem[] = JSON.parse(message).entries
+  evSocs = Object.values(vehicles).map(v=>'soc-ev'+v.id.toString())
+
   consumerCategories.map((cat) => {
     historicSummary[cat].energyPv = 0
     historicSummary[cat].energyBat = 0
@@ -65,14 +68,14 @@ function transformDatatable(
     previousRow = transformedRow
   })
   endValues = transformedRow
-  //endValues.chargingPv = pvChargeCounter
-  //endValues.chargingBat = batChargeCounter
+ 
   return outputTable
 }
 
 // transform one row of the incoming graph data table
 function transformRow(currentRow: RawDayGraphDataItem): GraphDataItem {
   let currentItem: GraphDataItem = {}
+  currentItem.devices = 0
   if (globalConfig.graphMode == 'day' || globalConfig.graphMode == 'today') {
     let d = timeParse('%H:%M')(currentRow.date)
     if (d) {
@@ -124,11 +127,12 @@ function transformRow(currentRow: RawDayGraphDataItem): GraphDataItem {
   Object.entries(currentRow.sh).forEach(([id, values]) => {
     if (id != 'all') {
       currentItem[id] = values.imported
+      currentItem['devices'] += values.imported
     } else {
-      currentItem['devices'] = values.imported
+      currentItem['devices'] += values.imported
     }
   })
-  currentItem['devices']=0
+  //currentItem['devices']=0
   return currentItem
 }
 
@@ -163,19 +167,7 @@ function calculatePowerValues(
     'charging',
     'devices'
   ]
-
-  const evSocs = [
-    'soc-ev0',
-    'soc-ev1',
-    'soc-ev2',
-    'soc-ev3',
-    'soc-ev4',
-    'soc-ev5',
-    'soc-ev6',
-    'soc-ev7',
-    'soc-ev8',
-    'soc-ev9',
-  ]
+  
   cats.concat(cps).forEach((category) => {
     result[category] = calculatePower(currentRow, previousRow, category)
     if (category == 'cp6') {
@@ -184,15 +176,8 @@ function calculatePowerValues(
   cats.concat(shs).forEach((category) => {
     result[category] = calculatePower(currentRow, previousRow, category)
   })
-
-  let socs: number[] = []
-  evSocs.forEach((label) => {
-    if (currentRow[label] != undefined) {
-      socs.push(currentRow[label])
-    }
-  })
-  result.soc1 = socs[0]
-  result.soc2 = socs[1]
+  result.soc0 = evSocs[0] ? currentRow[evSocs[0]] : 0
+  result.soc1 = evSocs[1] ? currentRow[evSocs[1]] : 0
   result.selfUsage = result.solarPower - result.gridPush
   result.house =
     result.solarPower +
@@ -200,23 +185,13 @@ function calculatePowerValues(
     result.batOut -
     result.gridPush -
     result.batIn -
-    result.cp0 -
-    result.cp1 -
-    result.cp2 -
-    result.cp3 -
-    result.cp4 -
-    result.cp5 -
-    result.cp6 -
-    result.cp7 -
-    result.cp8 -
-    result.cp9
+    result.charging -
+    result.devices
   result.inverter = 0
 
   let usedEnergy = result.gridPull + result.batOut + result.solarPower
   if (usedEnergy > 0) {
     consumerCategories.map((cat) => calculateAutarchy(cat, result))
-    // pvChargeCounter += (result.charging * result.solarPower / usedEnergy / 12 * 1000)
-    // batChargeCounter += (result.charging * result.batOut / usedEnergy / 12 * 1000)
   } else {
     consumerCategories.map((cat) => {
       result[cat + 'Pv'] = 0
