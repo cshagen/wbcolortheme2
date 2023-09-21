@@ -64,6 +64,9 @@ export function formatTime(seconds: number) {
 		return (minutes + " min");
 	}
 }
+export function formatDate(d: Date) {
+	return `${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}`
+}
 
 export function formatMonth(month: number, year: number) {
 	const months = ['Jan', 'Feb', 'März', 'April', 'Mai', 'Juni', 'Juli', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];

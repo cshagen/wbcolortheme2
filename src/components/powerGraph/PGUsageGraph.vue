@@ -213,7 +213,7 @@ function drawMonthGraph(graph: d3.Selection<d3.BaseType, unknown, HTMLElement, a
       .delay(delay)
       .ease(d3.easeLinear)
       .attr('y', (d) => yScale.value(d[0]))
-      .attr('height', (d) => yScale.value(d[1]) - yScale.value(d[0]))
+      .attr('height', (d,i, v) => yScale.value(d[1]) - yScale.value(d[0]))
     usageGraphIsInitialized()
   } else {
     graph.selectAll('*').remove()

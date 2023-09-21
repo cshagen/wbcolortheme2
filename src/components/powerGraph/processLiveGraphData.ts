@@ -119,6 +119,7 @@ function extractValues(data: RawGraphDataItem): GraphDataItem {
   if (values.selfUsage < 0) {
     values.selfUsage = 0
   }
+  values.devices = 0
   return values
 }
 function fullDate(timeString: string) {

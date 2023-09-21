@@ -2,9 +2,26 @@
   <WBWidget :full-width="true">
     <template v-slot:title>{{ heading }}</template>
     <template v-slot:buttons>
-      <EMMenu @shiftLeft="shiftLeft" @shiftRight="shiftRight" @toggleMonthlyView="toggleMonthlyView"
-        :show-left-button="globalConfig.showLeftButton" :show-right-button="globalConfig.showRightButton"></EMMenu>
+      <span class="d-flex justify-content-end align-items-center" data-bs-toggle="collapse" data-bs-target="#graphsettings2">
+        <span class="my-0 badge rounded-pill datebadge mx-1">{{  displayDate  }}
+        </span>
+      </span>
+    
+
+
+      <!-- <EMMenu @shiftLeft="shiftLeft" @shiftRight="shiftRight" @toggleMonthlyView="toggleMonthlyView"
+        :show-left-button="globalConfig.showLeftButton" :show-right-button="globalConfig.showRightButton"></EMMenu> -->
     </template>
+    <div class="collapse" id="graphsettings2">
+      <PGMenu
+        @shiftLeft="shiftLeft"
+        @shiftRight="shiftRight"
+        :show-left-button="globalConfig.showLeftButton"
+        :show-right-button="globalConfig.showRightButton"
+        widgetid="graphsettings2"
+      >
+      </PGMenu>
+    </div>
     <figure id="energymeter" class="p-0 m-0">
       <svg viewBox="0 0 500 500">
         <g :transform="'translate(' + margin.left + ',' + margin.top + ')'">
@@ -30,18 +47,19 @@ import * as d3 from 'd3'
 import type { ItemList, PowerItem } from '@/assets/js/types'
 import { sourceSummary, historicSummary } from '@/assets/js/model'
 import { formatMonth } from '@/assets/js/helpers'
-import EMMenu from './EMMenu.vue'
+import PGMenu from '../powerGraph/PGMenu.vue'
 import EMBarGraph from './EMBarGraph.vue'
 import EMYAxis from './EMYAxis.vue'
 import EMLabels from './EMLabels.vue'
 import WBWidget from '../shared/WBWidget.vue'
+import { globalConfig, setInitializeEnergyGraph } from '@/assets/js/themeConfig'
 import {
-  globalConfig,
+monthGraph,
   shiftLeft,
   shiftRight,
-  toggleMonthlyView,
-  setInitializeEnergyGraph,
-} from '@/assets/js/themeConfig'
+  toggleMonthlyView
+} from '@/components/powerGraph/model'
+
 import { dayGraph, graphData } from '@/components/powerGraph/model'
 import { computed } from 'vue'
 
@@ -136,6 +154,40 @@ const heading = computed(() => {
   }
   return result
 })
+
+const displayDate = computed(() => {
+  let text = ''
+  switch (graphData.graphMode) {
+    case 'live':
+      if (graphData.data.length) {
+        const startTime = graphData.data[0].date
+        const endTime = graphData.data[graphData.data.length - 1].date
+        const liveGraphMinutes = Math.round((endTime - startTime) / 60000)
+        return liveGraphMinutes + ' min'
+      } else {
+        console.warn('Graph Data empty.')
+      }
+      break
+    case 'today':
+      return 'heute'
+      break
+    case 'day':
+      let d = dayGraph.date
+      return (
+        dayGraph.date.getDate() + '.' + (dayGraph.date.getMonth() + 1) + '.'
+      )
+      break
+    case 'month':
+      return formatMonth(monthGraph.month - 1, monthGraph.year)
+  }
+  return heading
+})
 </script>
 
-<style></style>
+<style scoped>
+.datebadge {
+  background-color: var(--color-menu);
+  color: var(--color-bg);
+  font-size: var(--font-medium);
+  font-weight: normal;
+}</style>

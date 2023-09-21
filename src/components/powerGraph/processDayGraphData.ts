@@ -1,6 +1,6 @@
 import { timeParse } from 'd3'
-import { globalConfig } from '@/assets/js/themeConfig'
 import {
+  graphData,
   type GraphDataItem,
   type RawDayGraphDataItem,
   setGraphData,
@@ -8,18 +8,16 @@ import {
   dayGraph,
 } from './model'
 import { historicSummary, usageSummary } from '@/assets/js/model'
-import { chargePoints, vehicles } from '../chargePointList/model'
+import { vehicles } from '../chargePointList/model'
 let startValues: GraphDataItem = {}
 let endValues: GraphDataItem = {}
-let pvChargeCounter = 0
-let batChargeCounter = 0
-let consumerCategories = ['charging', 'house', 'batIn']
-let evSocs : string[] = []
+let consumerCategories = ['charging', 'house', 'batIn', 'devices']
+let evSocs: string[] = []
 // methods:
 
 export function processDayGraphMessages(topic: string, message: string) {
   const inputTable: RawDayGraphDataItem[] = JSON.parse(message).entries
-  evSocs = Object.values(vehicles).map(v=>'soc-ev'+v.id.toString())
+  evSocs = Object.values(vehicles).map(v => 'soc-ev' + v.id.toString())
 
   consumerCategories.map((cat) => {
     historicSummary[cat].energyPv = 0
@@ -35,7 +33,7 @@ export function processDayGraphMessages(topic: string, message: string) {
       Math.round(historicSummary[cat].energyBat * 100) / 100
   })
   updateEnergyValues(startValues, endValues)
-  if (globalConfig.graphMode == 'today') {
+  if (graphData.graphMode == 'today') {
     setTimeout(() => initGraph(), 300000)
   }
 }
@@ -68,7 +66,7 @@ function transformDatatable(
     previousRow = transformedRow
   })
   endValues = transformedRow
- 
+
   return outputTable
 }
 
@@ -76,7 +74,7 @@ function transformDatatable(
 function transformRow(currentRow: RawDayGraphDataItem): GraphDataItem {
   let currentItem: GraphDataItem = {}
   currentItem.devices = 0
-  if (globalConfig.graphMode == 'day' || globalConfig.graphMode == 'today') {
+  if (graphData.graphMode == 'day' || graphData.graphMode == 'today') {
     let d = timeParse('%H:%M')(currentRow.date)
     if (d) {
       d.setMonth(dayGraph.date.getMonth())
@@ -167,7 +165,7 @@ function calculatePowerValues(
     'charging',
     'devices'
   ]
-  
+
   cats.concat(cps).forEach((category) => {
     result[category] = calculatePower(currentRow, previousRow, category)
     if (category == 'cp6') {
@@ -239,13 +237,14 @@ function updateEnergyValues(
   historicSummary.batIn.energy = (endValues.batIn - startValues.batIn) / 1000
   historicSummary.charging.energy =
     (endValues.charging - startValues.charging) / 1000
-
+  historicSummary.devices.energy =
+    (endValues.devices - startValues.devices) / 1000
   // historicSummary.charging.energyPv = (endValues.chargingPv - startValues.chargingPv) / 1000
   // historicSummary.charging.energyBat = (endValues.chargingBat - startValues.chargingBat) / 1000
   historicSummary.charging.pvPercentage = Math.round(
     ((historicSummary.charging.energyPv + historicSummary.charging.energyBat) /
       historicSummary.charging.energy) *
-      100,
+    100,
   )
 
   historicSummary.house.energy =
@@ -256,14 +255,14 @@ function updateEnergyValues(
     historicSummary.batIn.energy -
     historicSummary.charging.energy -
     historicSummary.devices.energy
-
+  usageSummary.devices.energy = historicSummary.devices.energy
   consumerCategories.map((cat) => {
     usageSummary[cat].energyPv = historicSummary[cat].energyPv
     usageSummary[cat].energyBat = historicSummary[cat].energyBat
     historicSummary[cat].pvPercentage = Math.round(
       ((historicSummary[cat].energyPv + historicSummary[cat].energyBat) /
         historicSummary[cat].energy) *
-        100,
+      100,
     )
     usageSummary[cat].pvPercentage = historicSummary[cat].pvPercentage
   })

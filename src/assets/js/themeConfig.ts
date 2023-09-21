@@ -34,7 +34,7 @@ export class Config {
   etPrice: number = 20.5
   showRightButton = true
   showLeftButton = true
-  graphMode = ''
+  // graphMode = ''
   animationDuration = 300
   animationDelay = 100
   constructor() {}
@@ -140,9 +140,7 @@ export function setAnimateEnergyGraph(val: boolean) {
   animateEnergyGraph = val
 }
 
-export function setGraphMode(mode: string) {
-  globalConfig.graphMode = mode
-}
+
 // Handle wide vs narrow screen layouts
 const breakpoint = 992
 export const screensize = reactive({
@@ -332,73 +330,3 @@ function readCookie() {
   }
 }
 
-export function shiftLeft() {
-  switch (globalConfig.graphMode) {
-    case 'live':
-      globalConfig.graphMode = 'today'
-      globalConfig.graphPreference = 'day'
-      globalConfig.showRightButton = true
-      initGraph()
-      break
-    case 'today':
-      globalConfig.graphMode = 'day'
-      dayGraph.date = new Date()
-      dayGraph.back()
-      initGraph()
-      initializeEnergyGraph = true
-      break
-    case 'day':
-      dayGraph.back()
-      initGraph()
-      initializeEnergyGraph = true
-      break
-    case 'month':
-      monthGraph.back()
-
-      break
-    default:
-      break
-  }
-}
-export function shiftRight() {
-  switch (globalConfig.graphMode) {
-    case 'live':
-      break
-    case 'today':
-      globalConfig.graphMode = 'live'
-      globalConfig.graphPreference = 'live'
-      globalConfig.showRightButton = false
-      initGraph()
-      break
-    case 'day':
-      dayGraph.forward()
-      let now = new Date()
-      if (
-        dayGraph.date.getDate() == now.getDate() &&
-        dayGraph.date.getMonth() == now.getMonth() &&
-        dayGraph.date.getFullYear() == now.getFullYear()
-      ) {
-        globalConfig.graphMode = 'today'
-      }
-      initGraph()
-      initializeEnergyGraph = true
-      break
-    case 'month':
-      monthGraph.forward()
-      break
-    default:
-      break
-  }
-}
-export function toggleMonthlyView() {
-  switch (globalConfig.graphMode) {
-    case 'month':
-      globalConfig.graphMode = 'today'
-      initGraph()
-      break
-    default:
-      globalConfig.graphMode = 'month'
-      initGraph()
-      break
-  }
-}

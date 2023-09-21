@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
 import { mqttSubscribe, mqttUnsubscribe } from '../../assets/js/mqttClient'
 import { sendCommand } from '@/assets/js/sendMessages'
-import { globalConfig, setGraphMode } from '@/assets/js/themeConfig'
+import { globalConfig, setInitializeEnergyGraph } from '@/assets/js/themeConfig'
 
 export interface GraphDataItem {
   [key: string]: number
@@ -19,10 +19,23 @@ export interface RawDayGraphDataItem {
   ev: Object,
   sh: Object
 }
-export const graphData: { data: GraphDataItem[], graphMode: string } = reactive({
-  data: [],
-  graphMode: 'today'
-})
+
+export class GraphData {
+  data: GraphDataItem[] = []
+  private _graphMode = 'today'
+  
+  get graphMode() {
+    return this._graphMode
+  }
+  set graphMode(mode:string) {
+    this._graphMode = mode
+  }
+}
+
+
+export const graphData  = reactive(
+  new GraphData()
+)
 export var initializeSourceGraph = true
 export var initializeUsageGraph = true
 export function sourceGraphIsInitialized () {
@@ -46,7 +59,7 @@ export function setInitializeSourceGraph (val: boolean) {
 }
 export function setGraphData(d: GraphDataItem[]) {
   graphData.data = d
-  graphData.graphMode = globalConfig.graphMode 
+  graphData.graphMode = graphData.graphMode 
 }
 export const liveGraph = {
   refreshTopicPrefix : 'openWB/graph/' + 'alllivevaluesJson',
@@ -93,6 +106,7 @@ export const dayGraph = reactive({
     let dateString = this.date.getFullYear().toString() 
       + (this.date.getMonth() + 1).toString().padStart(2,'0') 
       + this.date.getDate().toString().padStart(2,'0')
+      graphData.data = []
     mqttSubscribe (this.topic)
     sendCommand({command: 'getDailyLog', 
       data: {day: dateString}
@@ -106,7 +120,13 @@ export const dayGraph = reactive({
   },
   forward() {
     this.date = new Date(this.date.setTime(this.date.getTime() + 86400000))
-  }
+  },
+  setDate(newDate: Date) {
+    this.date = newDate
+  },
+  getDate() {
+    return this.date
+  } 
 })
 export const monthGraph = reactive({
   topic: 'openWB/log/monthly/#',
@@ -115,6 +135,7 @@ export const monthGraph = reactive({
   activate() {
     let dateString = this.year.toString() 
       + this.month.toString().padStart(2,'0')
+      graphData.data = []
     mqttSubscribe (this.topic)
     sendCommand({command: 'getMonthlyLog', 
       data: {month: dateString}
@@ -140,15 +161,18 @@ export const monthGraph = reactive({
     }
     this.activate()
   }
-  }
+  },
+  getDate() {
+    return new Date (this.year, this.month)
+  } 
 })
 export function initGraph() {
-  if (globalConfig.graphMode == '') {
+  if (graphData.graphMode == '') {
    setGraphMode (globalConfig.graphPreference)
   }
   initializeSourceGraph = true
   initializeUsageGraph = true
-  switch (globalConfig.graphMode) {
+  switch (graphData.graphMode) {
     case 'live':
       dayGraph.deactivate()
       liveGraph.activate()
@@ -169,8 +193,11 @@ export function initGraph() {
       monthGraph.activate()
       break
   }
+  setInitializeEnergyGraph(true)
 }
-
+export function setGraphMode(mode: string) {
+  graphData.graphMode = mode
+}
 export function calculateAutarchy(cat: string, values: GraphDataItem) {
   values[cat + 'Pv'] =
     (values[cat] * (values.solarPower - values.gridPush)) /
@@ -178,4 +205,88 @@ export function calculateAutarchy(cat: string, values: GraphDataItem) {
   values[cat + 'Bat'] =
     (values[cat] * values.batOut) /
     (values.solarPower - values.gridPush + values.gridPull + values.batOut)
+}
+
+export function shiftLeft() {
+  switch (graphData.graphMode) {
+    case 'live':
+      graphData.graphMode = 'today'
+      globalConfig.showRightButton = true
+      initGraph()
+      break
+    case 'today':
+      graphData.graphMode = 'day'
+      dayGraph.date = new Date()
+      dayGraph.back()
+      initGraph()
+      break
+    case 'day':
+      dayGraph.back()
+      initGraph()
+      break
+    case 'month':
+      monthGraph.back()
+
+      break
+    default:
+      break
+  }
+}
+export function shiftRight() {
+  switch (graphData.graphMode) {
+    case 'live':
+      break
+    case 'today':
+      graphData.graphMode = 'live'
+      globalConfig.showRightButton = false
+      initGraph()
+      break
+    case 'day':
+      dayGraph.forward()
+      let now = new Date()
+      if (
+        dayGraph.date.getDate() == now.getDate() &&
+        dayGraph.date.getMonth() == now.getMonth() &&
+        dayGraph.date.getFullYear() == now.getFullYear()
+      ) {
+        graphData.graphMode = 'today'
+      }
+      initGraph()
+      break
+    case 'month':
+      monthGraph.forward()
+      break
+    default:
+      break
+  }
+}
+export function setGraphDate (newDate: Date) {
+  if (graphData.graphMode == 'day'|| graphData.graphMode == 'today') {
+    dayGraph.setDate(newDate)
+    let now = new Date()
+    if (
+      dayGraph.date.getDate() == now.getDate() &&
+      dayGraph.date.getMonth() == now.getMonth() &&
+      dayGraph.date.getFullYear() == now.getFullYear()
+    ) {
+      graphData.graphMode = 'today'
+    } else {
+      graphData.graphMode = 'day'
+    }
+    initGraph()
+    }
+}
+
+
+export function toggleMonthlyView() {
+  switch (graphData.graphMode) {
+    case 'month':
+      graphData.graphMode = 'today'
+      initGraph()
+      break
+    default:
+      graphData.graphMode = 'month'
+      initGraph()
+      break
+  }
 }

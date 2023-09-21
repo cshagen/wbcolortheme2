@@ -152,7 +152,10 @@ export function processVehicleMessages(topic: string, message: string) {
           cp.soc = JSON.parse(message)
         }
       })
-    } else if (topic.match(/^openwb\/vehicle\/[0-9]+\/charge_template$/i)) {
+    } else if (topic.match(/^openwb\/vehicle\/[0-9]+\/get\/range$/i)) {
+      vehicles[index].range = +message
+    }
+    else if (topic.match(/^openwb\/vehicle\/[0-9]+\/charge_template$/i)) {
       vehicles[index].updateChargeTemplateId(+message)
     } else if (topic.match(/^openwb\/vehicle\/[0-9]+\/ev_template$/i)) {
       vehicles[index].updateEvTemplateId(+message)

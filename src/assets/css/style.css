@@ -61,7 +61,7 @@ html {
   font-size: var(--font-verysmall);
 }
 .smallTextSize {
-  font-size: var(--font-small);
+  font-size: var(--font-medium);
 }
 .regularTextSize {
   font-size: var(--font-normal);
@@ -126,7 +126,8 @@ body > .container-fluid {
   --color-input: lightgrey;
   --font-normal: 1.4rem;
   --font-large: 1.6rem;
-  --font-small: 1.2rem;
+  --font-medium: 1.2rem;
+  --font-small: 1.0rem;
   --font-verysmall: 0.7rem;
   --font-extralarge: 1.6rem;
   --font-settings: 16px;
@@ -274,4 +275,8 @@ display:flex;
 
 swiper-slide {
   display:flex;
+}
+
+option {
+  color: blue;
 }

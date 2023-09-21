@@ -59,7 +59,6 @@ const leafStyle = computed(() => {
   }
 })
 function toggle() {
-  console.info(props.node)
   if (childCount.value > 0) {
     expanded.value = !expanded.value
   } 

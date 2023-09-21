@@ -59,7 +59,7 @@
 }
 
 .btn {
-	font-size: var(--font-small);
+	font-size: var(--font-medium);
 	background-color: var(--color-bg);
 	color: var(--color-fg)
 }

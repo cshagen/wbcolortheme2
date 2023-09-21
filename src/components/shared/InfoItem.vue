@@ -20,7 +20,7 @@ const props = defineProps<{
 <style scoped>
 .heading {
   color: var(--color-menu);
-  font-size: var(--font-small);
+  font-size: var(--font-medium);
 }
 .content {
   font-size: var(--font-normal);

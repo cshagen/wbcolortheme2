@@ -94,6 +94,10 @@
           <h3>
             <i class="fa-solid fa-sm fa-car me-2"> </i>
             {{ chargepoint.vehicleName }}
+            <span
+              v-if="chargepoint.hasPriority"
+              class="me-1 fa-solid fa-xs fa-star ps-1"
+            ></span>
           </h3>
         </div>
       </div>
@@ -118,12 +122,15 @@
               :style="{ color: 'var(--color-menu)' }"
             ></i>
           </InfoItem>
-          <InfoItem heading="Priorität:">
+         <!--  <InfoItem heading="Priorität:">
             <span
               v-if="chargepoint.hasPriority"
               class="me-1 fa-solid fa-xs fa-star ps-1"
             ></span>
             {{ props.chargepoint.hasPriority ? 'Ja' : 'Nein' }}
+          </InfoItem> -->
+          <InfoItem heading="Reichweite:">
+            {{ ((vehicles[props.chargepoint.connectedVehicle]) ? Math.round(vehicles[1].range) : 0) }} km
           </InfoItem>
           <InfoItem heading="Zeitplan:">
             <span
@@ -167,7 +174,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import type { ChargePoint } from './model'
+import { type ChargePoint, vehicles } from './model'
 import { chargemodes } from '@/assets/js/themeConfig'
 import WBWidget from '@/components/shared/WBWidget.vue'
 import InfoItem from '@/components/shared/InfoItem.vue'

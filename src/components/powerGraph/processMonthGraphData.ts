@@ -4,6 +4,7 @@ import {
   type RawDayGraphDataItem,
   setGraphData,
   calculateAutarchy,
+  graphData,
 } from './model'
 import { historicSummary, usageSummary } from '@/assets/js/model'
 let monthlyValues: {[key:string]:number} = {}

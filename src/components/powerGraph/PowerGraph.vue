@@ -2,16 +2,23 @@
   <WBWidget :full-width="true">
     <template v-slot:title>{{ heading }}</template>
     <template v-slot:buttons>
+      <span class="d-flex justify-content-end align-items-center" data-bs-toggle="collapse" data-bs-target="#graphsettings">
+        <span class="my-0 badge rounded-pill datebadge mx-1">{{  displayDate  }}
+        </span>
+      </span>
+    </template>
+    <div class="collapse" id="graphsettings">
       <PGMenu
         @change-stack-order="changeStackOrder"
         @shiftLeft="shiftLeft"
         @shiftRight="shiftRight"
         :show-left-button="globalConfig.showLeftButton"
         :show-right-button="globalConfig.showRightButton"
+        widgetid="graphsettings"
       >
       </PGMenu>
-    </template>
-    <figure id="powergraph" class="p-0 m-0">
+    </div>
+    <figure id="powergraph" class="p-0 m-0" @click="changeStackOrder">
       <svg :viewBox="'0 0 ' + width + ' ' + height">
         <!-- Draw the source graph -->
         <PGSourceGraph
@@ -64,28 +71,12 @@
           ></PgSocAxis>
         </g>
 
-        <g id="rect">
-          <rect
-            :x="margin.left + 5"
-            y="0"
-            rx="15"
-            ry="15"
-            width="80"
-            height="25"
-            fill="var(--color-menu)"
-            stroke="var(--color-bg)"
-          />
-        </g>
-        <g id="date">
-          <text
-            :x="margin.left + 45"
-            y="17"
-            font-size="16"
-            fill="var(--color-bg)"
-            text-anchor="middle"
-          >
-            {{ displayDate }}
-          </text>
+    
+      
+        <g id="button">
+          
+          <text :x="width" :y="height -10" color = "var(--color-menu)" text-anchor="end">
+            <tspan fill="var(--color-menu)" class="fas fa-lg">{{ "\uf0dc" }}</tspan></text>  
         </g>
       </svg>
     </figure>
@@ -105,8 +96,10 @@ import {
   dayGraph,
   monthGraph,
   setInitializeUsageGraph,
+  shiftLeft,
+  shiftRight
 } from './model'
-import { globalConfig, shiftLeft, shiftRight } from '@/assets/js/themeConfig'
+import { globalConfig } from '@/assets/js/themeConfig'
 import PgSoc from './PgSoc.vue'
 import PgSocAxis from './PgSocAxis.vue'
 import { vehicles } from '../chargePointList/model'
@@ -179,4 +172,14 @@ function changeStackOrder() {
 }
 </script>
 
-<style></style>
+<style scoped>
+.fa-ellipsis-vertical {
+  color: var(--color-menu);
+}
+.datebadge {
+  background-color: var(--color-menu);
+  color: var(--color-bg);
+  font-size: var(--font-medium);
+  font-weight: normal;
+}
+</style>

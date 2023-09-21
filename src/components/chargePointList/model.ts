@@ -216,6 +216,7 @@ export class Vehicle {
   private _evTemplateId = 0
   tags: Array<string> = []
   soc = 0
+  range = 0
   constructor(index: number) {
     this.id = index
   }
