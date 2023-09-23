@@ -30,7 +30,7 @@ export function formatWatt(watt: number, decimalPlaces = 1) {
 	}
 }
 
-export function formatWattH(wattH: number, decimalPlaces = 1) {
+export function formatWattH(wattH: number, decimalPlaces = 1, useMWh = false) {
 	let wattResult
 	if (wattH >= 1000 && decimalPlaces < 4) {
 		switch (decimalPlaces) {
@@ -50,9 +50,9 @@ export function formatWattH(wattH: number, decimalPlaces = 1) {
 				wattResult = Math.round(wattH / 100) / 10;
 				break;
 		}
-		return (wattResult.toLocaleString(undefined, { minimumFractionDigits: decimalPlaces }) + " kWh");
+		return (wattResult.toLocaleString(undefined, { minimumFractionDigits: decimalPlaces }) + (useMWh ? " MWh":" kWh"))
 	} else {
-		return (Math.round(wattH).toLocaleString(undefined) + " Wh");
+		return (Math.round(wattH).toLocaleString(undefined) + (useMWh ? " kWh" :  " Wh"))
 	}
 }
 export function formatTime(seconds: number) {
@@ -64,8 +64,16 @@ export function formatTime(seconds: number) {
 		return (minutes + " min");
 	}
 }
-export function formatDate(d: Date) {
-	return `${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}`
+export function formatDate(d: Date, mode: string = 'day') {
+	switch (mode) {
+		case 'day':
+		case 'today':
+			return `${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`
+		case 'month':
+			return `${d.getMonth()}-${d.getFullYear()}`
+		case 'year':
+			return `${d.getFullYear()}`
+	}
 }
 
 export function formatMonth(month: number, year: number) {

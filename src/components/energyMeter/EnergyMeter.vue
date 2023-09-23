@@ -2,24 +2,15 @@
   <WBWidget :full-width="true">
     <template v-slot:title>{{ heading }}</template>
     <template v-slot:buttons>
-      <span class="d-flex justify-content-end align-items-center" data-bs-toggle="collapse" data-bs-target="#graphsettings2">
-        <span class="my-0 badge rounded-pill datebadge mx-1">{{  displayDate  }}
+      <span class="d-flex justify-content-end align-items-center" data-bs-toggle="collapse"
+        data-bs-target="#graphsettings2">
+        <span class="my-0 badge rounded-pill datebadge mx-1">{{ displayDate }}
         </span>
       </span>
-    
-
-
-      <!-- <EMMenu @shiftLeft="shiftLeft" @shiftRight="shiftRight" @toggleMonthlyView="toggleMonthlyView"
-        :show-left-button="globalConfig.showLeftButton" :show-right-button="globalConfig.showRightButton"></EMMenu> -->
     </template>
     <div class="collapse" id="graphsettings2">
-      <PGMenu
-        @shiftLeft="shiftLeft"
-        @shiftRight="shiftRight"
-        :show-left-button="globalConfig.showLeftButton"
-        :show-right-button="globalConfig.showRightButton"
-        widgetid="graphsettings2"
-      >
+      <PGMenu @shiftLeft="shiftLeft" @shiftRight="shiftRight" :show-left-button="globalConfig.showLeftButton"
+        :show-right-button="globalConfig.showRightButton" widgetid="graphsettings2">
       </PGMenu>
     </div>
     <figure id="energymeter" class="p-0 m-0">
@@ -31,20 +22,18 @@
           <!-- Y Axis -->
           <EMYAxis :yScale="yScale" :width="width" :fontsize="axisFontsize" :config="globalConfig"></EMYAxis>
           <text :x="-margin.left" y="-15" fill="var(--color-axis)" :font-size="axisFontsize">
-            kWh
+            {{ graphData.graphMode=='year' ? 'MWh' : 'kWh'}}
           </text>
           <EMLabels :plotdata="plotdata" :xScale="xScale" :yScale="yScale" :height="height" :margin="margin"
             :config="globalConfig"></EMLabels>
-
         </g>
       </svg>
     </figure>
   </WBWidget>
 </template>
-
 <script setup lang="ts">
 import * as d3 from 'd3'
-import type { ItemList, PowerItem } from '@/assets/js/types'
+import type { PowerItem } from '@/assets/js/types'
 import { sourceSummary, historicSummary } from '@/assets/js/model'
 import { formatMonth } from '@/assets/js/helpers'
 import PGMenu from '../powerGraph/PGMenu.vue'
@@ -54,15 +43,13 @@ import EMLabels from './EMLabels.vue'
 import WBWidget from '../shared/WBWidget.vue'
 import { globalConfig, setInitializeEnergyGraph } from '@/assets/js/themeConfig'
 import {
-monthGraph,
+  monthGraph,
   shiftLeft,
   shiftRight,
-  toggleMonthlyView
+  yearGraph
 } from '@/components/powerGraph/model'
-
 import { dayGraph, graphData } from '@/components/powerGraph/model'
 import { computed } from 'vue'
-
 // props
 const props = defineProps<{
   usageDetails: PowerItem[]
@@ -82,37 +69,23 @@ const plotdata = computed(() => {
   let sources = Object.values(sourceSummary)
   let usage = props.usageDetails
   let historic = Object.values(historicSummary)
-  setInitializeEnergyGraph(true)
-  return calcPlotData(sources, usage, historic)
-})
-function calcPlotData(
-  sources: PowerItem[],
-  usage: PowerItem[],
-  history: PowerItem[],
-) {
   let result: PowerItem[] = []
+  setInitializeEnergyGraph(true)
   switch (graphData.graphMode) {
     default:
     case 'live':
-      result = Object.values(sourceSummary)
-        .concat(props.usageDetails)
-        .filter((row) => row.energy > 0)
-      break
     case 'today':
-      result = Object.values(sourceSummary)
-        .concat(props.usageDetails)
+      result = sources
+        .concat(usage)
         .filter((row) => row.energy > 0)
       break
     case 'day':
-      result = Object.values(historicSummary).filter((row) => row.energy > 0)
-      break
     case 'month':
-      result = Object.values(historicSummary).filter(
-      (row) => row.energy > 0)
-     break
+    case 'year':
+      result = historic.filter((row) => row.energy > 0)
   }
   return result
-}
+})
 const xScale = computed(() => {
   return d3
     .scaleBand()
@@ -126,37 +99,8 @@ const yScale = computed(() => {
     .range([height - margin.bottom - margin.top, 15])
     .domain([0, d3.max(plotdata.value, (d: PowerItem) => d.energy) as number])
 })
-const heading = computed(() => {
-  let result = 'Energie '
-  switch (graphData.graphMode) {
-    case 'live':
-    case 'today':
-      result = result + ' heute'
-      break
-    case 'day':
-      result =
-        result +
-        dayGraph.date.getDate() +
-        '.' +
-        (dayGraph.date.getMonth() + 1) +
-        '.'
-      break
-    case 'month':
-      /*  result =
-            "Monatswerte " +
-            formatMonth(
-              globalConfig.graphMonth.month,
-              globalConfig.graphMonth.year
-            ); */
-      break
-    default:
-      break
-  }
-  return result
-})
-
+const heading = 'Energie'
 const displayDate = computed(() => {
-  let text = ''
   switch (graphData.graphMode) {
     case 'live':
       if (graphData.data.length) {
@@ -170,17 +114,17 @@ const displayDate = computed(() => {
       break
     case 'today':
       return 'heute'
-      break
     case 'day':
       let d = dayGraph.date
       return (
         dayGraph.date.getDate() + '.' + (dayGraph.date.getMonth() + 1) + '.'
       )
-      break
     case 'month':
       return formatMonth(monthGraph.month - 1, monthGraph.year)
+    case 'year':
+      return yearGraph.year.toString()
+    default: return "???"
   }
-  return heading
 })
 </script>
 
@@ -190,4 +134,5 @@ const displayDate = computed(() => {
   color: var(--color-bg);
   font-size: var(--font-medium);
   font-weight: normal;
-}</style>
+}
+</style>

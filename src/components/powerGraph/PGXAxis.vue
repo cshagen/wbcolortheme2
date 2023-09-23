@@ -69,7 +69,7 @@ const xAxisGeneratorMonth = computed(() =>
 )
 
 const ticksize = computed(() => {
-  if (globalConfig.graphMode !== 'month') {
+  if (graphData.graphMode !== 'month' && graphData.graphMode !== 'year') {
     return globalConfig.showGrid ? -(props.height / 2 - 7) : -10
   } else {
     return 0
@@ -77,7 +77,7 @@ const ticksize = computed(() => {
 })
 const xAxisGenerator2 = computed(() => {
   const ticksize2 = -(props.height / 2 - 10)
-  if (globalConfig.graphMode == 'month') {
+  if (graphData.graphMode == 'month') {
     return
   } else {
     return d3
@@ -108,7 +108,7 @@ const xScaleMonth = computed(() => {
 const drawAxis1 = computed(() => {
   let axis = d3.select<d3.AxisContainerElement, number>('g#PGXAxis')
   axis.selectAll('*').remove()
-  if (globalConfig.graphMode == 'month') {
+  if (graphData.graphMode == 'month' || graphData.graphMode == 'year') {
     axis.call(xAxisGeneratorMonth.value)
   } else {
     axis.call(xAxisGenerator.value)
@@ -134,7 +134,7 @@ const drawAxis1 = computed(() => {
     .attr('y', 12)
     .attr('fill', 'var(--color-axis)')
     .attr('font-size', fontsize)
-    .text('kW')
+    .text((graphData.graphMode == 'year') ? 'MWh' : 'kWh')
     .attr('text-anchor', 'start')
   return 'PGXAxis.vue'
 })

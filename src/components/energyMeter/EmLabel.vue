@@ -2,8 +2,8 @@
 	<g :id="'barlabel-'+ props.item.name">
 		<!-- Energy -->
 		<text :x="props.xScale(item.name) as number + props.xScale.bandwidth() / 2" :y="labelY"
-			:font-size=" labelfontsize " text-anchor="middle" :fill=" item.color "> 
-			{{ formatWattH(item.energy * 1000, globalConfig.decimalPlaces)
+			:font-size="labelfontsize" text-anchor="middle" fill="var(--color-fg)"> 
+			{{ formatWattH(item.energy * 1000, globalConfig.decimalPlaces, (graphData.graphMode=='year'))
 			}}
 		</text>
 		<!-- Autarchy / Self consumption -->
@@ -29,6 +29,7 @@ import * as d3 from 'd3'
 import type { MarginType, PowerItem } from '@/assets/js/types'
 import { globalConfig } from '@/assets/js/themeConfig'
 import { formatWattH } from '@/assets/js/helpers'
+import { graphData } from '../powerGraph/model'
 
 const props = defineProps<{
 	item: PowerItem
@@ -96,7 +97,7 @@ function subString (item: PowerItem) : string {
 	}
 	function subColor (item: PowerItem) : string {
 		if (item.name == 'Netz' || item.name == 'PV') {
-			return ('var(--color-axis)')
+			return ('var(--color-fg)')
 		} else {
 			return ('var(--color-pv)')
 		}

@@ -97,7 +97,8 @@ import {
   monthGraph,
   setInitializeUsageGraph,
   shiftLeft,
-  shiftRight
+  shiftRight,
+yearGraph
 } from './model'
 import { globalConfig } from '@/assets/js/themeConfig'
 import PgSoc from './PgSoc.vue'
@@ -160,6 +161,10 @@ const displayDate = computed(() => {
       break
     case 'month':
       return formatMonth(monthGraph.month - 1, monthGraph.year)
+    case 'year':
+      return yearGraph.year.toString()
+    default:
+      return "???"
   }
   return heading
 })

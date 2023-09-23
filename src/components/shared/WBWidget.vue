@@ -48,10 +48,6 @@ const widgetWidth = computed(() => {
 </script>
 
 <style scoped>
-.wb-widget {
-  width: 100%;
-  border-radius: 30px;
-  
-}
+
 
 </style>

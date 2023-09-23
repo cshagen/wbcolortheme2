@@ -4,6 +4,7 @@ import { globalData, sourceSummary, usageSummary } from './model'
 import { processLiveGraphMessages } from '../../components/powerGraph/processLiveGraphData'
 import { processDayGraphMessages } from '../../components/powerGraph/processDayGraphData'
 import { processMonthGraphMessages } from '../../components/powerGraph/processMonthGraphData'
+import { processYearGraphMessages } from '../../components/powerGraph/processYearGraphData'
 import { initGraph } from '@/components/powerGraph/model'
 import { processBatteryMessages } from '@/components/batteryList/processMessages'
 import { processEtProviderMessages } from '@/components/priceChart/processMessages'
@@ -46,6 +47,7 @@ function processMqttMessage(topic: string, payload: Buffer) {
   } else if (topic.match(/^openwb\/graph\//i)) { processLiveGraphMessages(topic, message)
   } else if (topic.match(/^openwb\/log\/daily\//i)) { processDayGraphMessages(topic, message)
   } else if (topic.match(/^openwb\/log\/monthly\//i)) { processMonthGraphMessages(topic, message)
+  } else if (topic.match(/^openwb\/log\/yearly\//i)) { processYearGraphMessages(topic, message)
   } else if (topic.match(/^openwb\/optional\/et\//i)) { processEtProviderMessages(topic, message)
   }
   // else if ( mqttTopic.match( /^openwb\/global\//i) ) { processGlobalMessages(mqttTopic, message); }

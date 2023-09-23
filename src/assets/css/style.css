@@ -172,7 +172,7 @@ body > .container-fluid {
   --color-axis: #666666;
   --color-grid: black;
   --color-menu: #999999;
-  --color-frame: #999999;
+  --color-frame: #666666;
   --color-subframe: #333333;
   --color-fg: white;
   --color-scale: #999999;
@@ -229,8 +229,10 @@ body > .container-fluid {
 }
 .wb-widget {
   background-color: var(--color-bg);
-  border: 0.5px solid var(--color-frame);
+  border: 0.1px solid var(--color-frame);
   align-self: stretch;
+  width: 100%;
+  border-radius: 30px;
 }
 
 .wb-subwidget {

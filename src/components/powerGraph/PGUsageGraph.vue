@@ -13,6 +13,7 @@ import { globalConfig } from '@/assets/js/themeConfig'
 import {
   graphData,
   initializeUsageGraph,
+  setGraphMode,
   usageGraphIsInitialized,
   usageGraphIsNotInitialized,
 } from './model'
@@ -73,7 +74,7 @@ const draw = computed(() => {
    if (graphData.data.length > 0) {
     const graph = d3.select('g#pgUsageGraph')
 
-    if (graphData.graphMode == 'month') {
+    if (graphData.graphMode == 'month' || graphData.graphMode == 'year') {
       drawMonthGraph(graph)
     } else {
       drawGraph(graph)
@@ -118,12 +119,13 @@ const iScaleMonth = computed(() => d3
   return d3
     .scaleLinear()
     .range([props.height + 10, 2 * props.height])
-    .domain([0, Math.ceil(extent.value[1])])
+    .domain(graphData.graphMode=='year'? [0,Math.ceil(extent.value[1]*10)/10]: [0, Math.ceil(extent.value[1])])
 })
+
 const extent = computed(() => {
   let result = d3.extent(
     graphData.data,
-    (d) => d.house + d.charging + d.batIn + d.inverter,
+    (d) => d.house + d.charging + d.batIn + d.inverter +d.devices,
   )
   if (result[0] != undefined && result[1] != undefined) {
     return result
@@ -131,10 +133,15 @@ const extent = computed(() => {
     return [0, 0]
   }
 })
+
+const ticklength = computed(() => (graphData.graphMode == 'month' || graphData.graphMode == 'year'))
+  ? (-props.width - props.margin.right)
+  : (-props.width)
+
 const yAxisGenerator = computed(() => {
   return d3
     .axisLeft<number>(yScale.value)
-    .tickSizeInner(-props.width)
+    .tickSizeInner(ticklength)
     .ticks(4)
     .tickFormat((d: number) =>
       (d == 0 ? '' : Math.round(d * 10) / 10).toLocaleString(undefined),
