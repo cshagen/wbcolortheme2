@@ -149,18 +149,21 @@ Hagen */
       <hr />
       <div class="d-flex justify-content-between">
         <p class="mx-4">Screen Width: {{ screensize.x }}</p>
-        <button class="btn btn-sm btn-secondary mx-4" @click="toggleMqViewer">
+        <button class="btn btn-sm btn-secondary mx-4" @click="toggleSetup">
+          System Setup
+        </button>
+      <button class="btn btn-sm btn-secondary mx-4" @click="toggleMqViewer">
           MQ Viewer
         </button>
       </div>
+      <hr v-if="showSetup" />
+      <Setup v-if="showSetup"></Setup>
+    
       <hr v-if="showMQ" />
       <MQTTViewer v-if="showMQ"></MQTTViewer>
     </div>
   </div>
-  <!-- <ModalComponent modal-id="themeconfig">
-      <template v-slot:title>Look & Feel</template>
-    <ThemeSettings @resetArcs="resetArcs"></ThemeSettings>
-    </ModalComponent> -->
+
     
 </template>
 
@@ -181,6 +184,7 @@ import SmartHomeList from '@/components/smartHome/SmartHomeList.vue'
 import Carousel from '@/components/shared/Carousel.vue'
 import { msgInit } from '@/assets/js/processMessages'
 import MQTTViewer from '@/components/mqttViewer/MQTTViewer.vue'
+import Setup from '@/components/setup/Setup.vue'
 import ModalComponent from "@/components/shared/ModalComponent.vue";
 import ThemeSettings from "@/views/ThemeSettings.vue";
 import { globalConfig, updateDimensions, screensize } from '@/assets/js/themeConfig'
@@ -197,12 +201,17 @@ const usageDetails = computed(() => {
     .concat([usageSummary.batIn, usageSummary.house])
 })
 const showMQ = ref(false)
+const showSetup = ref(false)
 // methods
 function init() {
   initConfig()
 }
 function toggleMqViewer() {
   showMQ.value = !showMQ.value
+}
+function toggleSetup() {
+  showSetup.value = !showSetup.value
+  console.log ("click")
 }
 function resetArcs() {
   let maxPower =

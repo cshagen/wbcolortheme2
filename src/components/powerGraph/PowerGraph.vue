@@ -2,10 +2,12 @@
   <WBWidget :full-width="true">
     <template v-slot:title>{{ heading }}</template>
     <template v-slot:buttons>
-      <span class="d-flex justify-content-end align-items-center" data-bs-toggle="collapse" data-bs-target="#graphsettings">
+   <!--    <span class="d-flex justify-content-end align-items-center" data-bs-toggle="collapse" data-bs-target="#graphsettings">
         <span class="my-0 badge rounded-pill datebadge mx-1">{{  displayDate  }}
         </span>
-      </span>
+      </span> -->
+      <PgSelector widgetid="graphsettings" @shiftLeft="shiftLeft"
+        @shiftRight="shiftRight" @shiftUp="shiftUp" @shiftDown = "shiftDown" :show-left-button="true" :show-right-button="true"></PgSelector>
     </template>
     <div class="collapse" id="graphsettings">
       <PGMenu
@@ -98,6 +100,8 @@ import {
   setInitializeUsageGraph,
   shiftLeft,
   shiftRight,
+  shiftUp,
+  shiftDown,
 yearGraph
 } from './model'
 import { globalConfig } from '@/assets/js/themeConfig'
@@ -105,6 +109,7 @@ import PgSoc from './PgSoc.vue'
 import PgSocAxis from './PgSocAxis.vue'
 import { vehicles } from '../chargePointList/model'
 import { formatMonth } from '@/assets/js/helpers'
+import PgSelector from './PgSelector.vue'
 
 // state
 const width = 500

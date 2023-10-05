@@ -1,51 +1,75 @@
 <template>
-  <div class="d-flex flex-column graphsettings px-2 mb-2">
+  <div class="d-flex flex-column align-items-end graphsettings px-2 mb-2">
+    <div class="d-flex justify-content-end align-items-center">
+    <RadioBarInput id="pgm" :options="graphmodes.map((v, i) => {
+      return {
+        text: modenames[i],
+        value: v,
+        color: 'var(--color-menu)',
+        active: (v == graphData.graphMode)
+      }
+    })" v-model="gmode">
+    </RadioBarInput>
+    <button class="btn btn-sm align-self-end float-end m-1 mx-2 p-2 closebutton" data-bs-toggle="collapse"
+          :data-bs-target="'#' + props.widgetid">
+          <span class="fa-solid fa-xl ps-1 fa-circle-check"></span>
+        </button>
+  </div>
     <div class="d-flex justify-content-between">
-      <div class="d-flex flex-column">
-        <button class="btn badge rounded-pill graphmodebutton p-2 m-1 mt-2" @click="liveButtonClicked"
-          :style="buttonStyle('live')">Live</button>
-        <button class="btn badge rounded-pill graphmodebutton p-2 m-1" @click="dayButtonClicked"
-          :style="buttonStyle('day')">Tag</button>
-        <button class="btn badge rounded-pill graphmodebutton p-2 m-1" @click="todayButtonClicked"
-          :style="buttonStyle('today')">Heute</button>
-      </div>
+      
       <div class="d-flex justify-content-center align-items-center mt-1">
         <button class="btn btn-outline-secondary btn-lg arrowButton" :class="{ disabled: !props.showLeftButton }"
           id="graphLeftButton" @click="$emit('shiftLeft')">
           <span class="fa-solid fa-xl fa-chevron-circle-left px-0"></span>
         </button>
-        <DateInput :model-value="graphdate" :mode="graphData.graphMode"  @update:modelValue="setDate"></DateInput>
+        <DateInput :model-value="graphdate" :mode="graphData.graphMode" @update:modelValue="setDate"></DateInput>
         <button class="btn btn-outline-secondary btn-lg arrowButton" :class="{ disabled: !props.showRightButton }"
           id="graphRightButton" @click="$emit('shiftRight')">
           <span class="fa-solid fa-xl fa-chevron-circle-right px-0"></span>
         </button>
       </div>
       <div class="d-flex flex-column">
-        <button class="btn badge p-2 m-1 mt-2 rounded-pill graphmodebutton" @click="monthButtonClicked"
-          :style="buttonStyle('month')">Monat</button>
-        <button class="btn badge p-2 m-1 rounded-pill graphmodebutton" @click="yearButtonClicked"
-          :style="buttonStyle('year')">Jahr</button>
-        <button class="btn btn-sm align-self-end float-end m-1 mx-2 p-2 closebutton" data-bs-toggle="collapse"
-          :data-bs-target="'#' + props.widgetid">
-          <span class="fa-solid fa-xl ps-1 fa-circle-check"></span>
-        </button>
+       
+        
       </div>
     </div>
-
+  
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
 import DateInput from '../shared/DateInput.vue'
+import RadioBarInput from '../shared/RadioBarInput.vue';
 import { dayGraph, graphData, initGraph, setGraphDate } from './model'
 import { monthGraph } from './model';
+import RadioBarValues from '@/components/shared/RadioBarInput.vue'
 
 const props = defineProps<{
   showLeftButton: boolean
   showRightButton: boolean
   widgetid: string
 }>()
+const graphmodes = ['live', 'today', 'day', 'month', 'year']
+const modenames = ['Live', 'Heute', 'Tag', 'Monat', 'Jahr']
+const gmode = computed({
+  get() {
+    return graphData.graphMode
+  },
+  set(value: string) {
+    switch (value) {
+      case 'day': dayButtonClicked()
+        break
+      case 'today': todayButtonClicked()
+        break
+      case 'live': liveButtonClicked()
+        break
+      case 'month': monthButtonClicked()
+        break
+      case 'year': yearButtonClicked()
+    }
+  }
+})
 
 const graphdate = computed(() => {
   switch (graphData.graphMode) {

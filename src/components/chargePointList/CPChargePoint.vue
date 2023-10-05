@@ -38,7 +38,7 @@
 
           <!-- Ladung -->
           <InfoItem heading="Geladen:">
-            <FormatWattH :wattH="chargepoint.dailyYield * 1000"></FormatWattH>
+            <FormatWattH :wattH="chargepoint.chargedSincePlugged"></FormatWattH>
           </InfoItem>
           <InfoItem heading="gel. Reichw.:">
             {{ chargedRangeString }}
@@ -63,15 +63,16 @@
       <div class="row m-0 p-1 mt-3 mb-0">
         <div class="col d-flex justify-content-center">
           <RadioBarInput
+            :id="'chargemode-'+chargepoint.name"
             :options="
-              Object.keys(chargemodes).map((v) => [
+              Object.keys(chargemodes).map((v) => { return {
                 
-                chargemodes[v].name,
-                v,
-                chargemodes[v].color,
-                chargemodes[v].icon,
-                (chargemodes[v].mode == chargepoint.chargeMode)
-              ])
+                text: chargemodes[v].name,
+                value: v,
+                color: chargemodes[v].color,
+                icon: chargemodes[v].icon,
+                active: (chargemodes[v].mode == chargepoint.chargeMode)
+              }})
             "
             v-model="chargepoint.chargeMode"
           ></RadioBarInput>

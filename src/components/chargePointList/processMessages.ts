@@ -34,7 +34,7 @@ export function processChargepointMessages(topic: string, message: string) {
         var configMessage = JSON.parse(message)
         chargePoints[index].name = configMessage.name
         chargePoints[index].icon = configMessage.name
-        
+
       } else {
         console.warn('invalid chargepoint index: ' + index)
       }
@@ -48,12 +48,6 @@ export function processChargepointMessages(topic: string, message: string) {
       chargePoints[index].faultState = +message
     } else if (topic.match(/^openWB\/chargepoint\/[0-9]+\/get\/power$/i)) {
       chargePoints[index].power = +message
-    } else if (
-      topic.match(
-        /^openWB\/chargepoint\/[0-9]+\/set\/log\/charged_since_plugged_counter$/i,
-      )
-    ) {
-      chargePoints[index].chargedSincePlugged = +message
     } else if (
       topic.match(/^openWB\/chargepoint\/[0-9]+\/get\/daily_imported$/i)
     ) {
@@ -76,13 +70,17 @@ export function processChargepointMessages(topic: string, message: string) {
       chargePoints[index].phasesInUse = +message
     } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/set\/current/i)) {
       chargePoints[index].current = +message
-    } else if (
+    } else if (topic.match(/^openwb\/chargepoint\/[0-9]+\/set\/log/i)) {
+      const obj = JSON.parse(message)
+      chargePoints[index].chargedSincePlugged = obj.imported_since_plugged
+    }
+    else if (
       topic.match(/^openwb\/chargepoint\/[0-9]+\/get\/connected_vehicle\/soc$/i)
     ) {
       // console.warn('Ignored Connected Vehicle SOC ' + topic + ' : ' + message)
-        const obj = JSON.parse(message)  
-      chargePoints[index].rangeCharged=obj.range_charged
-      chargePoints[index].rangeUnit=obj.range_unit
+      const obj = JSON.parse(message)
+      chargePoints[index].rangeCharged = obj.range_charged
+      chargePoints[index].rangeUnit = obj.range_unit
     } else if (
       topic.match(
         /^openwb\/chargepoint\/[0-9]+\/get\/connected_vehicle\/soc_config$/i,
@@ -171,10 +169,10 @@ export function processVehicleTemplateMessages(topic: string, message: string) {
       let index = +match[0]
       let template: ChargeTemplate = JSON.parse(message) as ChargeTemplate
       if (!template.chargemode.scheduled_charging.plans) {
-        template.chargemode.scheduled_charging.plans={}
+        template.chargemode.scheduled_charging.plans = {}
       }
       if (!template.time_charging.plans) {
-        template.time_charging.plans={}
+        template.time_charging.plans = {}
       }
       chargeTemplates[index] = template
       updateCpFromChargeTemplate(index, template)

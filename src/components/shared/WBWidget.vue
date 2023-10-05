@@ -6,7 +6,7 @@
           <slot name="title"> <div class="p-0">(title goes here)</div> </slot>
           <slot name="subtitle"></slot>
         </h3>
-        <div class="p-4 pb-0 col-4 m-0" style="text-align: right">
+        <div class="p-4 pb-0 m-0" style="text-align: right">
           <slot name="buttons"></slot>
         </div>
       </div>

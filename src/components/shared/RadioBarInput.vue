@@ -4,15 +4,15 @@
       <button
         v-for="(element, index) in options"
         class="btn  btn-outline-secondary btn-sm radiobutton mx-0 mb-0 px-2"
-        :id="'radio-' + element[1]"
-        :value="element[1]"
+        :id="'radio-' + element.value"
+        :value="element.value"
         :style="getColor(index)"
-        :class="element[1] == v ? 'active' : ''"
+        :class="element.value == v ? 'active' : ''"
         @click="setValue"
       >
         <span :style="getColor(index)">
-          <i v-if="element[3]" class="fa-solid" :class="element[3]"></i>
-          {{ element[0] }}
+          <i v-if="element.icon" class="fa-solid" :class="element.icon"></i>
+          {{ element.text }}
         </span>
       </button>
       </div>
@@ -22,8 +22,9 @@
   
   <script setup lang="ts">
   import { computed } from 'vue'
+import InfoItem from './InfoItem.vue';
   const props = defineProps<{
-    options: [number | string, number | string, string?, string?, boolean?][] // name, object, color, icon, active
+    options: InfoItemValues[]  // name, object, color, icon, active
     modelValue: number | string
   }>()
   const emit = defineEmits(['update:modelValue'])
@@ -36,9 +37,8 @@
     },
   })
   function getColor(index: number) {
-    let clr = (props.options[index][2]) ? props.options[index][2] : 'var(--color-fg'
-    if (props.options[index][4]) {
-      
+    let clr = (props.options[index].color) ? props.options[index].color : 'var(--color-fg)'
+    if (props.options[index].active) {
       return { color: 'var(--color-bg)', background: clr }
     } else {
       return { color: clr }
@@ -52,6 +52,13 @@
     if (element.value) {
       v.value = element.value
     }
+  }
+  export type InfoItemValues = {
+    text: string
+    value: string | number
+    color?: string
+    icon?: string
+    active: boolean
   }
   </script>
   

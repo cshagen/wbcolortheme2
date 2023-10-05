@@ -23,58 +23,58 @@ export interface RawDayGraphDataItem {
 export class GraphData {
   data: GraphDataItem[] = []
   private _graphMode = 'today'
-  
+
   get graphMode() {
     return this._graphMode
   }
-  set graphMode(mode:string) {
+  set graphMode(mode: string) {
     this._graphMode = mode
   }
 }
 
 
-export const graphData  = reactive(
+export const graphData = reactive(
   new GraphData()
 )
 export var initializeSourceGraph = true
 export var initializeUsageGraph = true
-export function sourceGraphIsInitialized () {
+export function sourceGraphIsInitialized() {
   initializeSourceGraph = false
 }
-export function sourceGraphIsNotInitialized () {
+export function sourceGraphIsNotInitialized() {
   initializeSourceGraph = true
 }
 
-export function usageGraphIsInitialized () {
+export function usageGraphIsInitialized() {
   initializeUsageGraph = false
 }
-export function usageGraphIsNotInitialized () {
+export function usageGraphIsNotInitialized() {
   initializeUsageGraph = true
 }
-export function setInitializeUsageGraph (val: boolean) {
+export function setInitializeUsageGraph(val: boolean) {
   initializeUsageGraph = val
 }
-export function setInitializeSourceGraph (val: boolean) {
+export function setInitializeSourceGraph(val: boolean) {
   initializeSourceGraph = val
 }
 export function setGraphData(d: GraphDataItem[]) {
   graphData.data = d
-  graphData.graphMode = graphData.graphMode 
+  graphData.graphMode = graphData.graphMode
 }
 export const liveGraph = {
-  refreshTopicPrefix : 'openWB/graph/' + 'alllivevaluesJson',
-  updateTopic : 'openWB/graph/lastlivevaluesJson',
+  refreshTopicPrefix: 'openWB/graph/' + 'alllivevaluesJson',
+  updateTopic: 'openWB/graph/lastlivevaluesJson',
   initialized: false,
   initCounter: 0,
-  graphRefreshCounter : 0,
+  graphRefreshCounter: 0,
   rawDataPacks: [] as RawGraphDataItem[][],
 
   activate() {
     this.unsubscribeUpdates()
     this.subscribeRefresh()
-    this.initialized=false
-    this.initCounter=0
-    this.graphRefreshCounter=0
+    this.initialized = false
+    this.initCounter = 0
+    this.graphRefreshCounter = 0
     this.subscribeRefresh()
     this.rawDataPacks = []
   },
@@ -103,13 +103,14 @@ export const dayGraph = reactive({
   topic: 'openWB/log/daily/#',
   date: new Date(),
   activate() {
-    let dateString = this.date.getFullYear().toString() 
-      + (this.date.getMonth() + 1).toString().padStart(2,'0') 
-      + this.date.getDate().toString().padStart(2,'0')
-      graphData.data = []
-    mqttSubscribe (this.topic)
-    sendCommand({command: 'getDailyLog', 
-      data: {day: dateString}
+    let dateString = this.date.getFullYear().toString()
+      + (this.date.getMonth() + 1).toString().padStart(2, '0')
+      + this.date.getDate().toString().padStart(2, '0')
+    graphData.data = []
+    mqttSubscribe(this.topic)
+    sendCommand({
+      command: 'getDailyLog',
+      data: { day: dateString }
     })
   },
   deactivate() {
@@ -126,19 +127,20 @@ export const dayGraph = reactive({
   },
   getDate() {
     return this.date
-  } 
+  }
 })
 export const monthGraph = reactive({
   topic: 'openWB/log/monthly/#',
-  month: new Date().getMonth() +1,
+  month: new Date().getMonth() + 1,
   year: new Date().getFullYear(),
   activate() {
-    let dateString = this.year.toString() 
-      + this.month.toString().padStart(2,'0')
-      graphData.data = []
-    mqttSubscribe (this.topic)
-    sendCommand({command: 'getMonthlyLog', 
-      data: {month: dateString}
+    let dateString = this.year.toString()
+      + this.month.toString().padStart(2, '0')
+    graphData.data = []
+    mqttSubscribe(this.topic)
+    sendCommand({
+      command: 'getMonthlyLog',
+      data: { month: dateString }
     })
   },
   deactivate() {
@@ -147,36 +149,37 @@ export const monthGraph = reactive({
   back() {
     this.month -= 1
     if (this.month < 1) {
-      this.month=12
-      this.year -= 1 
+      this.month = 12
+      this.year -= 1
     }
     this.activate()
   },
   forward() {
-    if ((this.month-1) < new Date().getMonth()) {
+    if ((this.month - 1) < new Date().getMonth()) {
       this.month = this.month + 1
       if (this.month > 12) {
         this.month = 1
         this.year += 1
+      }
+      this.activate()
     }
-    this.activate()
-  }
   },
   getDate() {
-    return new Date (this.year, this.month)
-  } 
+    return new Date(this.year, this.month)
+  }
 })
 export const yearGraph = reactive({
   topic: 'openWB/log/yearly/#',
-  month: new Date().getMonth() +1,
+  month: new Date().getMonth() + 1,
   year: new Date().getFullYear(),
   activate() {
-    let dateString = this.year.toString() 
-      
-      graphData.data = []
-    mqttSubscribe (this.topic)
-    sendCommand({command: 'getYearlyLog', 
-      data: {year: dateString}
+    let dateString = this.year.toString()
+
+    graphData.data = []
+    mqttSubscribe(this.topic)
+    sendCommand({
+      command: 'getYearlyLog',
+      data: { year: dateString }
     })
   },
   deactivate() {
@@ -185,28 +188,28 @@ export const yearGraph = reactive({
   back() {
     this.month -= 1
     if (this.month < 1) {
-      this.month=12
-      this.year -= 1 
+      this.month = 12
+      this.year -= 1
     }
     this.activate()
   },
   forward() {
-    if ((this.month-1) < new Date().getMonth()) {
+    if ((this.month - 1) < new Date().getMonth()) {
       this.month = this.month + 1
       if (this.month > 12) {
         this.month = 1
         this.year += 1
+      }
+      this.activate()
     }
-    this.activate()
-  }
   },
   getDate() {
-    return new Date (this.year, this.month)
-  } 
+    return new Date(this.year, this.month)
+  }
 })
 export function initGraph() {
   if (graphData.graphMode == '') {
-   setGraphMode (globalConfig.graphPreference)
+    setGraphMode(globalConfig.graphPreference)
   }
   initializeSourceGraph = true
   initializeUsageGraph = true
@@ -220,13 +223,13 @@ export function initGraph() {
       liveGraph.deactivate()
       monthGraph.deactivate()
       yearGraph.deactivate()
-      dayGraph.activate()  
+      dayGraph.activate()
       break
     case 'day':
       liveGraph.deactivate()
       monthGraph.deactivate()
       yearGraph.deactivate()
-      dayGraph.activate()  
+      dayGraph.activate()
       break
     case 'month':
       liveGraph.deactivate()
@@ -240,7 +243,7 @@ export function initGraph() {
       monthGraph.deactivate()
       yearGraph.activate()
       break
-      
+
   }
   setInitializeEnergyGraph(true)
 }
@@ -309,8 +312,37 @@ export function shiftRight() {
       break
   }
 }
-export function setGraphDate (newDate: Date) {
-  if (graphData.graphMode == 'day'|| graphData.graphMode == 'today') {
+export function shiftUp() {
+  switch (graphData.graphMode) {
+    case 'live': shiftLeft()
+      break
+    case 'day':
+    case 'today': graphData.graphMode = 'month'
+      initGraph()
+      break
+    case 'month': graphData.graphMode = 'year'
+      initGraph()
+      break
+    default: break
+  }
+}
+export function shiftDown() {
+  switch (graphData.graphMode) {
+    case 'year': graphData.graphMode = 'month'
+      initGraph()
+      break
+    case 'month': graphData.graphMode = 'day'
+      initGraph()
+      break
+    case 'today':
+    case 'day': graphData.graphMode = 'live'
+      initGraph()
+      break
+    default: break
+  }
+}
+export function setGraphDate(newDate: Date) {
+  if (graphData.graphMode == 'day' || graphData.graphMode == 'today') {
     dayGraph.setDate(newDate)
     let now = new Date()
     if (
@@ -323,7 +355,7 @@ export function setGraphDate (newDate: Date) {
       graphData.graphMode = 'day'
     }
     initGraph()
-    }
+  }
 }
 
 

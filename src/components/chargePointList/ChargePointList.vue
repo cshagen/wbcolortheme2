@@ -3,7 +3,7 @@
     <swiper-container v-if="!globalConfig.simpleCpList" :space-between="0" :slides-per-view="1" :pagination="{ clickable: true }"
       class="cplist m-0 p-0 swiper-chargepoints d-flex align-items-stretch" :class="totalWidth">
       <swiper-slide v-for="chargepoint in chargepointsToDisplay">
-        <div :class="(widescreen) ? 'mb-0' : 'mb-4'" class="d-flex align-items-stretch flex-fill">
+        <div :class="(widescreen) ? 'mb-0' : 'mb-5'" class="d-flex align-items-stretch flex-fill">
           <CPChargePoint :chargepoint="chargepoint" :full-width="true"></CPChargePoint>
         </div>
       </swiper-slide>

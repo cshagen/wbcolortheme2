@@ -9,20 +9,21 @@
             {{ element }}
           </option>
         </select>
-        <select class="form-select" v-if="props.mode !== 'year' " v-model="month" id="selectmonth">
+        <select class="form-select" v-if="props.mode !== 'year' && props.mode != 'live'" v-model="month" id="selectmonth">
           <option v-for="element in months" :value="element">
             {{ element }}
           </option>
         </select>
       </span>
       <span class="d-flex">
-        <select class="form-select yearselector" v-model="_year" id="selectyear">
+        <select class="form-select yearselector" v-if="props.mode != 'live'" v-model="_year" id="selectyear">
           <option v-for="element in years" :value="element">
             {{ element }}
           </option>
 
         </select>
-        <button class="btn commitbutton" @click="updateDate"><span class="fa-solid fa-lg ps-1 fa-circle-check"></span></button>
+        <button v-if="props.mode != 'live'" class="btn commitbutton" @click="updateDate"><span class="fa-solid fa-lg ps-1 fa-circle-check"></span></button>
+        <span v-if="props.mode == 'live'">live</span>
       </span>
     </span>
   </template>
@@ -30,6 +31,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { formatDate } from '@/assets/js/helpers'
+import { graphData } from '../powerGraph/model';
 const props = defineProps<{
   modelValue: Date,
   mode: string

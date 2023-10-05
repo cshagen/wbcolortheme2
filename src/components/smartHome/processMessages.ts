@@ -63,8 +63,7 @@ function processSmarthomeDeviceMessages(topic: string, message: string) {
   } else if (topic.match(/^openWB\/LegacySmarthome\/Devices\/[0-9]+\/TemperatureSensor2$/i,)) {
     shDevices[index].temp[2] = +message
   } else if (topic.match(/^openWB\/LegacySmartHome\/Devices\/[0-9]+\/Status$/i)) {
-		console.log ("Device "+ index + " status: " + message)
-    switch (+message) {
+		switch (+message) {
 			case 10:
 				shDevices[index].status = 'off'
 				break

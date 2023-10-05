@@ -201,6 +201,7 @@ function toggleConfig() {
   padding-right: 2px;
   vertical-align: baseline;
   line-height: 1.4rem;
+  font-size: var(--font-small);
 }
 .buttoncell {
   background-color: var(--color-bg);

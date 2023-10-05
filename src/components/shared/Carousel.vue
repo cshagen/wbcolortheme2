@@ -6,17 +6,17 @@
       }">
 
       <swiper-slide>
-        <div :class="(widescreen) ? 'mb-0' : 'mb-4'" class="flex-fill d-flex align-items-stretch">
+        <div :class="(widescreen) ? 'mb-0' : 'mb-5'" class="flex-fill d-flex align-items-stretch">
           <slot name="item1"></slot>
         </div>
       </swiper-slide>
       <swiper-slide>
-        <div :class="(widescreen) ? 'mb-0' : 'mb-4'" class="flex-fill d-flex align-items-stretch">
+        <div :class="(widescreen) ? 'mb-0' : 'mb-5'" class="flex-fill d-flex align-items-stretch">
           <slot name="item2"></slot>
         </div>
       </swiper-slide>
       <swiper-slide>
-        <div :class="(widescreen) ? 'mb-0' : 'mb-4'" class="flex-fill d-flex align-items-stretch">
+        <div :class="(widescreen) ? 'mb-0' : 'mb-5'" class="flex-fill d-flex align-items-stretch">
           <slot name="item3"></slot>
         </div>
       </swiper-slide>

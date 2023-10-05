@@ -5,6 +5,7 @@ import { processLiveGraphMessages } from '../../components/powerGraph/processLiv
 import { processDayGraphMessages } from '../../components/powerGraph/processDayGraphData'
 import { processMonthGraphMessages } from '../../components/powerGraph/processMonthGraphData'
 import { processYearGraphMessages } from '../../components/powerGraph/processYearGraphData'
+import { processSystemMessages } from '@/components/setup/processMessages'
 import { initGraph } from '@/components/powerGraph/model'
 import { processBatteryMessages } from '@/components/batteryList/processMessages'
 import { processEtProviderMessages } from '@/components/priceChart/processMessages'
@@ -25,6 +26,7 @@ const topicsToSubscribe = [
   'openWB/vehicle/#',
   'openWB/general/chargemode_config/pv_charging/#',
   'openWB/optional/et/#',
+  'openWB/system/#',
   'openWB/LegacySmartHome/#'
 ]
 export function msgInit() {
@@ -49,10 +51,9 @@ function processMqttMessage(topic: string, payload: Buffer) {
   } else if (topic.match(/^openwb\/log\/monthly\//i)) { processMonthGraphMessages(topic, message)
   } else if (topic.match(/^openwb\/log\/yearly\//i)) { processYearGraphMessages(topic, message)
   } else if (topic.match(/^openwb\/optional\/et\//i)) { processEtProviderMessages(topic, message)
-  }
-  // else if ( mqttTopic.match( /^openwb\/global\//i) ) { processGlobalMessages(mqttTopic, message); }
-  // else if ( mqttTopic.match( /^openwb\/system\//i) ) { processSystemMessages(mqttTopic, message); }
-  // else if ( mqttTopic.match( /^openwb\/verbraucher\//i) ) { processVerbraucherMessages(mqttTopic, message); }
+  } // else if ( mqttTopic.match( /^openwb\/global\//i) ) { processGlobalMessages(mqttTopic, message); }
+  else if ( topic.match( /^openwb\/system\//i) ) { processSystemMessages(topic, message); 
+  } // else if ( mqttTopic.match( /^openwb\/verbraucher\//i) ) { processVerbraucherMessages(mqttTopic, message); }
   // else if ( mqttTopic.match( /^openwb\/hook\//i) ) { processHookMessages(mqttTopic, message); }
   // else if ( mqttTopic.match( /^openwb\/SmartHome\/Devices\//i) ) { processSmartHomeDevicesMessages(mqttTopic, message); }
   else if ( topic.match( /^openwb\/LegacySmartHome\//i) ) { processSmarthomeMessages (topic, message); }
