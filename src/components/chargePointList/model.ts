@@ -258,7 +258,7 @@ export enum ChargeMode {
 }
 export interface ChargeTimePlan {
   frequency: {
-    once: Array<string>
+    once: Array<Date>
     selected: string
     weekly: boolean[]
   }
@@ -269,7 +269,7 @@ export interface ChargeTimePlan {
 export function createChargeTimePlan () : ChargeTimePlan {
   return {
     frequency: {
-      once: ['2022-02-02','2022-02-22'],
+      once: [new Date('2022-02-02'),new Date('2022-02-22')],
       selected: 'daily',
       weekly: [false,false,false,false,false,false,false]
     },
@@ -284,7 +284,7 @@ export interface ChargeSchedule {
   time: string
   soc: number
   frequency: {
-    once: Array<string>
+    once: Array<Date>
     selected: string
     weekly: boolean[]
   }
@@ -296,7 +296,7 @@ export function createChargeSchedule () : ChargeSchedule {
     time: '12:00',
     soc: 80,
     frequency: {
-      once: ['2022-02-02','2022-02-22'],
+      once: [new Date('2022-02-02'),new Date('2022-02-22')],
       selected: 'daily',
       weekly: [false,false,false,false,false,false,false]
     }

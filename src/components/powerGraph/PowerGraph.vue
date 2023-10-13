@@ -2,83 +2,44 @@
   <WBWidget :full-width="true">
     <template v-slot:title>{{ heading }}</template>
     <template v-slot:buttons>
-   <!--    <span class="d-flex justify-content-end align-items-center" data-bs-toggle="collapse" data-bs-target="#graphsettings">
-        <span class="my-0 badge rounded-pill datebadge mx-1">{{  displayDate  }}
-        </span>
-      </span> -->
-      <PgSelector widgetid="graphsettings" @shiftLeft="shiftLeft"
-        @shiftRight="shiftRight" @shiftUp="shiftUp" @shiftDown = "shiftDown" :show-left-button="true" :show-right-button="true"></PgSelector>
+      <PgSelector widgetid="graphsettings" @shiftLeft="shiftLeft" @shiftRight="shiftRight" @shiftUp="shiftUp"
+        @shiftDown="shiftDown" :show-left-button="true" :show-right-button="true"></PgSelector>
     </template>
     <div class="collapse" id="graphsettings">
-      <PGMenu
-        @change-stack-order="changeStackOrder"
-        @shiftLeft="shiftLeft"
-        @shiftRight="shiftRight"
-        :show-left-button="globalConfig.showLeftButton"
-        :show-right-button="globalConfig.showRightButton"
-        widgetid="graphsettings"
-      >
+      <PGMenu @change-stack-order="changeStackOrder" @shiftLeft="shiftLeft" @shiftRight="shiftRight"
+        :show-left-button="globalConfig.showLeftButton" :show-right-button="globalConfig.showRightButton"
+        widgetid="graphsettings">
       </PGMenu>
     </div>
     <figure id="powergraph" class="p-0 m-0" @click="changeStackOrder">
       <svg :viewBox="'0 0 ' + width + ' ' + height">
         <!-- Draw the source graph -->
-        <PGSourceGraph
-          :width="width - margin.left - 2 * margin.right"
-          :height="(height - margin.top - margin.bottom) / 2"
-          :margin="margin"
-        />
-        <PGUsageGraph
-          :width="width - margin.left - 2 * margin.right"
-          :height="(height - margin.top - margin.bottom) / 2"
-          :margin="margin"
-          :stack-order="stackOrder"
-        />
-        <PGXAxis
-          :width="width - margin.left - 2 * margin.right"
-          :height="height - margin.top - margin.bottom"
-          :margin="margin"
-          :graphData="graphData"
-        />
+        <PGSourceGraph :width="width - margin.left - 2 * margin.right" :height="(height - margin.top - margin.bottom) / 2"
+          :margin="margin" />
+        <PGUsageGraph :width="width - margin.left - 2 * margin.right" :height="(height - margin.top - margin.bottom) / 2"
+          :margin="margin" :stack-order="globalConfig.usageStackOrder" />
+        <PGXAxis :width="width - margin.left - 2 * margin.right" :height="height - margin.top - margin.bottom"
+          :margin="margin" :graphData="graphData" />
         <g :transform="'translate(' + margin.left + ',' + margin.top + ')'">
-          <PgSoc
-            v-if="
-              (graphData.graphMode == 'day' ||
-                graphData.graphMode == 'today') &&
-              Object.values(vehicles).length > 0
-            "
-            :width="width - margin.left - 2 * margin.right"
-            :height="(height - margin.top - margin.bottom) / 2"
-            :margin="margin"
-            :order="0"
-          ></PgSoc>
-          <PgSoc
-            v-if="
-              (graphData.graphMode == 'day' ||
-                graphData.graphMode == 'today') &&
-              Object.values(vehicles).length > 1
-            "
-            :width="width - margin.left - 2 * margin.right"
-            :height="(height - margin.top - margin.bottom) / 2"
-            :margin="margin"
-            :order="1"
-          ></PgSoc>
-          <PgSocAxis
-            v-if="
-              graphData.graphMode == 'day' || graphData.graphMode == 'today'
-            "
-            :width="width - margin.left - margin.right"
-            :height="(height - margin.top - margin.bottom) / 2"
-            :margin="margin"
-          ></PgSocAxis>
+          <PgSoc v-if="(graphData.graphMode == 'day' ||
+              graphData.graphMode == 'today') &&
+            Object.values(vehicles).length > 0
+            " :width="width - margin.left - 2 * margin.right" :height="(height - margin.top - margin.bottom) / 2"
+            :margin="margin" :order="0"></PgSoc>
+          <PgSoc v-if="(graphData.graphMode == 'day' ||
+              graphData.graphMode == 'today') &&
+            Object.values(vehicles).length > 1
+            " :width="width - margin.left - 2 * margin.right" :height="(height - margin.top - margin.bottom) / 2"
+            :margin="margin" :order="1"></PgSoc>
+          <PgSocAxis v-if="graphData.graphMode == 'day' || graphData.graphMode == 'today'
+            " :width="width - margin.left - margin.right" :height="(height - margin.top - margin.bottom) / 2"
+            :margin="margin"></PgSocAxis>
         </g>
-
-    
-      
+        <!-- select layering for usage graph -->
         <g id="button">
-          
-          <text :x="width" :y="height -10" color = "var(--color-menu)" text-anchor="end">
-            <tspan fill="var(--color-menu)" class="fas fa-lg">{{ "\uf0dc" }}</tspan></text>  
+          <text :x="width" :y="height - 10" color="var(--color-menu)" text-anchor="end">
+            <tspan fill="var(--color-menu)" class="fas fa-lg">{{ "\uf0dc" }}</tspan>
+          </text>
         </g>
       </svg>
     </figure>
@@ -102,7 +63,7 @@ import {
   shiftRight,
   shiftUp,
   shiftDown,
-yearGraph
+  yearGraph
 } from './model'
 import { globalConfig } from '@/assets/js/themeConfig'
 import PgSoc from './PgSoc.vue'
@@ -174,10 +135,11 @@ const displayDate = computed(() => {
   return heading
 })
 function changeStackOrder() {
-  stackOrder.value = stackOrder.value + 1
-  if (stackOrder.value > stackOrderMax) {
-    stackOrder.value = 0
+  let newOrder = globalConfig.usageStackOrder + 1
+  if (newOrder > stackOrderMax) {
+    newOrder = 0
   }
+  globalConfig.usageStackOrder = newOrder
   setInitializeUsageGraph(true)
 }
 </script>
@@ -186,6 +148,7 @@ function changeStackOrder() {
 .fa-ellipsis-vertical {
   color: var(--color-menu);
 }
+
 .datebadge {
   background-color: var(--color-menu);
   color: var(--color-bg);

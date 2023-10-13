@@ -2,17 +2,14 @@
   <WBWidget :full-width="true">
     <template v-slot:title>{{ heading }}</template>
     <template v-slot:buttons>
-      <span class="d-flex justify-content-end align-items-center" data-bs-toggle="collapse"
-        data-bs-target="#graphsettings2">
-        <span class="my-0 badge rounded-pill datebadge mx-1">{{ displayDate }}
-        </span>
-      </span>
+      <PgSelector widgetid="graphsettings" @shiftLeft="shiftLeft" @shiftRight="shiftRight" @shiftUp="shiftUp"
+        @shiftDown="shiftDown" :show-left-button="true" :show-right-button="true"></PgSelector>
     </template>
-    <div class="collapse" id="graphsettings2">
+  <!--   <div class="collapse" id="graphsettings2">
       <PGMenu @shiftLeft="shiftLeft" @shiftRight="shiftRight" :show-left-button="globalConfig.showLeftButton"
         :show-right-button="globalConfig.showRightButton" widgetid="graphsettings2">
       </PGMenu>
-    </div>
+    </div> -->
     <figure id="energymeter" class="p-0 m-0">
       <svg viewBox="0 0 500 500">
         <g :transform="'translate(' + margin.left + ',' + margin.top + ')'">
@@ -22,7 +19,7 @@
           <!-- Y Axis -->
           <EMYAxis :yScale="yScale" :width="width" :fontsize="axisFontsize" :config="globalConfig"></EMYAxis>
           <text :x="-margin.left" y="-15" fill="var(--color-axis)" :font-size="axisFontsize">
-            {{ graphData.graphMode=='year' ? 'MWh' : 'kWh'}}
+            {{ graphData.graphMode == 'year' ? 'MWh' : 'kWh' }}
           </text>
           <EMLabels :plotdata="plotdata" :xScale="xScale" :yScale="yScale" :height="height" :margin="margin"
             :config="globalConfig"></EMLabels>
@@ -41,11 +38,14 @@ import EMBarGraph from './EMBarGraph.vue'
 import EMYAxis from './EMYAxis.vue'
 import EMLabels from './EMLabels.vue'
 import WBWidget from '../shared/WBWidget.vue'
+import PgSelector from '../powerGraph/PgSelector.vue'
 import { globalConfig, setInitializeEnergyGraph } from '@/assets/js/themeConfig'
 import {
   monthGraph,
   shiftLeft,
   shiftRight,
+  shiftUp,
+  shiftDown,
   yearGraph
 } from '@/components/powerGraph/model'
 import { dayGraph, graphData } from '@/components/powerGraph/model'
@@ -129,10 +129,5 @@ const displayDate = computed(() => {
 </script>
 
 <style scoped>
-.datebadge {
-  background-color: var(--color-menu);
-  color: var(--color-bg);
-  font-size: var(--font-medium);
-  font-weight: normal;
-}
+
 </style>

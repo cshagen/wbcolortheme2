@@ -11,6 +11,6 @@ export function msgInit() {
     mqttSubscribe(topic);
   });
 }
-function processMqttMessage(topic: string, message: string) {
-  add (topic, message)
+function processMqttMessage(topic: string, message: Buffer) {
+  add (topic, message.toString())
 }

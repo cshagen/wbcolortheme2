@@ -19,7 +19,7 @@
     <!-- Row 2 -->
     <div class="d-flex align-items-center" :class="row2layout">
       <!-- Left Button -->
-      <span type="button" v-if="editmode > 0" class="p-1"
+      <span type="button" v-if="editmode ==1" class="p-1"
         :class="{ disabled: !props.showLeftButton }" @click="$emit('shiftLeft')">
       <span class="fa-solid fa-xl fa-chevron-circle-left arrowButton"></span>
     </span>
@@ -31,7 +31,7 @@
       </DateInput>
 
       <!-- Right Button -->
-      <span type="button" v-if="editmode > 0" class="arrowButton fa-solid fa-xl fa-chevron-circle-right p-1"
+      <span type="button" v-if="editmode == 1" class="arrowButton fa-solid fa-xl fa-chevron-circle-right p-1"
         :class="{ disabled: !props.showRightButton }" id="graphRightButton" @click="$emit('shiftRight')"></span>
     </div>
     <!-- Row 3 -->
@@ -45,7 +45,7 @@
         :class="{ disabled: !props.showLeftButton }" id="graphLeftButton" @click="$emit('shiftDown')">
       </span>
       <!-- Close Button -->
-      <span v-if="editmode > 0" type="button" class="p-1" @click="toggleEdit">
+      <span v-if="editmode > 0" type="button" class="p-1" @click="editmode=0">
         <span class="fa-solid fa-xl fa-circle-check"></span>
       </span>
 
@@ -88,13 +88,11 @@ const displayDate = computed(() => {
       break
     case 'today':
       return 'heute'
-      break
     case 'day':
       let d = dayGraph.date
       return (
         dayGraph.date.getDate() + '.' + (dayGraph.date.getMonth() + 1) + '.'
       )
-      break
     case 'month':
       return formatMonth(monthGraph.month - 1, monthGraph.year)
     case 'year':
@@ -144,26 +142,12 @@ function toggleEdit() {
     editmode.value = 0
   }
 }
-function buttonStyle(kind: string) {
-  if (graphData.graphMode == kind) {
-    return {
-      'background-color': 'var(--color-menu)',
-      color: 'var(--color-bg)',
-    }
-  } else {
-    return {
-      'background-color': 'var(--color-bg)',
-      color: 'var(--color-menu)',
-    }
-  }
-}
 function liveButtonClicked() {
   if (graphData.graphMode != 'live') {
     graphData.graphMode = 'live'
     initGraph()
   }
 }
-
 function dayButtonClicked() {
   if (graphData.graphMode != 'day' && graphData.graphMode != 'today') {
     graphData.graphMode = 'day'
@@ -212,37 +196,18 @@ const row2layout = computed(() => {
 </script>
 
 <style scoped>
-.graphsettings {
-  background: var(--color-bg);
-  border: 1px solid var(--color-frame);
-  border-radius: 10px;
-}
-
 .rounded-pill {
   background-color: var(--color-menu);
 }
-
 .arrowButton {
   border: 0;
 }
-
-.closebutton {
-  background-color: var(--color-bg);
-  color: var(--color-menu);
-}
-
-.graphmodebutton {
-  border: 0.5px solid var(--color-menu);
-  font-size: var(--font-small);
-}
-
 .datebadge {
   background-color: var(--color-menu);
   color: var(--color-bg);
   font-size: var(--font-medium);
   font-weight: normal;
 }
-
 .arrowButton {
   color: var(--color-menu);
 }

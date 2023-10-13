@@ -169,6 +169,5 @@ function updateEnergyValues(
           historicSummary[cat].energy) *
           100,
       )
-      })
-	console.log(historicSummary)		
+      })		
   }

@@ -49,21 +49,21 @@
         <button
           class="btn btn-danger"
           @click="$emit('deletePlan', planId)"
-          data-bs-dismiss="modal"
+          
         >
           Löschen
         </button>
         <button
           class="btn btn-warning ms-1"
           @click="$emit('abort')"
-          data-bs-dismiss="modal"
+        
         >
           Abbrechen
         </button>
         <button
           class="btn btn-success float-end ms-1"
           @click="$emit('savePlan', planId)"
-          data-bs-dismiss="modal"
+          
         >
           Speichern
         </button>

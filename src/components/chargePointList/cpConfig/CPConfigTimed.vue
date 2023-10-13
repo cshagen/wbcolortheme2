@@ -21,9 +21,7 @@
           <td class="tablecell left">
             <span
               class="editButton"
-              data-bs-toggle="modal"
-              :data-bs-target="'#' + modalId"
-              @click="setPlanToEdit(key)"
+             @click="setPlanToEdit(key);editPlan=true"
             >
               <i class="fas fa-lg fa-pen ms-2"></i>
             </span>
@@ -38,8 +36,6 @@
             <span
               class="addButton"
               @click="addPlan"
-              
-              :data-bs-target="'#' + modalId"
             >
               <i class="fa-solid fa-xl fa-square-plus ms-2"></i>
             </span>
@@ -48,26 +44,24 @@
       </tbody>
     </table>
   
-    <ModalComponent v-for="planId in plansToEdit" :modalId="modalId">
+    <WBWidget :full-width="true" v-if="editPlan" >
       <template v-slot:title> Zeitplan bearbeiten </template>
       <CPEditTimeplan
-        
         :chargeTemplateId ="chargeTemplateId"
-        :planId="planId"
+        :planId="plansToEdit[0]"
         @savePlan="savePlan"
         @deletePlan="deletePlan"
         @abort="abortEdit"
       ></CPEditTimeplan>
-    </ModalComponent>
+    </WBWidget>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
-import { Modal } from 'bootstrap'
 import type { ChargeTemplate, ChargeTimePlan } from '../model'
 import { createChargeTimePlan } from '../model'
-import ModalComponent from '@/components/shared/ModalComponent.vue'
 import CPEditTimeplan from './CPEditTimeplan.vue'
+import WBWidget from '@/components/shared/WBWidget.vue'
 import { updateChargeTemplate } from '@/assets/js/sendMessages'
 
 const freqNames : {[key:string]:string} = {
@@ -80,24 +74,27 @@ const props = defineProps<{
   chargeTemplateId: number
 }>()
 
-const modalId = 'timesettingmodal' + props.chargeTemplateId
 // const planIdToEdit = (Object.keys(props.chargeTemplate.time_charging.plans).length >0) ? ref(Object.keys(props.chargeTemplate.time_charging.plans)[0]) : ref('0')
 const plansToEdit : string[] = reactive(["0"])
 function setPlanToEdit(key: string) {
   plansToEdit[0] = key
 }
+const editPlan = ref(false)
 function savePlansToServer(id: string) {
   updateChargeTemplate(props.chargeTemplateId)
 }
 function savePlan(id: string) {
   savePlansToServer(id)
+  editPlan.value=false
 }
 function abortEdit() {
   console.log('abort edit')
+  editPlan.value=false
  }
 function deletePlan(id: string) {
   delete props.chargeTemplate.time_charging.plans[id]
   savePlansToServer(id)
+  editPlan.value=false
 }
 function addPlan() {
   let p: ChargeTimePlan = createChargeTimePlan()
@@ -113,17 +110,10 @@ function addPlan() {
   max = max + 1
   props.chargeTemplate.time_charging.plans[max.toString()] = p
   setPlanToEdit (max.toString())
-  showModal()
+  // showModal()
+  editPlan.value=true
 }
-function showModal() {
-  let element = document.getElementById(modalId)
-  if (element) {
-  let modal = new Modal(element)
-  modal.show()
-  } else {
-    console.log ("NO MODAL ELEMENT")
-  }
-}
+
 const plans = computed(() => {
   let result = props.chargeTemplate.time_charging.plans
   return (result)? result : {}
@@ -133,10 +123,12 @@ const plans = computed(() => {
 <style scoped>
 .tablecell {
   color: var(--color-fg);
+  background-color: var(--color-bg);
   text-align: center;
  }
 .tableheader {
   color: var(--color-menu);
+  background-color: var(--color-bg);
   text-align: center;
  }
  .emptycell {
@@ -144,6 +136,8 @@ const plans = computed(() => {
   border-right: 0;
   border-bottom: 0;
   border-top: 0;
+  background-color: var(--color-bg);
+  color: var(--color-fg);
 }
 .heading {
   color: var(--color-battery);

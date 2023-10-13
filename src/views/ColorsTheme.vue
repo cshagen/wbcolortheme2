@@ -149,15 +149,15 @@ Hagen */
       <hr />
       <div class="d-flex justify-content-between">
         <p class="mx-4">Screen Width: {{ screensize.x }}</p>
-        <button class="btn btn-sm btn-secondary mx-4" @click="toggleSetup">
+     <!--    <button class="btn btn-sm btn-secondary mx-4" @click="toggleSetup">
           System Setup
-        </button>
+        </button> -->
       <button class="btn btn-sm btn-secondary mx-4" @click="toggleMqViewer">
           MQ Viewer
         </button>
       </div>
-      <hr v-if="showSetup" />
-      <Setup v-if="showSetup"></Setup>
+    <!--   <hr v-if="showSetup" />
+      <Setup v-if="showSetup"></Setup> -->
     
       <hr v-if="showMQ" />
       <MQTTViewer v-if="showMQ"></MQTTViewer>
